@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Test Módulo 5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { 
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+}
+
+body { 
+    font-family: 'Arial', sans-serif; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container { 
+    max-width: 900px; 
+    width: 100%;
+    margin: auto; 
+}
+
+/* Tarjeta principal */
+.card { 
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decoración de la tarjeta */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+}
+
+/* Títulos */
+h1, h2, h3 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h1 {
+    color: #2d3436;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #2d3436;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+/* Información de progreso */
+.info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    font-weight: bold;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+}
+
+#progress {
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+#timer {
+    color: #667eea;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Pregunta */
+.question {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+    color: #2d3436;
+    line-height: 1.5;
+    padding: 0 10px;
+}
+
+/* Opciones */
+.options {
+    margin-bottom: 30px;
+}
+
+.options label {
+    display: block;
+    padding: 20px 25px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border: 3px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    position: relative;
+}
+
+.options label:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    background: white;
+}
+
+.options label.selected {
+    background: #e8f4ff;
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.options label.option-wrong {
+    border-color: #ff6b6b;
+    background: #fff5f5;
+}
+
+.options label.option-correct {
+    border-color: #4ecdc4;
+    background: #f0fffd;
+}
+
+/* Botones */
+button {
+    padding: 18px 30px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+button.secondary {
+    background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+}
+
+#prevBtn, #nextBtn {
+    width: 48%;
+    padding: 18px;
+}
+
+.button-container {
+    display: flex;
+    gap: 4%;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+/* Pantalla final */
+.final { 
+    display: none; 
+    text-align: center;
+}
+
+.final h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+#summary, #finalTime, #finalNote {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #495057;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+#finalNote {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 20px;
+    border-left: 5px solid #667eea;
+}
+
+/* Preguntas incorrectas */
+.failed-question {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e9ecef;
+}
+
+.failed-question .question-text {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #2d3436;
+    font-size: 1.2rem;
+}
+
+/* ===== Diálogo de test guardado ===== */
+#resumeDialog {
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background: rgba(0,0,0,0.8); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#resumeDialog .card {
+    max-width: 500px; 
+    background: white;        
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#resumeDialog h2 { 
+    margin: 0; 
+    font-size: 2rem;
+    color: #2d3436;
+}
+
+#resumeDialog p { 
+    margin: 0; 
+    font-size: 1.2rem;
+    color: #636e72;
+    line-height: 1.6;
+}
+
+#resumeDialog button { 
+    width: 80%; 
+    padding: 18px; 
+    font-size: 1.1rem; 
+    border-radius: 12px; 
+    border: none; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+#resumeDialog button#continueBtn { 
+    background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+    color: white; 
+}
+
+#resumeDialog button#continueBtn:hover { 
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+}
+
+#resumeDialog button#newBtn { 
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white; 
+}
+
+#resumeDialog button#newBtn:hover { 
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+}
+
+#resumeDialog button + button { 
+    margin-top: 10px; 
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card {
+        padding: 25px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    .question {
+        font-size: 1.1rem;
+    }
+    
+    .options label {
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+    
+    button {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+    
+    #prevBtn, #nextBtn {
+        width: 48%;
+        padding: 16px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Diálogo para continuar test guardado -->
+    <div id="resumeDialog">
+        <div class="card">
+            <h2>💾 Test guardado</h2>
+            <p>Se detectó un test previo guardado. ¿Deseas continuar o empezar uno nuevo?</p>
+            <button id="continueBtn">Continuar</button>
+            <button id="newBtn">Empezar de nuevo</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de cuestionario -->
+    <div class="card" id="quizCard">
+        <h1 id="themeTitle"></h1>
+        <div class="info">
+            <div id="progress"></div>
+            <div id="timer">⏱ 00:00</div>
+        </div>
+        <div class="question" id="questionText"></div>
+        <div class="options" id="options"></div>
+        <div class="button-container">
+            <button id="prevBtn">Anterior</button>
+            <button id="nextBtn">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- Pantalla final -->
+    <div class="card final" id="finalScreen">
+        <h2>📊 Resultado final</h2>
+        <p id="summary"></p>
+        <p id="finalTime"></p>
+        <p id="finalNote"></p>
+        <div id="failedContainer" style="display:none;"></div>
+        <button class="secondary" id="restartBtn">Repetir test</button>
+    </div>
+
+</div>
+
+<script>
+// === Preguntas ===
+const themes = [
+{
+  "name": "Tema 10",
+  "questions": [
+  {
+    "question": "En el caso de cisternas o contenedores limpiados o desgasificados, donde deben de llevar los paneles de MMPP?",
+    "options": [
+      "Deben de llevarlos en la parte trasera de la cisterna o el contenedor.",
+      "Uno en la parte trasera y otro en la parte lateral.",
+      "Deberán de ser retirados o tapados y no visibles. ",
+      "Ninguna de las anteriores es correcta."
+    ],
+    "answer": "Deberán de ser retirados o tapados y no visibles. "
+  },
+  {
+    "question": "¿ En cuantas materias peligrosas (MMPP) se puede clasificar los materiales?",
+    "options": [
+      "8",
+      "6",
+      "9 ",
+      "5"
+    ],
+    "answer": "9 "
+  },
+  {
+    "question": "¿ Cuál es la clase 1 de materias?",
+    "options": [
+      "Gases",
+      "Explosivos ",
+      "Sólidos",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Explosivos "
+  },
+  {
+    "question": "¿ En qué tipos de propiedades podemos clasificar los gases?",
+    "options": [
+      "Químicas y físicas. ",
+      "Sólo químicas.",
+      "Gases tóxicos.",
+      "Sólo físicas."
+    ],
+    "answer": "Químicas y físicas. "
+  },
+  {
+    "question": "¿ Cuáles son las siglas de los gases tóxicos e inflamables?",
+    "options": [
+      "TC",
+      "TF",
+      "TFC ",
+      "TOC"
+    ],
+    "answer": "TFC "
+  },
+  {
+    "question": "¿Cuáles son las siglas de los gases tóxicos y comburentes?",
+    "options": [
+      "TOC",
+      "TO ",
+      "TFC",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "TO "
+  },
+  {
+    "question": "¿Cuáles son los gases que a temperaturas normales y bajo presión dentro de un recipiente mantienen su estado gaseoso?",
+    "options": [
+      "Gases licuados",
+      "Gases criogénicos",
+      "Gases comprimidos ",
+      "Gases disueltos a presión."
+    ],
+    "answer": "Gases comprimidos "
+  },
+  {
+    "question": "¿ Qué tipo de gas es, el gas natural?",
+    "options": [
+      "Gas disuelto a presión.",
+      "Gas criogénico. ",
+      "Gas licuado.",
+      "Gas comprimido."
+    ],
+    "answer": "Gas criogénico. "
+  },
+  {
+    "question": "¿ Cuáles son las sustancias sólidas que no están clasificadas como explosivos, pero que se inflaman con facilidad?",
+    "options": [
+      "Sólidos inflamables. ",
+      "Sólidos de combustión espontánea.",
+      "Las dos anteriores.",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Sólidos inflamables. "
+  },
+  {
+    "question": "¿ Cómo tiene que ser el cartel que llevan los vehículos que transporten MMPP?",
+    "options": [
+      "20cm largo, 20cm ancho.",
+      "30cm largo, 40cm ancho. ",
+      "40cm largo, 30cm ancho.",
+      "No tienen medida."
+    ],
+    "answer": "30cm largo, 40cm ancho. "
+  },
+  {
+    "question": "¿ De qué color tiene que ser el cartel en el vehículo?",
+    "options": [
+      "Naranja. ",
+      "Rojo.",
+      "Verde.",
+      "Amarillo."
+    ],
+    "answer": "Naranja. "
+  },
+  {
+    "question": "En qué parte deberán llevar dichos carteles?",
+    "options": [
+      "Parte delantera y trasera. ",
+      "Sólo parte delantera.",
+      "Sólo parte trasera.",
+      "Da igual donde."
+    ],
+    "answer": "Parte delantera y trasera. "
+  },
+  {
+    "question": "En dichos carteles, el primer número nos indica qué tipo de mercancía transporta. Entre ellos, el gas, ¿A qué número nos indica?",
+    "options": [
+      "2 ",
+      "3",
+      "1",
+      "6"
+    ],
+    "answer": "2 "
+  },
+  {
+    "question": "¿ Con qué letra en el cartel nos indica que esa materia reacciona peligrosamente con el agua?",
+    "options": [
+      "Y",
+      "Z",
+      "X ",
+      "H"
+    ],
+    "answer": "X "
+  },
+  {
+    "question": "Cuando hay fuga o derrame de material, de qué tipo de emergencia estamos hablando?",
+    "options": [
+      "TPC TIPO 1",
+      "TPC TIPO 2",
+      "TPC TIPO 3 ",
+      "TPC TIPO 4"
+    ],
+    "answer": "TPC TIPO 3 "
+  },
+  {
+    "question": "Y cuando hay un incendio en esa fuga?",
+    "options": [
+      "TPC TIPO 2",
+      "TPC TIPO 5",
+      "TPC TIPO 1",
+      "TPC TIPO 4 "
+    ],
+    "answer": "TPC TIPO 4 "
+  },
+  {
+    "question": "Dentro de la primera respuesta en las emergencias, ¿En cuántos niveles se diferencian los niveles de respuesta?",
+    "options": [
+      "Primer y segundo nivel, más un tercero especialista. ",
+      "Primer y segundo nivel únicamente.",
+      "Primer nivel.",
+      "Ninguna de las anteriores es correcta."
+    ],
+    "answer": "Primer y segundo nivel, más un tercero especialista. "
+  },
+  {
+    "question": "Dentro de las zonas de seguridad, concretamente en la Zona caliente trabajaran exclusivamente:",
+    "options": [
+      "Policías y Bomberos",
+      "Bomberos ",
+      "Bomberos y sanitarios",
+      "Policías, bomberos y sanitarios"
+    ],
+    "answer": "Bomberos "
+  },
+  {
+    "question": "Las zonas de seguridad se dividen en:",
+    "options": [
+      "Zona caliente, intermedia y fría.",
+      "Zona caliente y templada.",
+      "zona caliente, templada, fría y de seguridad.",
+      "Zona caliente, templada y fría. "
+    ],
+    "answer": "Zona caliente, templada y fría. "
+  },
+  {
+    "question": "Si hay un incendio en un vehículo propulsado por gas natural, electricidad, hidrógeno o en un vehículo híbrido actuaremos:",
+    "options": [
+      "Como si fuese un vehículo propulsado a gasolina.",
+      "No esperaremos a que se apague solo.",
+      "Extremaremos las medidas de precaución. ",
+      "Indistintamente en cada caso."
+    ],
+    "answer": "Extremaremos las medidas de precaución. "
+  },
+  {
+    "question": "Si vemos a una persona envuelta en llamas:",
+    "options": [
+      "Le diremos que corra para que así se puedan apagar las llamas y taparle con una manta.",
+      "Le diremos que se tire al suelo y le echaremos agua.",
+      "le haremos que se tire al suelo y que ruede para después echarle agua.",
+      "Haremos que se tire al suelo y ruede para después cubrirlo con una manta. "
+    ],
+    "answer": "Haremos que se tire al suelo y ruede para después cubrirlo con una manta. "
+  },
+  {
+    "question": "El número de peligro 368 corresponde a materia líquida inflamable, infecciosa y corrosiva.",
+    "options": [
+      "Verdadero",
+      "Falso "
+    ],
+    "answer": "Falso "
+  },
+  {
+    "question": "Toda víctima de incendios, que presente disminución de nivel de consciencia, debe ser considerada víctima traumática.",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  },
+  {
+    "question": "Los gases irritantes son tóxicos a bajas concentraciones:",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  },
+  {
+    "question": "Las materias comburentes son sustancias térmicamente muy inestables.",
+    "options": [
+      "Verdadero",
+      "Falso "
+    ],
+    "answer": "Falso "
+  },
+  {
+    "question": "Las materias radiactivas emiten radiaciones ionizantes capaces de provocar daños en las células.",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  }
+]
+},
+]
+
+// === Variables ===
+let theme = themes[0];
+let index=0, correct=0, incorrect=0, startTime=Date.now(), answers=[], timerInterval;
+
+// === DOM ===
+const themeTitle = document.getElementById("themeTitle");
+const questionText = document.getElementById("questionText");
+const optionsDiv = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const progress = document.getElementById("progress");
+const timer = document.getElementById("timer");
+
+const quizCard = document.getElementById("quizCard");
+const finalScreen = document.getElementById("finalScreen");
+const summary = document.getElementById("summary");
+const finalTime = document.getElementById("finalTime");
+const finalNote = document.getElementById("finalNote");
+const failedContainer = document.getElementById("failedContainer");
+
+const resumeDialog = document.getElementById("resumeDialog");
+const continueBtn = document.getElementById("continueBtn");
+const newBtn = document.getElementById("newBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+// === Funciones ===
+function initTest(loadSaved=false){
+    const saved = localStorage.getItem("testState");
+    if(!loadSaved && saved){
+        resumeDialog.style.display="flex";
+        quizCard.style.display="none";
+        finalScreen.style.display="none";
+        return;
+    }
+
+    resumeDialog.style.display="none";
+    quizCard.style.display="block";
+    finalScreen.style.display="none";
+
+    if(loadSaved && saved){
+        const state = JSON.parse(saved);
+        index=state.index; correct=state.correct; incorrect=state.incorrect;
+        startTime=state.startTime; answers=state.answers;
+    }else{
+        index=0; correct=0; incorrect=0; startTime=Date.now(); answers=[];
+        localStorage.removeItem("testState");
+    }
+
+    themeTitle.textContent = theme.name;
+    clearInterval(timerInterval);
+    timerInterval=setInterval(updateTimer,1000);
+    loadQuestion();
+}
+
+function loadQuestion(){
+    const q = theme.questions[index];
+    questionText.textContent=q.question;
+    optionsDiv.innerHTML="";
+    progress.textContent=`Pregunta ${index+1} / ${theme.questions.length}`;
+
+    q.options.forEach(opt=>{
+        const label=document.createElement("label");
+        label.textContent=opt;
+        if(answers[index]?.selected===opt) label.classList.add("selected");
+        label.addEventListener("click",()=>{
+            document.querySelectorAll(".options label").forEach(l=>l.classList.remove("selected"));
+            label.classList.add("selected");
+            answers[index]={question:q.question, options:q.options, correct:q.answer, selected:opt, number:index+1};
+            saveProgress();
+        });
+        optionsDiv.appendChild(label);
+    });
+
+    prevBtn.style.display = index===0 ? "none" : "inline-block";
+    nextBtn.textContent = index===theme.questions.length-1 ? "Finalizar" : "Siguiente";
+}
+
+function saveProgress(){
+    localStorage.setItem("testState", JSON.stringify({index, correct, incorrect, startTime, answers}));
+}
+
+nextBtn.addEventListener("click", ()=>{
+    const selectedAnswer = answers[index]?.selected || null; // null si no respondió
+    const q = theme.questions[index];
+
+    answers[index] = { question:q.question, options:q.options, correct:q.answer, selected:selectedAnswer, number:index+1 };
+    saveProgress();
+
+    if(selectedAnswer){
+        if(selectedAnswer === q.answer) correct++;
+        else incorrect++;
+    }
+
+    if(index < theme.questions.length-1){ index++; loadQuestion();}
+    else finishTest();
+});
+
+prevBtn.addEventListener("click", ()=>{
+    if(index>0) index--; loadQuestion();
+});
+
+function finishTest(){
+    clearInterval(timerInterval);
+    localStorage.removeItem("testState");
+    quizCard.style.display="none";
+    finalScreen.style.display="block";
+
+    const totalSeconds = Math.floor((Date.now()-startTime)/1000);
+    const min = String(Math.floor(totalSeconds/60)).padStart(2,"0");
+    const sec = String(totalSeconds %60).padStart(2,"0");
+    const rawScore = correct - (incorrect/3);
+    const note = Math.max(0,(rawScore/theme.questions.length)*10).toFixed(2);
+
+    summary.innerHTML=`✔️ Correctas: <strong>${correct}</strong><br>❌ Incorrectas: <strong>${incorrect}</strong>`;
+    finalTime.textContent=`⏱ Tiempo total: ${min}:${sec}`;
+    finalNote.innerHTML=`🎯 Nota final: <strong style="font-size: 2rem; color: #667eea;">${note}/10</strong>`;
+
+    failedContainer.style.display="block";
+    failedContainer.innerHTML = "";
+
+    // Preguntas incorrectas
+    const failed = answers.filter(a=>a.selected && a.selected!==a.correct);
+    if(failed.length){
+        const failedDiv = document.createElement("div");
+        failedDiv.innerHTML = "<h3 style='color: #ff6b6b; margin-bottom: 20px;'>📝 Preguntas incorrectas</h3>";
+        failed.forEach(a=>{
+            const div=document.createElement("div"); div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label");
+                if(opt===a.correct) label.classList.add("option-correct");
+                if(opt===a.selected) label.classList.add("option-wrong");
+                label.textContent=opt;
+                opts.appendChild(label);
+            });
+            div.appendChild(opts);
+            failedDiv.appendChild(div);
+        });
+        failedContainer.appendChild(failedDiv);
+    }
+
+    // Preguntas no respondidas
+    const unanswered = answers.filter(a=>a.selected===null);
+    if(unanswered.length){
+        const unDiv = document.createElement("div");
+        unDiv.innerHTML="<h3 style='color: #636e72; margin-bottom: 20px;'>❓ Preguntas no respondidas</h3>";
+        unanswered.forEach(a=>{
+            const div=document.createElement("div"); div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label");
+                if(opt===a.correct) label.classList.add("option-correct");
+                label.textContent=opt;
+                opts.appendChild(label);
+            });
+            div.appendChild(opts);
+            unDiv.appendChild(div);
+        });
+        failedContainer.appendChild(unDiv);
+    }
+}
+
+function updateTimer(){
+    const elapsed = Math.floor((Date.now()-startTime)/1000);
+    const m = String(Math.floor(elapsed/60)).padStart(2,"0");
+    const s = String(elapsed%60).padStart(2,"0");
+    timer.textContent=`⏱ ${m}:${s}`;
+}
+
+function restartTest(){
+    correct=0; incorrect=0; index=0; answers=[]; startTime=Date.now();
+    localStorage.removeItem("testState");
+    initTest(false);
+}
+
+// === Botones ===
+continueBtn.addEventListener("click", ()=>initTest(true));
+newBtn.addEventListener("click", ()=>restartTest());
+restartBtn.addEventListener("click", ()=>restartTest());
+
+// Añadir botón de volver al inicio
+const backButton = document.createElement("button");
+backButton.textContent = "Volver al inicio";
+backButton.style.background = "linear-gradient(135deg, #ff6b6b, #ee5a52)";
+backButton.style.marginTop = "20px";
+backButton.addEventListener("click", () => {
+    window.location.href = "../index.html";
+});
+document.getElementById("finalScreen").appendChild(backButton);
+
+initTest();
+</script>
+</body>
+</html>
