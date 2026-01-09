@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Test Módulo 5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { 
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+}
+
+body { 
+    font-family: 'Arial', sans-serif; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container { 
+    max-width: 900px; 
+    width: 100%;
+    margin: auto; 
+}
+
+/* Tarjeta principal */
+.card { 
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decoración de la tarjeta */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+}
+
+/* Títulos */
+h1, h2, h3 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h1 {
+    color: #2d3436;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #2d3436;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+/* Información de progreso */
+.info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    font-weight: bold;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+}
+
+#progress {
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+#timer {
+    color: #667eea;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Pregunta */
+.question {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+    color: #2d3436;
+    line-height: 1.5;
+    padding: 0 10px;
+}
+
+/* Opciones */
+.options {
+    margin-bottom: 30px;
+}
+
+.options label {
+    display: block;
+    padding: 20px 25px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border: 3px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    position: relative;
+}
+
+.options label:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    background: white;
+}
+
+.options label.selected {
+    background: #e8f4ff;
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.options label.option-wrong {
+    border-color: #ff6b6b;
+    background: #fff5f5;
+}
+
+.options label.option-correct {
+    border-color: #4ecdc4;
+    background: #f0fffd;
+}
+
+/* Botones */
+button {
+    padding: 18px 30px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+button.secondary {
+    background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+}
+
+#prevBtn, #nextBtn {
+    width: 48%;
+    padding: 18px;
+}
+
+.button-container {
+    display: flex;
+    gap: 4%;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+/* Pantalla final */
+.final { 
+    display: none; 
+    text-align: center;
+}
+
+.final h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+#summary, #finalTime, #finalNote {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #495057;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+#finalNote {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 20px;
+    border-left: 5px solid #667eea;
+}
+
+/* Preguntas incorrectas */
+.failed-question {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e9ecef;
+}
+
+.failed-question .question-text {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #2d3436;
+    font-size: 1.2rem;
+}
+
+/* ===== Diálogo de test guardado ===== */
+#resumeDialog {
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background: rgba(0,0,0,0.8); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#resumeDialog .card {
+    max-width: 500px; 
+    background: white;        
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#resumeDialog h2 { 
+    margin: 0; 
+    font-size: 2rem;
+    color: #2d3436;
+}
+
+#resumeDialog p { 
+    margin: 0; 
+    font-size: 1.2rem;
+    color: #636e72;
+    line-height: 1.6;
+}
+
+#resumeDialog button { 
+    width: 80%; 
+    padding: 18px; 
+    font-size: 1.1rem; 
+    border-radius: 12px; 
+    border: none; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+#resumeDialog button#continueBtn { 
+    background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+    color: white; 
+}
+
+#resumeDialog button#continueBtn:hover { 
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+}
+
+#resumeDialog button#newBtn { 
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white; 
+}
+
+#resumeDialog button#newBtn:hover { 
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+}
+
+#resumeDialog button + button { 
+    margin-top: 10px; 
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card {
+        padding: 25px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    .question {
+        font-size: 1.1rem;
+    }
+    
+    .options label {
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+    
+    button {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+    
+    #prevBtn, #nextBtn {
+        width: 48%;
+        padding: 16px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Diálogo para continuar test guardado -->
+    <div id="resumeDialog">
+        <div class="card">
+            <h2>💾 Test guardado</h2>
+            <p>Se detectó un test previo guardado. ¿Deseas continuar o empezar uno nuevo?</p>
+            <button id="continueBtn">Continuar</button>
+            <button id="newBtn">Empezar de nuevo</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de cuestionario -->
+    <div class="card" id="quizCard">
+        <h1 id="themeTitle"></h1>
+        <div class="info">
+            <div id="progress"></div>
+            <div id="timer">⏱ 00:00</div>
+        </div>
+        <div class="question" id="questionText"></div>
+        <div class="options" id="options"></div>
+        <div class="button-container">
+            <button id="prevBtn">Anterior</button>
+            <button id="nextBtn">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- Pantalla final -->
+    <div class="card final" id="finalScreen">
+        <h2>📊 Resultado final</h2>
+        <p id="summary"></p>
+        <p id="finalTime"></p>
+        <p id="finalNote"></p>
+        <div id="failedContainer" style="display:none;"></div>
+        <button class="secondary" id="restartBtn">Repetir test</button>
+    </div>
+
+</div>
+
+<script>
+// === Preguntas ===
+const themes = [
+    {
+        "name": "Modulo 5 2020",
+        "questions": [
+            {
+        'question': 'Si una persona que está diagnosticada de enfermedad coronaria, presenta dolor torácico opresivo en el pecho de más de 5 minutos de duración, lo más correcto sería:',
+        'options': [
+            'Ayudarle, si precisa, en la administración de nitroglicerina sublingual en intervalos de 15 minutos.',
+            'Darle ácido acetil salicílico, aunque tenga una úlcera gástrica.',
+            'Controlar signos vitales y, si se queda inconsciente, valorar la respiración. ',
+            'Taparle para evitar hipotermia',
+        ],
+        'answer': 'Controlar signos vitales y, si se queda inconsciente, valorar la respiración. ',
+    },
+    {
+        'question': 'Indique cuál de los siguientes signos de alarma NO se da en un ataque cerebral:',
+        'options': [
+            'Pérdida de sensibilidad, parcial o completa en medio cuerpo.',
+            'Dolor de cabeza muy intenso, que comienza lentamente. ',
+            'Pérdida de memoria',
+            'Afectación del nivel de consciencia.',
+        ],
+        'answer': 'Dolor de cabeza muy intenso, que comienza lentamente. ',
+    },
+    {
+        'question': 'Una mujer de 55 años presenta súbitamente dolor torácico retroesternal mientras trabaja. No tiene antecedentes conocidos de enfermedad coronaria. ¿Cuándo debemos activar la cadena de supervivencia y llamar al 112?',
+        'options': [
+            'Si el dolor no cede en unas pocas horas',
+            'En el momento que comienza el dolor',
+            'Si el dolor no cede después de 5 minutos de reposo ',
+            'Después de administrar nitroglicerina sublingual',
+        ],
+        'answer': 'Si el dolor no cede después de 5 minutos de reposo ',
+    },
+    {
+        'question': 'En una PCR y en ausencia de DESA, las compresiones torácicas aumentan la supervivencia. ¿Cuándo son efectivas en el adulto?:',
+        'options': [
+            'Si se dan a una frecuencia de 100-120/min y hasta una profundidad menor a 5 cm.',
+            'Si después de cada compresión, se permite la reexpansión completa del tórax. ',
+            'Si se presiona sobre la parte alta del abdomen o la parte final del esternón.',
+            'Todas las anteriores',
+        ],
+        'answer': 'Si después de cada compresión, se permite la reexpansión completa del tórax. ',
+    },
+    {
+        'question': 'Sobre los electrodos del DESA:',
+        'options': [
+            'Uno se coloca encima de la clavícula derecha y, el otro, debajo del esternón.',
+            'Uno se coloca debajo de la clavícula derecha y, el otro, justo debajo del pezón izquierdo.',
+            'Antes de colocar los electrodos, hay que secar el tórax. ',
+            'En los niños de 5 años, se colocan los del adulto.',
+        ],
+        'answer': 'Antes de colocar los electrodos, hay que secar el tórax. ',
+    },
+    {
+        'question': 'En una parada por fibrilación ventricular y tras aplicar la primera descarga, el DEA reanaliza el ritmo y NO recomienda dar una descarga, mientras la víctima reinicia la respiración espontánea. ¿Cuál es el siguiente paso?',
+        'options': [
+            'Continuar sólo con compresiones torácicas',
+            'Continuar 30/2 durante dos minutos más',
+            'Continuar con ventilaciones solo',
+            'Suspender toda maniobra y colocarle en posición lateral de seguridad ',
+        ],
+        'answer': 'Suspender toda maniobra y colocarle en posición lateral de seguridad ',
+    },
+    {
+        'question': '¿Cuál de los siguientes factores NO indica gravedad en una herida?',
+        'options': [
+            'Dolor',
+            'Profundidad',
+            'Rubor ',
+            'Inflamación',
+        ],
+        'answer': 'Dolor',
+    },
+    {
+        'question': '¿Qué debemos sospechar ante una herida de bala en abdomen o tórax?',
+        'options': [
+            'Presencia de orificio de salida',
+            'Lesión en órganos vitales',
+            'Lesión en columna vertebral',
+            'b y c son correctas ',
+        ],
+        'answer': 'b y c son correctas ',
+    },
+    {
+        'question': 'Es conveniente realizar el control de las hemorragias con el herido:',
+        'options': [
+            'De pie',
+            'Tumbado ',
+            'Sentado',
+            'En cuclillas.',
+        ],
+        'answer': 'Tumbado ',
+    },
+    {
+        'question': 'Los apósitos hemostáticos:',
+        'options': [
+            'Deben estar en contacto con toda la superficie de la herida ',
+            'Se utilizan sólo en quirófano.',
+            'Se colocan encima de la herida y luego se sujetan con esparadrapo.',
+            'No es necesario presionar, ya que el control de la hemorragia es inmediato.',
+        ],
+        'answer': 'Deben estar en contacto con toda la superficie de la herida ',
+    },
+    {
+        'question': 'Torniquete:',
+        'options': [
+            'No se utiliza, pues provoca muchas complicaciones.',
+            'Se debe valorar riesgo/beneficio y la supervivencia frente a la pérdida del miembro.',
+            'El diseño del torniquete no es importante.',
+            'El plazo de tiempo considerado seguro para utilizar el torniquete es de 150 minutos. ',
+        ],
+        'answer': 'El plazo de tiempo considerado seguro para utilizar el torniquete es de 150 minutos. ',
+    },
+    {
+        'question': 'EI SHOCK por vasodilatación o secuestro, se produce por:',
+        'options': [
+            'Fallo del corazón.',
+            'Quemaduras extensas.',
+            'Por infección generalizada. ',
+            'Ninguna es correcta',
+        ],
+        'answer': 'Por infección generalizada. ',
+    },
+    {
+        'question': 'En el agotamiento por calor:',
+        'options': [
+            'Hay palidez y sensación de frio ',
+            'La temperatura es elevada, más de 40°C.',
+            'Se pueden dar convulsiones o coma',
+            'La sudoración está ausente.',
+        ],
+        'answer': 'Hay palidez y sensación de frio ',
+    },
+    {
+        'question': 'Ante una quemadura de 2º grado:',
+        'options': [
+            'Abrir las ampollas.',
+            'No cubrir la zona para evitar adherencias.',
+            'Todo es cierto.',
+            'Enfriar la zona ',
+        ],
+        'answer': 'Enfriar la zona ',
+    },
+    {
+        'question': 'Si una picadura produce shock alérgico, se realizará lo siguiente:',
+        'options': [
+            'Hacerle chupar hielo durante el traslado al hospital',
+            'Colocarle en posición anti-shock si vomita o se ahoga.',
+            'Valorar si presenta dificultad respiratoria o se queda inconsciente. ',
+            'Ayudarle en la administración de adrenalina auto inyectable hasta un máximo de 5 dosis.',
+        ],
+        'answer': 'Valorar si presenta dificultad respiratoria o se queda inconsciente. ',
+    },
+    {
+        'question': 'Para la correcta inmovilización del antebrazo (cúbito y radio), ¿Qué partes debe inmovilizar la férula?',
+        'options': [
+            'La zona de la fractura y el codo',
+            'La zona de la fractura, únicamente',
+            'La zona de la fractura y la muñeca',
+            'La zona de la fractura, muñeca y codo. ',
+        ],
+        'answer': 'La zona de la fractura, muñeca y codo. ',
+    },
+    {
+        'question': 'Ante una fractura es necesario valorar:',
+        'options': [
+            'Temperatura',
+            'Coloración de la piel',
+            'Sensibilidad y movilidad',
+            'Todas son correctas ',
+        ],
+        'answer': 'Todas son correctas ',
+    },
+    {
+        'question': '¿Cuál es la secuencia CORRECTA en la valoración primaria de la víctima politraumatizada que no responde a estímulos?',
+        'options': [
+            'Colocar collarín cervical-Valorar dificultad respiratoria-Valorar signos de shock',
+            'Abrir vía aérea-Valorar dificultad respiratoria-Colocar collarín cervical ',
+            'Colocar collarín cervical-Valorar signos de shock-Colocar mascarilla de oxígeno',
+            'Abrir vía aérea -Colocar collarín cervical-Comprobar heridas abiertas de tórax',
+        ],
+        'answer': 'Abrir vía aérea-Valorar dificultad respiratoria-Colocar collarín cervical ',
+    },
+    {
+        'question': 'Ante un herido que está tendido en el suelo boca abajo, sin hemorragia visible y que no responde estímulos lo primero que haremos es:',
+        'options': [
+            'Colocarle un tubo de Guedel',
+            'Valorar si respira ',
+            'Ponerle en posición RCP',
+            'Colocarle en posición lateral de seguridad',
+        ],
+        'answer': 'Valorar si respira ',
+    },
+    {
+        'question': 'El sistema AVDNR:',
+        'options': [
+            'Es un sistema de seguridad especial para proteger a los niños en los accidentes de coche.',
+            'Es un apósito hemostático',
+            'Son correas de sujeción para el tablero espinal',
+            'Sirve para valorar el nivel de consciencia. ',
+        ],
+        'answer': 'Sirve para valorar el nivel de consciencia. ',
+    },
+    {
+        'question': '¿Cuál de los siguientes parámetros NO pertenece a la valoración secundaria?',
+        'options': [
+            'Valoración de frecuencia respiratoria ',
+            'Interrogatorio OPUMA',
+            'Exploración de tórax',
+            'Valoración del relleno capilar',
+        ],
+        'answer': 'Valoración de frecuencia respiratoria ',
+    },
+    {
+        'question': 'En qué situación utilizaremos la maniobra de RAUTEC:',
+        'options': [
+            'Presencia de mercancías peligrosas, valorando riesgo/beneficio. ',
+            'Siempre que la víctima este inconsciente, pero respire.',
+            'En caso de vómito, para evitar broncoaspiracion.',
+            'Si la victima sangra por la nariz.',
+        ],
+        'answer': 'Presencia de mercancías peligrosas, valorando riesgo/beneficio. ',
+    },
+    {
+        'question': '¿Cuál es la respuesta CORRECTA con respecto a la colocación del collarín cervical?',
+        'options': [
+            'La cabeza de la víctima debe estar ladeada.',
+            'Para la medición, se colocan los dedos de nuestra mano entre la clavícula y la oreja del accidentado.',
+            'El cierre excesivo del collarín provoca incomodidad y dificultad respiratoria. ',
+            'Tras colocar el collarín, no es necesario seguir sujetando la cabeza',
+        ],
+        'answer': 'El cierre excesivo del collarín provoca incomodidad y dificultad respiratoria. ',
+    },
+    {
+        'question': 'El área de socorro:',
+        'options': [
+            'Es el área más segura',
+            'Debe estar próxima a la zona del accidente ',
+            'Nunca habrá sanitarios en ella',
+            'Posee las infraestructuras materiales necesarias',
+        ],
+        'answer': 'Debe estar próxima a la zona del accidente ',
+    },
+    {
+        'question': 'En un adulto que sufre convulsiones generalizadas, señale cuál de las siguientes afirmaciones es falsa:',
+        'options': [
+            'Se produce pérdida súbita del nivel de consciencia.',
+            'Se puede producir hipersalivación',
+            'Siempre hay publico delante ',
+            'Puede haber relajación de esfinteres.',
+        ],
+        'answer': 'Siempre hay publico delante ',
+    },
+    {
+        'question': 'Entre los factores desencadenantes de una crisis epiléptica, no se encuentra:',
+        'options': [
+            'Fiebre',
+            'Falta de sueño',
+            'Reposo ',
+            'Estrés',
+        ],
+        'answer': 'Reposo ',
+    },
+    {
+        'question': 'No es causa de hipoglucemia:',
+        'options': [
+            'Demasiada insulina',
+            'Comer menos',
+            'Hacer poco ejercicio. ',
+            'Ingerir medicamentos incompatibles.',
+        ],
+        'answer': 'Hacer poco ejercicio. ',
+    },
+    {
+        'question': 'Un diabético que presenta un nivel de azúcar en sangre de 300, los signos que se pueden observar son:',
+        'options': [
+            'Hambre aguda.',
+            'Nerviosismo.',
+            'Piel caliente y seca ',
+            'Debilidad y temblor.',
+        ],
+        'answer': 'Piel caliente y seca ',
+    },
+    {
+        'question': 'Ante una persona que tiene nivel conciencia disminuido, respira lentamente, tiene signos de pinchazos en los brazos y las pupilas tienen un tamaño muy reducido, se sospechara una intoxicación grave por:',
+        'options': [
+            'Marihuana',
+            'LSD',
+            'Cocaína',
+            'Heroína ',
+        ],
+        'answer': 'Heroína ',
+    },
+    {
+        'question': 'Ante una persona que sufre un coma etílico, la asistencia consistirá en:',
+        'options': [
+            'Provocar el vómito dándole de beber agua con sal.',
+            'Desnudarle si empieza a sudar',
+            'Llamar al 112 y colocarle en posición lateral de seguridad. ',
+            'Sumergir la cabeza en agua fría.',
+        ],
+        'answer': 'Llamar al 112 y colocarle en posición lateral de seguridad. ',
+    },
+    {
+        'question': 'En las caídas de personas mayores, ¿Cuál de las siguientes NO se considera consecuencia de una caída?',
+        'options': [
+            'Hipotermia',
+            'Úlcera por presión',
+            'Trombosis venosa profunda',
+            'Congelación ',
+        ],
+        'answer': 'Congelación ',
+    },
+    {
+        'question': '¿Cuál de las siguientes etiquetas corresponde a un peróxido orgánico?',
+        'options': [
+            'Llama negra o blanca sobre fondo rojo',
+            'Llama negra o blanca sobre fondo blanco teniendo el triángulo inferior color rojo.',
+            'Llama negra o blanca sobre fondo rojo teniendo el triángulo inferior color amarillo ',
+            'Triangulo superior a rayas negras/blancas y el triángulo inferior blanco',
+        ],
+        'answer': 'Llama negra o blanca sobre fondo rojo teniendo el triángulo inferior color amarillo ',
+    },
+    {
+        'question': 'Una materia que en contacto con el agua desprende gases inflamables corresponde a:',
+        'options': [
+            'Subclase 5.2',
+            'Subclase 4.2 ',
+            'Subclase 3.2',
+            'Subclase 4.3',
+        ],
+        'answer': 'Subclase 4.2 ',
+    },
+    {
+        'question': 'Un panel naranja con código de peligro X338 indica:',
+        'options': [
+            'Materia muy tóxica que reacciona peligrosamente con el agua',
+            'Líquido inflamable y tóxico que reacciona peligrosamente con el agua',
+            'Materia líquida muy inflamable y corrosiva que reacciona peligrosamente con el agua ',
+            'Materia liquida corrosiva que reacciona peligrosamente con agua desprendiendo gases inflamables.',
+        ],
+        'answer': 'Materia líquida muy inflamable y corrosiva que reacciona peligrosamente con el agua ',
+    },
+    {
+        'question': 'Un transporte de mercancías peligrosas sufre un accidente. Como consecuencia, la cisterna sufre desperfectos, no observándose fugas ni derrames. ¿Qué tipo de emergencia será?',
+        'options': [
+            'TPC-1.',
+            'TPC-2 ',
+            'TPC-3.',
+            'TPC-4.',
+        ],
+        'answer': 'TPC-2 ',
+    },
+    {
+        'question': '¿Cuál de estos gases tiene un olor característico a almendras amargas?',
+        'options': [
+            'Amoniaco',
+            'Ácido cianhídrico ',
+            'Fluoruro de hidrógeno',
+            'Cloruro de metileno',
+        ],
+        'answer': 'Ácido cianhídrico ',
+    },
+    {
+        'question': 'La higiene de manos:',
+        'options': [
+            'Se realiza preferiblemente con una pastilla de jabón',
+            'El uso de guantes sustituye a la higiene de manos',
+            'Se debe realizar antes del contacto con fluidos corporales',
+            'Después del contacto con fluidos corporales, detenido y entorno del detenido. ',
+        ],
+        'answer': 'Después del contacto con fluidos corporales, detenido y entorno del detenido. ',
+    },
+    {
+        'question': 'En un incendio de fardos de paja, cuando se retiran los fardos que aún no han ardido, ¿sobre qué lado del tetraedro del fuego se está actuando?',
+        'options': [
+            'El combustible',
+            'El comburente',
+            'El calor',
+            'La reacción en cadena ',
+        ],
+        'answer': 'La reacción en cadena ',
+    },
+    {
+        'question': 'Un incendio ventilado está limitado por',
+        'options': [
+            'El combustible ',
+            'El comburente',
+            'Ninguno de los componentes actúa como limitante del incendio',
+            'La reacción en cadena',
+        ],
+        'answer': 'El combustible ',
+    },
+    {
+        'question': '¿Para qué se utiliza el acetileno?',
+        'options': [
+            'Corte',
+            'Soldadura',
+            'A y B son correctas ',
+            'Ninguna de las anteriores',
+        ],
+        'answer': 'A y B son correctas ',
+    },
+    {
+        'question': '¿Qué es la mezcla ideal?',
+        'options': [
+            'La concentración de combustible/comburente en la que la reacción tiene su máxima intensidad. ',
+            'El porcentaje mínimo de vapores combustibles a partir del cual se produce la combustión',
+            'El porcentaje máximo de vapores combustibles a partir del cual no puede producirse la combustión',
+            'Un volumen formado por un 50% de vapores combustibles y 50% comburente.',
+        ],
+        'answer': 'La concentración de combustible/comburente en la que la reacción tiene su máxima intensidad. ',
+    },
+    {
+        'question': 'Una freidora con aceite que se incendia, produce un fuego de clase:',
+        'options': [
+            '"A"',
+            '"C"',
+            '"G"',
+            '"F" ',
+        ],
+        'answer': '"F" ',
+    },
+    {
+        'question': '¿Cuál de las tres formas convencionales de transmisión del calor es la que transmite más calor en un incendio a los elementos que quedan por encima?',
+        'options': [
+            'Conducción',
+            'Convección ',
+            'Radiación',
+            'Inducción.',
+        ],
+        'answer': 'Convección ',
+    },
+    {
+        'question': 'Las estructuras de hormigón armado:',
+        'options': [
+            'Tienen una reacción al fuego buena y una resistencia al fuego mala.',
+            'Tienen una reacción al fuego buena y una resistencia al fuego buena.',
+            'Tienen una reacción al fuego mala y una resistencia al fuego buena.',
+            'Tienen una reacción al fuego mala y una resistencia al fuego mala.',
+        ],
+        'answer': 'Tienen una reacción al fuego buena y una resistencia al fuego buena.',
+    },
+    {
+        'question': 'Las primeras acciones a realizar por la Policía al llegar a un incendio son:',
+        'options': [
+            'Dejar el vehículo correctamente sin obstaculizar la llegada de los bomberos',
+            'Confirmar el incidente.',
+            'Habilitar vías de entrada y salida',
+            'Todas son correctas ',
+        ],
+        'answer': 'Todas son correctas ',
+    },
+    {
+        'question': 'En una bombona de gas propano sometida a un incendio',
+        'options': [
+            'Es más peligroso que el fuego incida en la zona de fase líquida',
+            'Es más peligroso que el fuego incida en zona de fase gas ',
+            'Es indiferente que fuego indica en la zona de fase líquida o zona de fase gas',
+            'La bombona explotará, en cualquier caso',
+        ],
+        'answer': 'Es más peligroso que el fuego incida en zona de fase gas ',
+    },
+    {
+        'question': 'En un incendio, la Policía, sanitarios... etc. deben estar en la',
+        'options': [
+            'Zona caliente',
+            'Zona templada',
+            'Zona de exclusión',
+            'Zona fría ',
+        ],
+        'answer': 'Zona fría ',
+    },
+    {
+        'question': 'Si al llegar a un incendio en un edificio de viviendas encontramos a un vecino que ha salido del edificio',
+        'options': [
+            'Intentaremos que nos proporcione la mayor información posible y lo mantendremos bajo control en todo momento ',
+            'Le apartaremos de la escena para que no nos moleste',
+            'Le pediremos que avise a sus vecinos para que evacuen el edificio.',
+            'La información que pueda darnos carece de valor.',
+        ],
+        'answer': 'Intentaremos que nos proporcione la mayor información posible y lo mantendremos bajo control en todo momento ',
+    },
+    {
+        'question': 'En un incendio en un edificio de hormigón con la escalera inundada de humo',
+        'options': [
+            'La puerta de acceso a una vivienda en una planta superior a la del incendio detendrá la propagación del fuego el tiempo suficiente hasta la llegada de los bomberos. ',
+            'La puerta de acceso a una vivienda en una planta superior a la del incendio NO podrá detener la propagación del fuego el tiempo suficiente hasta la llegada de los bomberos.',
+            'En cualquier caso, será más seguro salir a la escalera agachado que quedarse en el edificio',
+            'Dejaremos la puerta de la vivienda abierta para que los bomberos puedan entrar a recatarnos.',
+        ],
+        'answer': 'La puerta de acceso a una vivienda en una planta superior a la del incendio detendrá la propagación del fuego el tiempo suficiente hasta la llegada de los bomberos. ',
+    },
+    {
+        'question': 'La temperatura de ignición:',
+        'options': [
+            'Es igual para todos los productos combustibles.',
+            'Es diferente para todos los productos combustibles, pero no determina su peligrosidad.',
+            'Cuanto más alta sea la temperatura de ignición más peligroso es el producto.',
+            'Cuanto más baja sea la temperatura de ignición más peligroso es el producto. ',
+        ],
+        'answer': 'Cuanto más baja sea la temperatura de ignición más peligroso es el producto. ',
+    },
+    {
+        'question': 'El tipo de síncope más frecuente es el:',
+        'options': [
+            'Ortostático',
+            'Del seno carotídeo',
+            'Cardiogénico',
+            'Vasovagal ',
+        ],
+        'answer': 'Vasovagal ',
+    },
+    {
+        'question': 'Para poder usar una Boca de Incendio Equipada que sea de manguera plana:',
+        'options': [
+            'La manguera se debe desenrollar completamente antes de abrir la válvula ',
+            'Son de uso exclusivo para los bomberos.',
+            'Siempre tienen tapa de cristal por lo que hay que tener cuidado de no cortarse al abrirla.',
+            'La válvula sólo se debe girar un cuarto de vuelta para que el caudal sea eficaz',
+        ],
+        'answer': 'La manguera se debe desenrollar completamente antes de abrir la válvula ',
+    },
+        ]
+    },
+]
+
+// === Variables ===
+let theme = themes[0];
+let index=0, correct=0, incorrect=0, startTime=Date.now(), answers=[], timerInterval;
+
+// === DOM ===
+const themeTitle = document.getElementById("themeTitle");
+const questionText = document.getElementById("questionText");
+const optionsDiv = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const progress = document.getElementById("progress");
+const timer = document.getElementById("timer");
+
+const quizCard = document.getElementById("quizCard");
+const finalScreen = document.getElementById("finalScreen");
+const summary = document.getElementById("summary");
+const finalTime = document.getElementById("finalTime");
+const finalNote = document.getElementById("finalNote");
+const failedContainer = document.getElementById("failedContainer");
+
+const resumeDialog = document.getElementById("resumeDialog");
+const continueBtn = document.getElementById("continueBtn");
+const newBtn = document.getElementById("newBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+// === Funciones ===
+function initTest(loadSaved=false){
+    const saved = localStorage.getItem("testState");
+    if(!loadSaved && saved){
+        resumeDialog.style.display="flex";
+        quizCard.style.display="none";
+        finalScreen.style.display="none";
+        return;
+    }
+
+    resumeDialog.style.display="none";
+    quizCard.style.display="block";
+    finalScreen.style.display="none";
+
+    if(loadSaved && saved){
+        const state = JSON.parse(saved);
+        index=state.index; correct=state.correct; incorrect=state.incorrect;
+        startTime=state.startTime; answers=state.answers;
+    }else{
+        index=0; correct=0; incorrect=0; startTime=Date.now(); answers=[];
+        localStorage.removeItem("testState");
+    }
+
+    themeTitle.textContent = theme.name;
+    clearInterval(timerInterval);
+    timerInterval=setInterval(updateTimer,1000);
+    loadQuestion();
+}
+
+function loadQuestion(){
+    const q = theme.questions[index];
+    questionText.textContent=q.question;
+    optionsDiv.innerHTML="";
+    progress.textContent=`Pregunta ${index+1} / ${theme.questions.length}`;
+
+    q.options.forEach(opt=>{
+        const label=document.createElement("label");
+        label.textContent=opt;
+        if(answers[index]?.selected===opt) label.classList.add("selected");
+        label.addEventListener("click",()=>{
+            document.querySelectorAll(".options label").forEach(l=>l.classList.remove("selected"));
+            label.classList.add("selected");
+            answers[index]={question:q.question, options:q.options, correct:q.answer, selected:opt, number:index+1};
+            saveProgress();
+        });
+        optionsDiv.appendChild(label);
+    });
+
+    prevBtn.style.display = index===0 ? "none" : "inline-block";
+    nextBtn.textContent = index===theme.questions.length-1 ? "Finalizar" : "Siguiente";
+}
+
+function saveProgress(){
+    localStorage.setItem("testState", JSON.stringify({index, correct, incorrect, startTime, answers}));
+}
+
+nextBtn.addEventListener("click", ()=>{
+    const selectedAnswer = answers[index]?.selected || null; // null si no respondió
+    const q = theme.questions[index];
+
+    answers[index] = { question:q.question, options:q.options, correct:q.answer, selected:selectedAnswer, number:index+1 };
+    saveProgress();
+
+    if(selectedAnswer){
+        if(selectedAnswer === q.answer) correct++;
+        else incorrect++;
+    }
+
+    if(index < theme.questions.length-1){ index++; loadQuestion();}
+    else finishTest();
+});
+
+prevBtn.addEventListener("click", ()=>{
+    if(index>0) index--; loadQuestion();
+});
+
+function finishTest(){
+    clearInterval(timerInterval);
+    localStorage.removeItem("testState");
+    quizCard.style.display="none";
+    finalScreen.style.display="block";
+
+    const totalSeconds = Math.floor((Date.now()-startTime)/1000);
+    const min = String(Math.floor(totalSeconds/60)).padStart(2,"0");
+    const sec = String(totalSeconds %60).padStart(2,"0");
+    const rawScore = correct - (incorrect/3);
+    const note = Math.max(0,(rawScore/theme.questions.length)*10).toFixed(2);
+
+    summary.innerHTML=`✔️ Correctas: <strong>${correct}</strong><br>❌ Incorrectas: <strong>${incorrect}</strong>`;
+    finalTime.textContent=`⏱ Tiempo total: ${min}:${sec}`;
+    finalNote.innerHTML=`🎯 Nota final: <strong style="font-size: 2rem; color: #667eea;">${note}/10</strong>`;
+
+    failedContainer.style.display="block";
+    failedContainer.innerHTML = "";
+
+    // Preguntas incorrectas
+    const failed = answers.filter(a=>a.selected && a.selected!==a.correct);
+    if(failed.length){
+        const failedDiv = document.createElement("div");
+        failedDiv.innerHTML = "<h3 style='color: #ff6b6b; margin-bottom: 20px;'>📝 Preguntas incorrectas</h3>";
+        failed.forEach(a=>{
+            const div=document.createElement("div"); div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label");
+                if(opt===a.correct) label.classList.add("option-correct");
+                if(opt===a.selected) label.classList.add("option-wrong");
+                label.textContent=opt;
+                opts.appendChild(label);
+            });
+            div.appendChild(opts);
+            failedDiv.appendChild(div);
+        });
+        failedContainer.appendChild(failedDiv);
+    }
+
+    // Preguntas no respondidas
+    const unanswered = answers.filter(a=>a.selected===null);
+    if(unanswered.length){
+        const unDiv = document.createElement("div");
+        unDiv.innerHTML="<h3 style='color: #636e72; margin-bottom: 20px;'>❓ Preguntas no respondidas</h3>";
+        unanswered.forEach(a=>{
+            const div=document.createElement("div"); div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label");
+                if(opt===a.correct) label.classList.add("option-correct");
+                label.textContent=opt;
+                opts.appendChild(label);
+            });
+            div.appendChild(opts);
+            unDiv.appendChild(div);
+        });
+        failedContainer.appendChild(unDiv);
+    }
+}
+
+function updateTimer(){
+    const elapsed = Math.floor((Date.now()-startTime)/1000);
+    const m = String(Math.floor(elapsed/60)).padStart(2,"0");
+    const s = String(elapsed%60).padStart(2,"0");
+    timer.textContent=`⏱ ${m}:${s}`;
+}
+
+function restartTest(){
+    correct=0; incorrect=0; index=0; answers=[]; startTime=Date.now();
+    localStorage.removeItem("testState");
+    initTest(false);
+}
+
+// === Botones ===
+continueBtn.addEventListener("click", ()=>initTest(true));
+newBtn.addEventListener("click", ()=>restartTest());
+restartBtn.addEventListener("click", ()=>restartTest());
+
+// Añadir botón de volver al inicio
+const backButton = document.createElement("button");
+backButton.textContent = "Volver al inicio";
+backButton.style.background = "linear-gradient(135deg, #ff6b6b, #ee5a52)";
+backButton.style.marginTop = "20px";
+backButton.addEventListener("click", () => {
+    window.location.href = "../index.html";
+});
+document.getElementById("finalScreen").appendChild(backButton);
+
+initTest();
+</script>
+</body>
+</html>
