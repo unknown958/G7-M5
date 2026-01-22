@@ -276,7 +276,7 @@ body {
 <!-- Contenido Principal -->
 <div class="container">
     <div class="main-card">
-        <h1 class="main-title">📚 Tests M5</h1>
+        <h1 class="main-title">📚 Elige un Módulo</h1>
         <p class="subtitle">Selecciona un tema para practicar o realiza el examen</p>
 
         <div class="tests-grid" id="testsContainer">
@@ -290,159 +290,106 @@ body {
 </div>
 
 <script>
-// Configuración de los tests disponibles
+// ================= CONFIGURACIÓN DE BOTONES =================
+const buttons = [
+    { type: 'exam', title: 'Módulo 5', link: 'temas/indexm5.html' },
+    { type: 'exam', title: 'Módulo 6', link: 'temas/indexm6.html' }
+];
 
-// DOM Elements
+// ================= ELEMENTOS DOM =================
 const welcomeAlert = document.getElementById('welcomeAlert');
 const closeAlertBtn = document.getElementById('closeAlertBtn');
 const dontShowAgainCheckbox = document.getElementById('dontShowAgain');
 const testsContainer = document.getElementById('testsContainer');
 
-// Función para mostrar/ocultar la alerta
+// ================= ALERTA DE BIENVENIDA =================
 function showWelcomeAlert() {
-    const dontShow = localStorage.getItem('dontShowWelcomeAlert');
-    if (!dontShow || dontShow === 'false') {
-        setTimeout(() => {
-            welcomeAlert.style.display = 'flex';
-        }, 500);
+    if (localStorage.getItem('dontShowWelcomeAlert') !== 'true') {
+        setTimeout(() => welcomeAlert.style.display = 'flex', 500);
     }
 }
 
-// Cerrar la alerta
 closeAlertBtn.addEventListener('click', () => {
     if (dontShowAgainCheckbox.checked) {
         localStorage.setItem('dontShowWelcomeAlert', 'true');
     }
     welcomeAlert.style.display = 'none';
-
-    // Pequeña animación de confeti
     createConfetti();
 });
 
-// Función para crear efecto confeti
+// ================= CONFETI =================
 function createConfetti() {
-    const confettiCount = 50;
     const colors = ['#667eea', '#764ba2', '#ff6b6b', '#4ecdc4', '#45b7d1'];
-
-    for (let i = 0; i < confettiCount; i++) {
-        const confetti = document.createElement('div');
-        confetti.style.position = 'fixed';
-        confetti.style.width = '10px';
-        confetti.style.height = '10px';
-        confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-        confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.top = '-20px';
-        confetti.style.zIndex = '9998';
-        confetti.style.opacity = '0.8';
-        confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-
-        document.body.appendChild(confetti);
-
-        // Animación
-        const animation = confetti.animate([
-            { transform: `translateY(0) rotate(0deg)`, opacity: 1 },
-            { transform: `translateY(${window.innerHeight + 20}px) rotate(${Math.random() * 360}deg)`, opacity: 0 }
-        ], {
-            duration: 2000 + Math.random() * 2000,
-            easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
-        });
-
-        animation.onfinish = () => confetti.remove();
+    for (let i = 0; i < 40; i++) {
+        const c = document.createElement('div');
+        c.style.cssText = `
+            position:fixed;
+            width:10px;
+            height:10px;
+            background:${colors[Math.random()*colors.length|0]};
+            left:${Math.random()*100}vw;
+            top:-20px;
+            z-index:9998;
+        `;
+        document.body.appendChild(c);
+        c.animate(
+            [{transform:'translateY(0)'},{transform:`translateY(${innerHeight}px)`}],
+            {duration:2000 + Math.random()*2000}
+        ).onfinish = () => c.remove();
     }
 }
 
-// Generar botones de los tests
-function generateTestButtons() {
-    tests.forEach(test => {
-        const button = document.createElement('button');
-        button.className = 'theme-btn';
-        button.innerHTML = `
-            <div class="icon">📘</div>
-            <div>
-                <strong>Tema ${test.number}</strong><br>
-                <small style="font-size: 0.8rem; opacity: 0.8;">${test.name}</small>
-            </div>
-        `;
+// ================= GENERADOR DE BOTONES =================
+function generateButtons() {
+    buttons.forEach(item => {
+        const btn = document.createElement('button');
 
-        button.addEventListener('click', () => {
-            // Redirigir al test correspondiente
-            window.location.href = `temas/Tema ${test.number}.html`;
-        });
+        if (item.type === 'tema') {
+            btn.className = 'theme-btn';
+            btn.innerHTML = `
+                <div class="icon">📘</div>
+                <div>
+                    <strong>Tema ${item.number}</strong><br>
+                    <small>${item.name}</small>
+                </div>
+            `;
+            btn.onclick = () =>
+                location.href = `temas/Tema ${item.number}.html`;
+        }
 
-        testsContainer.appendChild(button);
+        if (item.type === 'exam') {
+            btn.className = 'theme-btn exam';
+            btn.innerHTML = `
+                <div class="icon">📝</div>
+                <strong>${item.title}</strong>
+            `;
+            btn.onclick = () => location.href = item.link;
+        }
+
+        testsContainer.appendChild(btn);
     });
-
-    // Añadir botón del examen
-    const examButton = document.createElement('button');
-    examButton.className = 'theme-btn exam';
-    examButton.innerHTML = `
-        <div class="icon"></div>
-        <div>
-            <strong>Módulo 5</strong><br>
-            <small style="font-size: 0.8rem; opacity: 0.9;"></small>
-        </div>
-    `;
-
-    examButton.addEventListener('click', () => {
-        window.location.href = 'temas/indexm5.html';
-    });
-
-    testsContainer.appendChild(examButton);
-}
-// Añadir botón del examen
-    const examButton = document.createElement('button');
-    examButton.className = 'theme-btn exam';
-    examButton.innerHTML = `
-        <div class="icon"></div>
-        <div>
-            <strong>Módulo 6</strong><br>
-            <small style="font-size: 0.8rem; opacity: 0.9;"></small>
-        </div>
-    `;
-
-    examButton.addEventListener('click', () => {
-        window.location.href = 'temas/indexm6.html';
-    });
-
-    testsContainer.appendChild(examButton);
 }
 
-// Función para crear botones adicionales si los archivos no existen
-function checkAndCreateLinks() {
-    // Esta función puede extenderse para verificar existencia de archivos
-    console.log('Tests configurados correctamente');
-}
-
-// Inicializar
-function init() {
-    generateTestButtons();
+// ================= INICIO =================
+document.addEventListener('DOMContentLoaded', () => {
+    generateButtons();
     showWelcomeAlert();
-    checkAndCreateLinks();
 
-    // Cargar preferencia del checkbox
-    const savedPreference = localStorage.getItem('dontShowWelcomeAlert');
-    if (savedPreference === 'true') {
+    if (localStorage.getItem('dontShowWelcomeAlert') === 'true') {
         dontShowAgainCheckbox.checked = true;
     }
-}
-
-// Cerrar modal con Escape
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && welcomeAlert.style.display === 'flex') {
-        welcomeAlert.style.display = 'none';
-    }
 });
 
-// Ejecutar cuando el DOM esté cargado
-document.addEventListener('DOMContentLoaded', init);
+// Cerrar modal con ESC
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') welcomeAlert.style.display = 'none';
+});
 
-// Manejar clic fuera del modal para cerrar
-welcomeAlert.addEventListener('click', (e) => {
-    if (e.target === welcomeAlert) {
-        welcomeAlert.style.display = 'none';
-    }
+// Cerrar clic fuera
+welcomeAlert.addEventListener('click', e => {
+    if (e.target === welcomeAlert) welcomeAlert.style.display = 'none';
 });
 </script>
+
 </body>
 </html>
