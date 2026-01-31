@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Elige qué quieres hacer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      position: relative;
+    }
+    
+    /* Modo oscuro para el cuerpo */
+    body.dark-mode {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    
+    .container {
+      text-align: center;
+      max-width: 800px;
+      width: 100%;
+      background-color: white;
+      border-radius: 15px;
+      padding: 40px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s, box-shadow 0.3s;
+      position: relative;
+      padding-bottom: 80px; /* Más espacio abajo para el interruptor */
+    }
+    
+    body.dark-mode .container {
+      background-color: #1e1e1e;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    }
+    
+    h2 {
+      font-size: 2.5rem;
+      color: #333;
+      transition: color 0.3s;
+      margin: 0 0 40px 0;
+      text-align: center;
+    }
+    
+    body.dark-mode h2 {
+      color: #e0e0e0;
+    }
+    
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+    
+    /* Estilos generales para todos los botones */
+    .action-btn {
+      padding: 20px 30px;
+      font-size: 1.3rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
+      font-weight: bold;
+      color: white;
+    }
+    
+    .action-btn:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+    
+    .action-btn:active {
+      transform: translateY(-2px);
+    }
+    
+    /* Colores para los botones - ahora usando clases */
+    .study-btn {
+      background-color: #4CAF50;
+    }
+    
+    .study-btn:hover {
+      background-color: #45a049;
+    }
+    
+    .test-btn {
+      background-color: #2196F3;
+    }
+    
+    .test-btn:hover {
+      background-color: #1976D2;
+    }
+    
+    /* Colores para botones adicionales */
+    .btn-purple {
+      background-color: #9C27B0;
+    }
+    
+    .btn-purple:hover {
+      background-color: #7B1FA2;
+    }
+    
+    .btn-orange {
+      background-color: #FF9800;
+    }
+    
+    .btn-orange:hover {
+      background-color: #F57C00;
+    }
+    
+    .btn-red {
+      background-color: #F44336;
+    }
+    
+    .btn-red:hover {
+      background-color: #D32F2F;
+    }
+    
+    .btn-teal {
+      background-color: #009688;
+    }
+    
+    .btn-teal:hover {
+      background-color: #00796B;
+    }
+    .btn-run {
+  background-color: #F48FB1; /* rosa suave */
+}
+
+.btn-run:hover {
+  background-color: #F06292;
+}
+    /* Interruptor en la esquina inferior derecha del contenedor */
+    .theme-toggle-wrapper {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      z-index: 10;
+    }
+    
+    .theme-toggle-label {
+      font-size: 0.7rem;
+      color: #666;
+      text-align: center;
+      white-space: nowrap;
+      font-weight: bold;
+    }
+    
+    body.dark-mode .theme-toggle-label {
+      color: #aaa;
+    }
+    
+    .theme-toggle {
+      position: relative;
+      width: 50px;
+      height: 25px;
+      background-color: #f1f1f1;
+      border-radius: 25px;
+      cursor: pointer;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      transition: background-color 0.3s;
+    }
+    
+    .theme-toggle::after {
+      content: '';
+      position: absolute;
+      width: 21px;
+      height: 21px;
+      background-color: white;
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    
+    /* Modo claro (sol) */
+    .theme-toggle.light-mode {
+      background-color: #ffd700;
+    }
+    
+    .theme-toggle.light-mode::after {
+      content: '☀️';
+      transform: translateX(0px);
+      background-color: white;
+      color: #333;
+    }
+    
+    /* Modo oscuro (luna) */
+    .theme-toggle.dark-mode {
+      background-color: #333;
+    }
+    
+    .theme-toggle.dark-mode::after {
+      content: '🌙';
+      transform: translateX(25px);
+      background-color: #555;
+      color: white;
+    }
+    
+    
+    /* Responsive para pantallas pequeñas */
+    @media (max-width: 768px) {
+      .container {
+        padding: 30px 20px 70px 20px; /* Más padding abajo para el interruptor */
+      }
+      
+      h2 {
+        font-size: 2rem;
+        margin-bottom: 30px;
+      }
+      
+      .theme-toggle-wrapper {
+        bottom: 15px;
+        right: 15px;
+      }
+      
+      .theme-toggle {
+        width: 45px;
+        height: 22px;
+      }
+      
+      .theme-toggle::after {
+        width: 18px;
+        height: 18px;
+      }
+      
+      .theme-toggle.dark-mode::after {
+        transform: translateX(23px);
+      }
+      
+      .action-btn {
+        padding: 18px 25px;
+        font-size: 1.2rem;
+      }
+    }
+    
+    /* Para pantallas muy pequeñas (móviles) */
+    @media (max-width: 480px) {
+      h2 {
+        font-size: 1.7rem;
+      }
+      
+      .theme-toggle {
+        width: 40px;
+        height: 20px;
+      }
+      
+      .theme-toggle::after {
+        width: 16px;
+        height: 16px;
+        font-size: 10px;
+      }
+      
+      .theme-toggle.dark-mode::after {
+        transform: translateX(20px);
+      }
+      
+      .action-btn {
+        padding: 16px 20px;
+        font-size: 1.1rem;
+      }
+      
+      .theme-toggle-label {
+        font-size: 0.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>¿QUÉ QUIERES HACER?</h2>
+    
+    <div class="buttons">
+      <button class="action-btn study-btn" onclick="redirectToPage('test/m5.html')">Módulo 5</button>
+      <button class="action-btn test-btn" onclick="redirectToPage('test/m6.html')">Módulo 6</button>
+      <!-- Ejemplo de botones adicionales con diferentes colores -->
+    <!--  <button class="action-btn btn-purple" onclick="redirectToPage('test/super j.html')">SUPER J</button> -->
+    <!--  <button class="action-btn btn-run" onclick="redirectToPage('test/lua 2024.html')">LUA 2024</button> -->
+    <!--   <button class="action-btn btn-orange" onclick="redirectToPage('test/lua 2024n.html')">LUA 2024</button> -->
+    <!--  <button class="action-btn btn-teal" onclick="redirectToPage('test/lua 2025.html')">LUA 2025</button> -->
+    <!--  <button class="action-btn btn-red" onclick="redirectToPage('https://drive.google.com/file/d/1WB4iM3d6DmK_Uq6yUlMv42JpUXdFRRTj/view?usp=drivesdk')">TEMARIO</button> -->
+    </div>
+    
+   
+    
+    <!-- Interruptor dentro del contenedor, esquina inferior derecha -->
+    <div class="theme-toggle-wrapper">
+      <div class="theme-toggle-label" id="darkModeLabel">Modo Claro</div>
+      <div class="theme-toggle light-mode" id="darkModeToggle"></div>
+    </div>
+  </div>
+
+  <script>
+    // ============ FUNCIONES DE MODO OSCURO ============
+    
+    // Función para alternar entre modo oscuro y claro
+    function toggleDarkMode() {
+      if (document.body.classList.contains("dark-mode")) {
+        disableDarkMode();
+      } else {
+        enableDarkMode();
+      }
+    }
+    
+    // Función para activar modo oscuro
+    function enableDarkMode() {
+      document.body.classList.add("dark-mode");
+      darkModeToggle.className = "theme-toggle dark-mode";
+      darkModeLabel.textContent = "Modo Oscuro";
+      localStorage.setItem("darkMode", "true");
+    }
+    
+    // Función para desactivar modo oscuro
+    function disableDarkMode() {
+      document.body.classList.remove("dark-mode");
+      darkModeToggle.className = "theme-toggle light-mode";
+      darkModeLabel.textContent = "Modo Claro";
+      localStorage.setItem("darkMode", "false");
+    }
+    
+    // Función para cargar la preferencia guardada
+    function loadDarkModePreference() {
+      const darkMode = localStorage.getItem("darkMode") === "true";
+      
+      if (darkMode) {
+        enableDarkMode();
+      } else {
+        disableDarkMode();
+      }
+    }
+    
+    // ============ FUNCIONES DE NAVEGACIÓN ============
+    
+    function redirectToPage(page) {
+      window.location.href = page;
+    }
+    
+    // ============ INICIALIZACIÓN ============
+    
+    // Referencias DOM
+    const darkModeToggle = document.getElementById("darkModeToggle");
+    const darkModeLabel = document.getElementById("darkModeLabel");
+    
+    // Cargar preferencia de modo oscuro al iniciar
+    loadDarkModePreference();
+    
+    // Configurar evento para el interruptor
+    darkModeToggle.addEventListener("click", toggleDarkMode);
+    
+    // También permitir arrastre (como en el test)
+    setupToggleDrag(darkModeToggle, toggleDarkMode);
+    
+    // Función genérica para arrastre en toggles
+    function setupToggleDrag(toggleElement, toggleFunction) {
+      let dragStart = 0;
+      let isDragging = false;
+      
+      toggleElement.addEventListener('touchstart', (e) => {
+        dragStart = e.touches[0].clientX;
+        isDragging = true;
+        e.preventDefault();
+      }, {passive: false});
+      
+      toggleElement.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+      }, {passive: false});
+      
+      toggleElement.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        
+        const dragEnd = e.changedTouches[0].clientX;
+        const deltaX = dragEnd - dragStart;
+        
+        // Si se arrastra horizontalmente más de 20px, cambiar modo
+        if (Math.abs(deltaX) > 20) {
+          toggleFunction();
+        }
+        
+        isDragging = false;
+        e.preventDefault();
+      }, {passive: false});
+      
+      // Para mouse
+      toggleElement.addEventListener('mousedown', (e) => {
+        dragStart = e.clientX;
+        isDragging = true;
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mouseup', (e) => {
+        if (!isDragging) return;
+        
+        const dragEnd = e.clientX;
+        const deltaX = dragEnd - dragStart;
+        
+        // Si se arrastra horizontalmente más de 20px, cambiar modo
+        if (Math.abs(deltaX) > 20) {
+          toggleFunction();
+        }
+        
+        isDragging = false;
+        e.preventDefault();
+      });
+    }
+    
+    // Mensaje en consola para verificar la carga
+    console.log("Página de inicio cargada. Modo oscuro persistente activado.");
+  </script>
+</body>
+</html>
