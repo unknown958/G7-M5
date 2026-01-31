@@ -1,0 +1,3954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Test Módulo 5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #f2f4f7; margin:0; }
+.container { max-width: 900px; margin:auto; padding:15px; }
+.card { background:white; border-radius:10px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+h1,h2,h3{text-align:center;}
+.question{font-size:1.1rem;margin-bottom:15px;font-weight:bold;}
+.options label{
+    display:block;
+    padding:12px;
+    margin-bottom:12px;
+    border-radius:8px;
+    border:2px solid #ddd;
+    cursor:pointer;
+    transition: background 0.2s, border 0.2s;
+}
+.options label.selected{background:#cce5ff;border-color:#007bff;}
+.options label.option-wrong{border-color:#dc3545;background:#f8d7da;}
+.options label.option-correct{border-color:#28a745;background:#d4edda;}
+button{padding:14px;font-size:1rem;border-radius:8px;border:none;background:#007bff;color:white;width:100%;cursor:pointer;margin-top:15px;}
+button.secondary{background:#007bff;}
+button.third{background:#dc3545;}
+button.cuart{background:#fd7e14;}
+.info{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:bold;}
+.final{display:none;}
+.failed-question{margin-top:30px;padding-top:20px;border-top:1px solid #ddd;}
+.failed-question .question-text{margin-bottom:15px;font-weight:bold;}
+.saved-module{
+    margin:8px 0 20px 0; 
+    font-size:0.95rem; 
+    padding:10px;
+    border-radius:10px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+    transition: background 0.3s;
+}
+.saved-module p{margin:3px 0;}
+.saved-module.low{background:#f8d7da; color:#842029;}
+.saved-module.mid{background:#fff3cd; color:#664d03;}
+.saved-module.high{background:#d1e7dd; color:#0f5132;}
+#resumeDialog {
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0,0,0,0.5); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center;
+}
+#resumeDialog .card {
+    max-width: 400px; 
+    background: white;        
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; 
+    text-align: center;
+}
+#resumeDialog h2 { margin:0; }
+#resumeDialog p { margin:0; font-size:1rem; }
+#resumeDialog button { width: 80%; padding: 12px; font-size:1rem; border-radius:8px; border:none; cursor:pointer; transition: background 0.2s; }
+#resumeDialog button#continueBtn { background:#28a745; color:white; }
+#resumeDialog button#continueBtn:hover { background:#1e7e34; }
+#resumeDialog button#newBtn { background:#dc3545; color:white; }
+#resumeDialog button#newBtn:hover { background:#a71d2a; }
+#resumeDialog button + button { margin-top: 6px; } 
+#testSelection { display:none; }
+#testButtons button { margin-bottom: 12px; }
+
+/* Eliminamos el toggle switch original del modo estudio/examen */
+.mode-toggle-container {
+    display: none; /* Ocultamos el toggle original */
+}
+
+.mode-label {
+    display: none; /* Ocultamos las etiquetas del toggle original */
+}
+
+/* Indicador de modo actual */
+.current-mode-indicator {
+    text-align: center;
+    font-weight: bold;
+    margin: 10px 0;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    font-size: 0.9rem;
+}
+
+.current-mode-indicator.exam {
+    color: #dc3545;
+    border: 2px solid #dc3545;
+}
+
+.current-mode-indicator.study {
+    color: #28a745;
+    border: 2px solid #28a745;
+}
+
+/* Estilos para mostrar nota en modo estudio */
+.study-mode-note {
+    background-color: #e7f5ff;
+    border-left: 4px solid #007bff;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 0 8px 8px 0;
+    font-weight: bold;
+}
+
+/* Diálogo de confirmación para salir */
+#confirmDialog {
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0,0,0,0.5); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center;
+}
+
+#confirmDialog .card {
+    max-width: 400px; 
+    background: white;        
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; 
+    text-align: center;
+}
+
+#confirmDialog h2 { margin:0; }
+#confirmDialog p { margin:0; font-size:1rem; }
+#confirmDialog button { width: 80%; padding: 12px; font-size:1rem; border-radius:8px; border:none; cursor:pointer; transition: background 0.2s; }
+#confirmDialog button#confirmExitBtn { background:#dc3545; color:white; }
+#confirmDialog button#confirmExitBtn:hover { background:#a71d2a; }
+#confirmDialog button#cancelExitBtn { background:#6c757d; color:white; }
+#confirmDialog button#cancelExitBtn:hover { background:#545b62; }
+
+/* Estilos para los botones del test en la misma línea */
+.button-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.button-row button {
+    margin-top: 0;
+    flex: 1;
+}
+
+/* Estilos para los interruptores de modo estudio/examen y modo oscuro */
+.mode-toggle-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 140px;
+    margin: 20px 0;
+}
+
+.mode-toggle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.mode-toggle-label {
+    font-size: 0.7rem;
+    color: #666;
+    text-align: center;
+    white-space: nowrap;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.mode-toggle {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background-color: #f1f1f1;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
+}
+
+.mode-toggle::after {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+/* Interruptor de modo estudio/examen (izquierda) */
+#studyExamToggle.study-mode {
+    background-color: #28a745;
+}
+
+#studyExamToggle.study-mode::after {
+    content: '📚';
+    transform: translateX(0px);
+    background-color: white;
+    color: #333;
+}
+
+#studyExamToggle.exam-mode {
+    background-color: #dc3545;
+}
+
+#studyExamToggle.exam-mode::after {
+    content: '📝';
+    transform: translateX(30px);
+    background-color: white;
+    color: #333;
+}
+
+/* Interruptor de modo oscuro (derecha) */
+#darkModeToggle.light-mode {
+    background-color: #ffd700;
+}
+
+#darkModeToggle.light-mode::after {
+    content: '☀️';
+    transform: translateX(0px);
+    background-color: white;
+    color: #333;
+}
+
+#darkModeToggle.dark-mode {
+    background-color: #333;
+}
+
+#darkModeToggle.dark-mode::after {
+    content: '🌙';
+    transform: translateX(30px);
+    background-color: #555;
+    color: white;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .card {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .question {
+    color: #ffffff;
+}
+
+body.dark-mode .options label {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .options label.selected {
+    background-color: #1a3d5c;
+    border-color: #007bff;
+}
+
+body.dark-mode .options label.option-correct {
+    background-color: #1e4620;
+    border-color: #28a745;
+    color: #ffffff;
+}
+
+body.dark-mode .options label.option-wrong {
+    background-color: #5a1a1a;
+    border-color: #dc3545;
+    color: #ffffff;
+}
+
+body.dark-mode button {
+    background-color: #0056b3;
+}
+
+body.dark-mode button.third {
+    background-color: #c82333;
+}
+
+body.dark-mode button.cuart {
+    background-color: #e06c00;
+}
+
+body.dark-mode .saved-module.low {
+    background-color: #5a1a1a;
+    color: #f8d7da;
+}
+
+body.dark-mode .saved-module.mid {
+    background-color: #5a4a00;
+    color: #fff3cd;
+}
+
+body.dark-mode .saved-module.high {
+    background-color: #1e4620;
+    color: #d1e7dd;
+}
+
+body.dark-mode .current-mode-indicator {
+    background-color: #2d2d2d;
+    border-color: #444;
+}
+
+body.dark-mode .study-mode-note {
+    background-color: #1a3d5c;
+    border-left-color: #007bff;
+    color: #e0e0e0;
+}
+
+body.dark-mode .failed-question {
+    border-top-color: #444;
+}
+
+body.dark-mode #resumeDialog .card,
+body.dark-mode #confirmDialog .card {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .mode-toggle-label {
+    color: #aaa;
+}
+
+body.dark-mode .mode-toggle {
+    background-color: #2d2d2d;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 600px) {
+    .mode-toggle-group {
+        gap: 120px;
+        flex-wrap: wrap;
+    }
+    
+    .mode-toggle {
+        width: 55px;
+        height: 28px;
+    }
+    
+    .mode-toggle::after {
+        width: 24px;
+        height: 24px;
+    }
+    
+    #studyExamToggle.exam-mode::after,
+    #darkModeToggle.dark-mode::after {
+        transform: translateX(27px);
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div id="resumeDialog">
+    <div class="card">
+        <h2>💾 Intento guardado 💾</h2>
+        <p>Se detectó un intento previo guardado. ¿Deseas continuar o empezar de nuevo?</p>
+        <button id="continueBtn">Continuar</button>
+        <button id="newBtn">Empezar de nuevo</button>
+    </div>
+</div>
+
+<div id="confirmDialog">
+    <div class="card">
+        <h2>⚠️ Salir del test ⚠️</h2>
+        <p>¿Estás seguro de que quieres salir? Tu progreso se guardará automáticamente y podrás continuar más tarde.</p>
+        <button id="confirmExitBtn">Sí, salir</button>
+        <button id="cancelExitBtn">Cancelar</button>
+    </div>
+</div>
+
+<div class="card" id="testSelection">
+    <h1>📚 M6 📚</h1>
+    
+    <!-- Grupo de interruptores uno al lado del otro -->
+    <div class="mode-toggle-group">
+        <!-- Interruptor de modo estudio/examen (izquierda) -->
+        <div class="mode-toggle-wrapper">
+            <div class="mode-toggle-label" id="studyExamLabel">Modo Estudio</div>
+            <div class="mode-toggle study-mode" id="studyExamToggle"></div>
+        </div>
+        
+        <!-- Interruptor de modo oscuro (derecha) -->
+        <div class="mode-toggle-wrapper">
+            <div class="mode-toggle-label" id="darkModeLabel">Modo Claro</div>
+            <div class="mode-toggle light-mode" id="darkModeToggle"></div>
+        </div>
+    </div>
+    
+    <!-- Indicador del modo actual -->
+    <div class="current-mode-indicator study" id="modeIndicator">
+        Modo: Estudio - Verás las respuestas inmediatamente
+    </div>
+    
+    <div id="testButtons"></div>
+    <button class="third" onclick="goToIndex()">Volver</button>
+</div>
+
+<div class="card" id="quizCard">
+    <h1 id="themeTitle"></h1>
+    <div class="info">
+        <div id="progress"></div>
+        <div id="timer">⏱ 00:00</div>
+    </div>
+    <div class="question" id="questionText"></div>
+    
+    <!-- Contenedor para mostrar nota en modo estudio durante el test -->
+    <div id="studyNoteContainer" style="display:none;"></div>
+    
+    <div class="options" id="options"></div>
+    
+    <!-- Botones en la misma línea -->
+    <div class="button-row">
+        <button id="prevBtn">Anterior</button>
+         <button class="third" id="backBtn">Volver</button>
+        <button id="nextBtn">Siguiente</button>
+       
+    </div>
+</div>
+
+<div class="card final" id="finalScreen">
+    <h1 id="finalTheme"></h1>
+    <h2>📊 Resultado final</h2>
+    <p id="summary"></p>
+    <p id="finalTime"></p>
+    <p id="finalNote"></p>
+    <div id="failedContainer" style="display:none;"></div>
+    <button class="secondary" onclick="restartTest()">Repetir test</button>
+    <button class="third" onclick="backToSelection()">Volver</button>
+</div>
+
+<div class="card final" id="lastFailsScreen">
+    <h1 id="lastFailsTheme"></h1>
+    <h2>Preguntas incorrectas o sin responder</h2>
+    <div id="lastFailsContainer"></div>
+    <button class="third" onclick="backToSelection()">Volver</button>
+</div>
+
+</div>
+
+<script>
+// === Datos del test ===
+const themes = [
+{
+  "name": "Tema 1",
+  "questions": [
+  {
+    "question": "El infarto agudo de miocardio (IAM)...",
+    "options": [
+      "Provoca dolor y síntomas de mayor intensidad y duración que la angina de pecho.",
+      "Cede con reposo y nitroglicerina.",
+      "Es, en la mayoría de ocasiones, provocado por una estenosis (estrechamiento) grave o bloqueo completo de una arteria coronaria.",
+      "A y C son correctas. "
+    ],
+    "answer": "A y C son correctas. "
+  },
+  {
+    "question": "Una PCR por sobredosis por drogas es considerada...",
+    "options": [
+      "PCR de origen cardíaco.",
+      "PCR no cardíaca externa. ",
+      "PCR no cardíaca interna.",
+      "Ninguna es correcta."
+    ],
+    "answer": "PCR no cardíaca externa. "
+  },
+  {
+    "question": "¿Cual es el objetivo principal de la reanimación cardiopulmonar (RCP)?",
+    "options": [
+      "Prevenir la obstrucción de la vía aérea o la aspiración bronco-pulmonar en caso de pérdida de conocimiento",
+      "Conseguir una buena oxigenación cerebral y cardiaca hasta la llegada de los sanitarios ",
+      "Sustituir primero y restaurar después la respiración y la circulación espontáneas.",
+      "Todas son correctas."
+    ],
+    "answer": "Conseguir una buena oxigenación cerebral y cardiaca hasta la llegada de los sanitarios "
+  },
+  {
+    "question": "Señale la secuencia correcta de la CADENA DE SUPERVIVENCIA:",
+    "options": [
+      "Desfibrilación rápida; RCP precoz realizada por testigos; SVA precoz y cuidados post reanimación; Reconocimiento precoz de parada y activación del sistema de emergencias.",
+      "Reconocimiento precoz de parada y activación del sistema de emergencias; RCP realizada por testigos; Desfibrilación rápida; SVA precoz y cuidados post reanimación. ",
+      "Reconocimiento precoz de parada y activación del sistema de emergencias; Desfibrilación rápida, RCP realizada por testigos; SVA precoz y cuidados post reanimación.",
+      "Ninguna es correcta"
+    ],
+    "answer": "Reconocimiento precoz de parada y activación del sistema de emergencias; RCP realizada por testigos; Desfibrilación rápida; SVA precoz y cuidados post reanimación. "
+  },
+  {
+    "question": "¿Cual es la principal causa de muerte en España?",
+    "options": [
+      "Cáncer",
+      "Ictus",
+      "Enfermedad coronaria ",
+      "Accidentes de tráfico"
+    ],
+    "answer": "Enfermedad coronaria "
+  },
+  {
+    "question": "Los ICTUS ISQUÉMICOS suponen:",
+    "options": [
+      "El 80-85% del total de ictus y se producen por la obstrucción de una vena cerebral causada por una placa de arteroma.",
+      "Suponen el 15-20% del total y se dan al obstruirse una arteria cerebral.",
+      "Suponen el 80-85% del total de ictus y se producen al romperse la pared de una arteria cerebral",
+      "Ninguna es correcta. "
+    ],
+    "answer": "Ninguna es correcta. "
+  },
+  {
+    "question": "¿La desfibrilación rápida (DESA. en qué eslabón de la cadena de supervivencia se encuentra?",
+    "options": [
+      "En el cuarto",
+      "En el segundo",
+      "En el tercero ",
+      "En ninguno"
+    ],
+    "answer": "En el tercero "
+  },
+  {
+    "question": "En caso de sospecha de ictus se debe:",
+    "options": [
+      "Administrar una aspirina",
+      "Realizar valoración primaria y secundaria",
+      "Activar 112",
+      "b y c son correctas "
+    ],
+    "answer": "b y c son correctas "
+  },
+  {
+    "question": "Indique qué signos de alarma corresponden con un posible ataque cerebral (ictus):",
+    "options": [
+      "Afectación del nivel de consciencia ",
+      "Visión doble y borrosa de ambos ojos",
+      "Dolor de cabeza suave, prolongado y repentino",
+      "Ninguna es correcta"
+    ],
+    "answer": "Afectación del nivel de consciencia "
+  },
+  {
+    "question": "La definición de “molestia transitoria, que puede o no ser percibida como dolor, causada por flujo sanguíneo y suministro de oxígeno inadecuados e insuficiente al músculo cardíaco” corresponde a:",
+    "options": [
+      "Infarto Grave de Miocardio",
+      "Angina de pecho ",
+      "Infarto Agudo de miocardio (IAM)",
+      "Enfermedad coronaria."
+    ],
+    "answer": "Angina de pecho "
+  },
+  {
+    "question": "La ANGINA INESTABLE se caracteriza por:",
+    "options": [
+      "Angina persistente y prolongada (más de 20 minutos)",
+      "Angina persistente y prolongada (entre 2-15 minutos)",
+      "Implica mayor riesgo de infarto agudo de miocardio (IAM) y muerte súbita",
+      "a y c son correctas "
+    ],
+    "answer": "a y c son correctas "
+  },
+  {
+    "question": "En caso de sospecha de enfermedad coronaria procederemos:",
+    "options": [
+      "Si la víctima está diagnosticada de enfermedad coronaria administrar ácido acetil salicílico (aspirina).",
+      "Tranquilizar al sujeto e indicarle que continúe con su actividad.",
+      "Activar el Sistema Médico de Emergencias a través del 112/Ardatz. ",
+      "Ninguna es correcta."
+    ],
+    "answer": "Activar el Sistema Médico de Emergencias a través del 112/Ardatz. "
+  },
+  {
+    "question": "¿Qué afirmación es CORRECTA?",
+    "options": [
+      "La parada cardiorrespiratoria es el cese brusco, inesperado y potencialmente reversible de la respiración y circulación espontáneas.",
+      "El 80-90% de las PCR son de origen cardíaco.",
+      "Tras cuatro o cinco minutos sin oxígeno, se inician los daños cerebrales y después de ocho o diez minutos se produce la muerte cerebral irreversible.",
+      "Todas son ciertas. "
+    ],
+    "answer": "Todas son ciertas. "
+  },
+  {
+    "question": "Atención inmediata e inicial que recibe un sujeto en una emergencia. Actuaciones por personal no sanitario. Corresponde a:",
+    "options": [
+      "Soporte vital básico ",
+      "Desfibrilación precoz",
+      "Soporte vital avanzado",
+      "todas son correctas"
+    ],
+    "answer": "Soporte vital básico "
+  },
+  {
+    "question": "La combinación de soporte vital básico y fármacos o accesorios, recibido por personal sanitario. Corresponde a:",
+    "options": [
+      "Soporte vital básico",
+      "Desfibrilación precoz",
+      "Soporte vital avanzado ",
+      "todas son correctas"
+    ],
+    "answer": "Soporte vital avanzado "
+  },
+  {
+    "question": "Qué definición corresponde al concepto EMERGENCIA:",
+    "options": [
+      "Situación urgente en la que la vida de la persona no corre peligro.",
+      "Situación en la que la vida de una persona corre peligro, pero los daños son reversibles aunque no reciba atención sanitaria.",
+      "Situación en la que la vida de una persona corre peligro. Daños irreversibles si no recibe atención sanitaria. ",
+      "Ninguna es correcta."
+    ],
+    "answer": "Situación en la que la vida de una persona corre peligro. Daños irreversibles si no recibe atención sanitaria. "
+  }
+]
+},
+{
+  "name": "Tema 2",
+  "questions": [
+  {
+    "question": "El desfibrilador externo semiautomático (D.E.S.A. producirá descarga cuando…",
+    "options": [
+      "El paciente tiene pulso pero está inconsciente.",
+      "La PCR es debida a asistolia.",
+      "La PCR es debida a fibrilación ventricular (FV) o taquicardia ventricular sin pulso (TVSP). ",
+      "El paciente está consciente."
+    ],
+    "answer": "La PCR es debida a fibrilación ventricular (FV) o taquicardia ventricular sin pulso (TVSP). "
+  },
+  {
+    "question": "Si se recomienda el uso del DESA en...",
+    "options": [
+      "En niños mayores de 6 meses.",
+      "En niños menores de 1 año.",
+      "En niños de entre 1 y 8 años. ",
+      "Todas son correctas."
+    ],
+    "answer": "En niños de entre 1 y 8 años. "
+  },
+  {
+    "question": "Para comprobar si la persona respira (VEA, OIGA, SIENTA. se debe mantener la hiperextensión de la cabeza con la maniobra frente-mentón y emplear...",
+    "options": [
+      "más de diez segundos.",
+      "menos de diez segundos. ",
+      "el tiempo suficiente.",
+      "treinta segundos."
+    ],
+    "answer": "menos de diez segundos. "
+  },
+  {
+    "question": "En caso de duda acerca de si la respiración es normal…",
+    "options": [
+      "No se actúa.",
+      "Actuar como si respirara normalmente.",
+      "Se coloca a la persona en la posición lateral de seguridad.",
+      "Actuar como si no respirara normalmente. "
+    ],
+    "answer": "Actuar como si no respirara normalmente. "
+  },
+  {
+    "question": "La frecuencia de compresiones al realizar RCP será de…",
+    "options": [
+      "Entre 60 y 80 por minuto.",
+      "Entre 80 y 100 por minuto.",
+      "Entre 100 y 120 por minuto. ",
+      "Entre 120 y 140 por minuto"
+    ],
+    "answer": "Entre 100 y 120 por minuto. "
+  },
+  {
+    "question": "A la hora de realizar la RCP, se colocará justo encima del esternón (sobre la linea intermamilar)....",
+    "options": [
+      "El puño de cualquier mano.",
+      "El talón de la mano más cercana a la cabeza de la víctima. ",
+      "La palma de la mano más cercana a la cabeza de la víctima.",
+      "La palma de la mano más alejada a la cabeza de la víctima."
+    ],
+    "answer": "El talón de la mano más cercana a la cabeza de la víctima. "
+  },
+  {
+    "question": "Hay que continuar haciendo las maniobras de resucitación hasta que....",
+    "options": [
+      "Llegue ayuda cualificada.",
+      "La víctima empiece a respirar normalmente.",
+      "Vd. esté agotado.",
+      "Todas son correctas "
+    ],
+    "answer": "Todas son correctas "
+  },
+  {
+    "question": "En las ventilaciones de rescate, hay que insuflar aire…",
+    "options": [
+      "La cantidad suficiente para que comience a elevarse el tórax (un segundo). ",
+      "Evitando que se eleve el tórax.",
+      "Hasta que se eleve por completo el tórax (2-3 segundos).",
+      "Hasta que expulsemos todo el aire que tengamos. Cuanto más aire, más se oxigenará."
+    ],
+    "answer": "La cantidad suficiente para que comience a elevarse el tórax (un segundo). "
+  },
+  {
+    "question": "Si hay más de un reanimador presente, el otro debe sustituirle cada…",
+    "options": [
+      "Dos ciclos de 30/2",
+      "Dos minutos.",
+      "Cinco ciclos de 30/2",
+      "La b y c son correctas. "
+    ],
+    "answer": "La b y c son correctas. "
+  },
+  {
+    "question": "Una RCP básica por sí sola puede convertir los “ritmos de muerte” en ritmos cardiacos normales....",
+    "options": [
+      "Siempre.",
+      "La mitad de las veces.",
+      "Nunca. ",
+      "En un 20% de las ocasiones"
+    ],
+    "answer": "Nunca. "
+  },
+  {
+    "question": "La probabilidad de supervivencia disminuye rápidamente al retrasar la desfibrilación…",
+    "options": [
+      "Un 5-10 % cada minuto que transcurre",
+      "Un 10-15% cada minuto que transcurre. ",
+      "Un 15-20% cada minuto que transcurre.",
+      "Un 20-25% cada minuto que transcurre."
+    ],
+    "answer": "Un 10-15% cada minuto que transcurre. "
+  },
+  {
+    "question": "Señala la incorrecta. (medidas de seguridad para el uso del desA.",
+    "options": [
+      "No secar nunca los cuerpos aunque estén mojados o sudorosos. ",
+      "Retirar los parches de medicamentos que estén dentro del área de trabajo.",
+      "Evitar atmósferas con gases combustibles o explosivos.",
+      "Nunca debe haber nada metálico bajo los electrodos."
+    ],
+    "answer": "No secar nunca los cuerpos aunque estén mojados o sudorosos. "
+  },
+  {
+    "question": "Dentro de las deficiencias del Desa se encuentran la caducidad de parches que tienen una duración de?",
+    "options": [
+      "5 años. ",
+      "4 años.",
+      "3 años.",
+      "No tiene caducidad."
+    ],
+    "answer": "5 años. "
+  },
+  {
+    "question": "¿En edades pediátricas las causas más frecuentes de PCR son?",
+    "options": [
+      "Fallo cardiaco.",
+      "Fallo respiratorio “asfixia” ",
+      "Ahogamiento.",
+      "Fallo pulmonar."
+    ],
+    "answer": "Fallo respiratorio “asfixia” "
+  },
+  {
+    "question": "Cual de las siguientes secuencias es la adecuada para niños y víctimas de ahogamiento.",
+    "options": [
+      "Dar inicialmente 5 ventilaciones de rescate después de comenzar con las compresiones torácicas.",
+      "Dar inicialmente 5 ventilaciones de rescate antes de comenzar con las compresiones torácicas. ",
+      "Dar inicialmente 2 ventilaciones de rescate antes de comenzar con las compresiones torácicas.",
+      "Dar inicialmente 2 ventilaciones de rescate después de comenzar con las compresiones torácicas."
+    ],
+    "answer": "Dar inicialmente 5 ventilaciones de rescate antes de comenzar con las compresiones torácicas. "
+  },
+  {
+    "question": "La intensidad de las compresiones en lactantes debe ser suficiente para conseguir descender el tórax:",
+    "options": [
+      "Tórax tercio de su diámetro 3 cm.",
+      "Tórax tercio de su diámetro 4 cm. ",
+      "Tórax tercio de su diámetro 5 cm.",
+      "Tórax tercio de su diámetro 6 cm."
+    ],
+    "answer": "Tórax tercio de su diámetro 4 cm. "
+  },
+  {
+    "question": "Diga cual es la afirmativa;",
+    "options": [
+      "Recuerde , un minuto de RCP después de pedir ayuda si el reanimador está solo.",
+      "Recuerde, dos minutos de RCP antes de pedir ayuda si el reanimador está solo.",
+      "Recuerde, un minuto de RCP después de pedir ayuda si el reanimador está acompañado.",
+      "Recuerde, un minuto de RCP antes de pedir ayuda si el reanimador está solo. "
+    ],
+    "answer": "Recuerde, un minuto de RCP antes de pedir ayuda si el reanimador está solo. "
+  },
+  {
+    "question": "En Ovace las compresiones abdominales están contraindicadas en:",
+    "options": [
+      "Lactantes,embarazadas,ancianos",
+      "Lactantes, embarazadas, obesos, niños pequeños. ",
+      "Obesos y ancianos.",
+      "La A y la C son correctas."
+    ],
+    "answer": "Lactantes, embarazadas, obesos, niños pequeños. "
+  },
+  {
+    "question": "¿Secuencia para el uso del DESA , una vez dada la descarga , si la víctima no respira que debemos hacer?",
+    "options": [
+      "Parar.",
+      "Continuar la maniobra RCP durante 5 minutos hasta nuevo análisis.",
+      "Continuar la maniobra de RCP durante 2 minutos hasta nuevo análisis. ",
+      "Reanudar inmediatamente RCP."
+    ],
+    "answer": "Continuar la maniobra de RCP durante 2 minutos hasta nuevo análisis. "
+  },
+  {
+    "question": "En el uso del DESA el operador debe de dar:",
+    "options": [
+      "1 orden.",
+      "2 órdenes.",
+      "3 órdenes. ",
+      "Ninguna orden."
+    ],
+    "answer": "3 órdenes. "
+  },
+  {
+    "question": "Desfibrilación pediátrica , los parches pediátricos son adecuados para uso en niños:",
+    "options": [
+      "Mayores de 6 años> 25kg",
+      "Mayores de 8 años>20kg",
+      "Mayores de 9 años>25kg",
+      "Ninguna es correcta. "
+    ],
+    "answer": "Ninguna es correcta. "
+  },
+  {
+    "question": "En niños menores de un año se recomienda el DESA.",
+    "options": [
+      "Verdadero.",
+      "Falso. ",
+      "Depende , si está con un profesional sí que podría utilizarlo."
+    ],
+    "answer": "Falso. "
+  }
+]
+},{
+  "name": "Tema 3",
+  "questions": [
+  {
+    "question": "¿Qué heridas presentan en particular un gran riesgo de infección?",
+    "options": [
+      "Las heridas graves.",
+      "Las mordeduras. ",
+      "Las heridas con pérdida de sustancia.",
+      "Las heridas de tórax."
+    ],
+    "answer": "Las mordeduras. "
+  },
+  {
+    "question": "En el caso de heridas en la cabeza que NO debemos de hacer?",
+    "options": [
+      "Tapar con un apósito esteril, sin realizar vendajes compresivos.",
+      "En caso de Scalp, recolocar el cuero cabelludo,cubriendo con un apósito esteril y con un vendaje ligeramente compresivo.",
+      "En caso de fractura manipular la herida. ",
+      "Todas las anteriores son correctas."
+    ],
+    "answer": "En caso de fractura manipular la herida. "
+  },
+  {
+    "question": "¿Cómo debemos de actuar ante heridas abdominales?",
+    "options": [
+      "Se debe colocar al herido boca arriba en posición antishock salvo sospecha de lesión medular.",
+      "No se debe reintroducir las vísceras.",
+      "Se debe tapar la herida con un paño o gasa grande esteril muy humedecida y con un vendaje no compresivo.",
+      "Todas las anteriores son correctas. "
+    ],
+    "answer": "Todas las anteriores son correctas. "
+  },
+  {
+    "question": "¿Tipos de heridas existentes según el agente?",
+    "options": [
+      "Leves y graves.",
+      "Lineales, colgajo y con pérdida de sustancia",
+      "Incisa, contusa, punzante y arrancamiento. ",
+      "Todas son incorrectas."
+    ],
+    "answer": "Incisa, contusa, punzante y arrancamiento. "
+  },
+  {
+    "question": "¿Tipos de heridas existentes según la forma?",
+    "options": [
+      "Leves y graves.",
+      "Lineales, colgajo y con pérdida de sustancia ",
+      "Incisa, contusa, punzante y arrancamiento.",
+      "Todas son incorrectas."
+    ],
+    "answer": "Lineales, colgajo y con pérdida de sustancia "
+  },
+  {
+    "question": "¿Tipos de heridas existentes según la gravedad?",
+    "options": [
+      "Leves y graves. ",
+      "Lineales, colgajo y con pérdida de sustancia",
+      "Incisa, contusa, punzante y arrancamiento.",
+      "Todas son incorrectas."
+    ],
+    "answer": "Leves y graves. "
+  }
+]
+},{
+  "name": "Tema 4",
+  "questions": [
+  {
+    "question": "La colocación de torniquete estará recomendado en ambiente hostil cuando... SEÑALE LA INCORRECTA.",
+    "options": [
+      "Se den acciones en incidentes con múltiples víctimas cuando el número de heridos o las lesiones exceden las posibilidades de un tratamiento mejor.",
+      "Se dé una hemorragia severa o moderada en extremidades en rescates.",
+      "Se den operaciones nocturnas y diurnas de visibilidad reducida. (Ej. NRBQ) ",
+      "Se dé la atención a víctimas con amputaciones traumáticas en situaciones bajo amenaza activa."
+    ],
+    "answer": "Se den operaciones nocturnas y diurnas de visibilidad reducida. (Ej. NRBQ) "
+  },
+  {
+    "question": "Cuando nos referimos a una salida de sangre fuera del aparato circulatorio, visible o no, hablamos de…",
+    "options": [
+      "Hemostasia",
+      "Shock hipovolémico",
+      "Hemorragia ",
+      "Hemostasia espontánea"
+    ],
+    "answer": "Hemorragia "
+  },
+  {
+    "question": "El tratamiento de las hemorragias se realiza…",
+    "options": [
+      "Después de realizar RCP",
+      "No hay que tratar las hemorragias",
+      "Únicamente por personal sanitario",
+      "Antes de realizar RCP "
+    ],
+    "answer": "Antes de realizar RCP "
+  },
+  {
+    "question": "Cuando el organismo reacciona y forma un coágulo para detener el sangrado hablamos de:",
+    "options": [
+      "Hemorragia arterial",
+      "Hemostasia espontánea ",
+      "Hemorragia capilar",
+      "Hemostasia provocada"
+    ],
+    "answer": "Hemostasia espontánea "
+  },
+  {
+    "question": "Según la fuente vascular, las hemorragias pueden ser:",
+    "options": [
+      "Arteriales y capilares",
+      "Venosas",
+      "Coagulantes",
+      "A y B son correctas "
+    ],
+    "answer": "A y B son correctas "
+  },
+  {
+    "question": "En las hemorragias arteriales, la sangre:",
+    "options": [
+      "Está cargada de CO2 y es más oscura",
+      "Es roja brillante",
+      "Está saturada de oxígeno y sale a chorros intermitentes",
+      "B y C son correctas "
+    ],
+    "answer": "B y C son correctas "
+  },
+  {
+    "question": "En el control de hemorragias por presión directa (señala la incorrectA.:",
+    "options": [
+      "Presionaremos fuertemente mínimo 10 minutos",
+      "Si el apósito se empapa de sangre, lo retiraremos y dejaremos la herida sin colocar más apósitos. ",
+      "Si la hemorragia se controla podemos retirar las manos y colocar vendaje compresivo.",
+      "Si el herido tiene más lesiones o hay más víctimas que atender, se colocará vendaje compresivo estéril."
+    ],
+    "answer": "Si el apósito se empapa de sangre, lo retiraremos y dejaremos la herida sin colocar más apósitos. "
+  },
+  {
+    "question": "Si la presión directa no es efectiva o no es practicable en las extremidades:",
+    "options": [
+      "Se colocará un torniquete comercial. ",
+      "Se rellena la herida con apósitos o vendas hemostáticas.",
+      "Se realiza vendaje compresivo.",
+      "Ninguna es correcta."
+    ],
+    "answer": "Se colocará un torniquete comercial. "
+  },
+  {
+    "question": "Los apósitos hemostáticos se utilizan…",
+    "options": [
+      "Normalmente en entornos quirúrgicos y militares.",
+      "Cuando la herida está en una zona no compresible.",
+      "En zonas como ingle, cuello, hombro, axila, etc.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "Se deben adoptar las precauciones universales tales como el uso de guantes de látex o de nitrilo…",
+    "options": [
+      "Únicamente ante hemorragias.",
+      "En víctimas traumáticas.",
+      "Cuando exista pérdida de consciencia.",
+      "Ante cualquier persona accidentada. "
+    ],
+    "answer": "Ante cualquier persona accidentada. "
+  },
+  {
+    "question": "Son síntomas de hemorragia (señale la incorrectA.:",
+    "options": [
+      "Pulso débil y rápido.",
+      "Sudoración fría y pegajosa.",
+      "Hipotensión.",
+      "Enrojecimiento de la piel. "
+    ],
+    "answer": "Enrojecimiento de la piel. "
+  },
+  {
+    "question": "Definición de Shock:",
+    "options": [
+      "Estado clínico en el cual la cantidad de sangre que llega a las células es insuficiente para realizar su función, lo que provoca una alteración de las funciones vitales. ",
+      "Término clínico que describe la aparición brusca de un déficit neurológico del Sistema Nervioso Central.",
+      "Molestia transitoria causada por flujo sanguíneo y suministro de oxígeno inadecuado e insuficiente.",
+      "Obstrucción de la vía aérea provocada por cualquier cuerpo extraño."
+    ],
+    "answer": "Estado clínico en el cual la cantidad de sangre que llega a las células es insuficiente para realizar su función, lo que provoca una alteración de las funciones vitales. "
+  },
+  {
+    "question": "Causas de Shock:",
+    "options": [
+      "Deshidratación.",
+      "IAM.",
+      "Quemaduras graves.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "Clasificación de Shock:",
+    "options": [
+      "Hipovolémico, Cardiogénico y Hemorrágico.",
+      "Hemorrágico, Cardiogénico y por Vasodilatación. ",
+      "Neurógeno, Alérgico y Séptico.",
+      "Hipovolémico, Cardiogénico y Neurógeno."
+    ],
+    "answer": "Hemorrágico, Cardiogénico y por Vasodilatación. "
+  },
+  {
+    "question": "Sintomatología de Shock (SEÑALE LA INCORRECTA.:",
+    "options": [
+      "Palidez y sudor frío.",
+      "Pulso débil y lento. ",
+      "Cianosis.",
+      "Respiración rápida y superficial."
+    ],
+    "answer": "Pulso débil y lento. "
+  },
+  {
+    "question": "En el Shock:",
+    "options": [
+      "El sujeto está inconsciente. Tiene los pulsos rápidos y débiles.",
+      "El sujeto está consciente, delirante. Tiene sudoración fría y una coloración rosada.",
+      "El sujeto está consciente, aunque puede estar ansioso. Tiene sudoración fría.",
+      "El sujeto está consciente, aunque puede estar obnubilado, agitado y delirante. Tiene los pulsos rápidos y débiles. "
+    ],
+    "answer": "El sujeto está consciente, aunque puede estar obnubilado, agitado y delirante. Tiene los pulsos rápidos y débiles. "
+  },
+  {
+    "question": "En el Shock Neurógeno de color se tiene la piel:",
+    "options": [
+      "Pálida.",
+      "Sonrojada.",
+      "Azulada (cianosis)",
+      "Todas son falsas. "
+    ],
+    "answer": "Todas son falsas. "
+  },
+  {
+    "question": "En caso de Shock con lesión en el tórax, cual es la posición más adecuada:",
+    "options": [
+      "Tumbado boca arriba.",
+      "Posición lateral de seguridad.",
+      "Semisentado apoyado sobre su lado lesionado. ",
+      "Tumbado boca arriba con las rodillas flexionadas."
+    ],
+    "answer": "Semisentado apoyado sobre su lado lesionado. "
+  }
+]
+},{
+  "name": "Tema 5",
+  "questions": [
+  {
+    "question": "Que es el esguince",
+    "options": [
+      "Separación temporal de las superficies articulares. ",
+      "Separación permanente de las superficies articulares.",
+      "Todas son correctas.",
+      "Ninguna es correcta."
+    ],
+    "answer": "Separación temporal de las superficies articulares. "
+  },
+  {
+    "question": "Que es la luxación.",
+    "options": [
+      "Separación temporal de las superficies articulares.",
+      "Separación permanente de las superficies articulares. ",
+      "Todas son correctas.",
+      "Ninguna es correcta."
+    ],
+    "answer": "Separación permanente de las superficies articulares. "
+  },
+  {
+    "question": "La fractura se origina por un mecanismo de producción.",
+    "options": [
+      "Directo ",
+      "Indirecto.",
+      "Ninguna.",
+      "Todas."
+    ],
+    "answer": "Todas."
+  },
+  {
+    "question": "La fractura se clasifica como…",
+    "options": [
+      "Abierta o cerrada. ",
+      "Semiabierta o abierta.",
+      "Semicerrada o cerrada.",
+      "Lineal o no lineal."
+    ],
+    "answer": "Abierta o cerrada. "
+  },
+  {
+    "question": "En las fracturas tienen que aparecer siempre todos los signos de fractura?",
+    "options": [
+      "Si",
+      "No "
+    ],
+    "answer": "No "
+  },
+  {
+    "question": "Cual de estos signo NO es de fractura",
+    "options": [
+      "Dolor",
+      "Crepitación.",
+      "Inflamación.",
+      "Astillamiento. "
+    ],
+    "answer": "Astillamiento. "
+  },
+  {
+    "question": "Cual de estos signo NO es de fractura",
+    "options": [
+      "Impotencia funcional.",
+      "Deformidad.",
+      "Dolor discontinuo. ",
+      "Chasquido."
+    ],
+    "answer": "Dolor discontinuo. "
+  },
+  {
+    "question": "Qué tipo de férulas se utilizan para la inmovilización.",
+    "options": [
+      "Rígidas, semirrígidas y blandas. ",
+      "Rigidas y semirrigidas.",
+      "Ninguna de las anteriores.",
+      "Rígidas y maleables."
+    ],
+    "answer": "Rigidas y semirrigidas."
+  },
+  {
+    "question": "Las fracturas de columna pueden ser señale la correcta.",
+    "options": [
+      "Con bloqueo vertebral.",
+      "Con desplazamiento o sin desplazamiento de los fragmentos vertebrales. ",
+      "Solo con desplazamiento de los fragmentos vertebrales.",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Con desplazamiento o sin desplazamiento de los fragmentos vertebrales. "
+  },
+  {
+    "question": "Si se produce una fractura múltiple de costillas:",
+    "options": [
+      "No es necesario inmovilizar la lesión",
+      "Se inmoviliza colocando almohadillado sobre la zona fracturada",
+      "Se inmoviliza colocando vendaje y almohadillado sobre la zona fracturada ",
+      "Se inmoviliza colocando vendaje sobre la zona fracturada"
+    ],
+    "answer": "Se inmoviliza colocando vendaje y almohadillado sobre la zona fracturada "
+  },
+  {
+    "question": "La fractura de clavícula se inmoviliza colocando:",
+    "options": [
+      "Un vendaje en 8",
+      "No se debe inmovilizar",
+      "Un palo entre los brazos flexionados y la espalda",
+      "a y c son correctas "
+    ],
+    "answer": "a y c son correctas "
+  },
+  {
+    "question": "Si existe sospecha de lesión pélvica:",
+    "options": [
+      "No se debe manipular",
+      "Se debe instalar un cinturón pelvico al rededor",
+      "Se debe instalar precozmente un inmovilizador pélvico ",
+      "Se coloca un vendaje"
+    ],
+    "answer": "Se debe instalar precozmente un inmovilizador pélvico "
+  },
+  {
+    "question": "Aunque no esté presente, se sospecha que hay fractura craneal cuando:",
+    "options": [
+      "Aparece hemorragia por la nariz",
+      "Aparece hemorragia por los oídos",
+      "a y b son correctas  ",
+      "Hay hundimiento de la bóveda craneana"
+    ],
+    "answer": "a y b son correctas  "
+  },
+  {
+    "question": "El primer interviniente inmovilizará una fractura:",
+    "options": [
+      "Siempre",
+      "Cuando tengamos los medios",
+      "Sólo en aquellas situaciones en las que los recursos sanitarios no pueden llegar ",
+      "Nunca"
+    ],
+    "answer": "Sólo en aquellas situaciones en las que los recursos sanitarios no pueden llegar "
+  },
+  {
+    "question": "Nos referimos a las férulas como:",
+    "options": [
+      "Elementos rígidos que permiten la inmovilización de una fractura",
+      "Elementos que unen una fractura",
+      "Elementos semirrígidos que permiten la inmovilización de una fractura",
+      "a y c son correctas "
+    ],
+    "answer": "a y c son correctas "
+  },
+  {
+    "question": "Las fracturas de columna siempre llevan aparejada desplazamiento de los fragmentos vertebrales:",
+    "options": [
+      "Verdadero",
+      "Falso "
+    ],
+    "answer": "Falso "
+  },
+  {
+    "question": "Alguien con una fractura siempre debe transportarse tras inmovilizar la fractura",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  }
+]
+},{
+  "name": "Tema 6",
+  "questions": [
+  {
+    "question": "El objetivo en la valoración primaria:",
+    "options": [
+      "Identificar y solucionar problemas no vitales e inmediatos siguiendo el esquema ABCDE O C-ABCDE.",
+      "Identificar y solucionar problemas vitales y no inmediatos siguiendo el esquema ABCDE O C-ABCDE.",
+      "Identificar y solucionar problemas vitales e inmediatos siguiendo el esquema ABCDE O C-ABCDE. ",
+      "Identificar y solucionar problemas vitales e inmediatos siguiendo el esquema ABCD O C-ABCD."
+    ],
+    "answer": "Identificar y solucionar problemas vitales e inmediatos siguiendo el esquema ABCDE O C-ABCDE. "
+  },
+  {
+    "question": "A la hora de estabilizar manualmente la cabeza de la víctima:",
+    "options": [
+      "Coger la cabeza de la víctima con ambas manos dirigiendo nuestros pulgares hacia los ojos de la víctima, sin realizar ninguna tracción.",
+      "Coger la cabeza de la víctima con ambas manos dirigiendo nuestros pulgares hacia los ojos de la víctima, realizaremos una tracción de 12kg hacia la víctima, manteniendo el eje cabeza-cuello-tronco.",
+      "Coger la cabeza de la víctima con ambas manos dirigiendo nuestros pulgares hacia los ojos de la víctima, realizaremos una tracción de 10kg hacia nuestro , manteniendo el eje cabeza-espalda-tronco.",
+      "Coger la cabeza de la víctima con ambas manos dirigiendo nuestros pulgares hacia los ojos de la víctima, realizaremos una tracción de 12kg hacia nuestro tronco, manteniendo el eje cabeza-cuello-tronco."
+    ],
+    "answer": "Coger la cabeza de la víctima con ambas manos dirigiendo nuestros pulgares hacia los ojos de la víctima, sin realizar ninguna tracción."
+  },
+  {
+    "question": "Cual son los 3 objetivos principales de la valoración secundaria?",
+    "options": [
+      "Interrogatorio, reducir signos vitales. exposición",
+      "Reevaluar signos vitales, interrogatorio, exposición",
+      "Interrogatorio, reevaluar signos vitales, exploración ",
+      "Interrogatorio, reducir signos vitales. exploración"
+    ],
+    "answer": "Interrogatorio, reevaluar signos vitales, exploración "
+  },
+  {
+    "question": "Como realizaremos la exploración de la valoración secundaria?",
+    "options": [
+      "Sentido ascendente empezando por las extremidades y acabando por la cabeza",
+      "Sentido descendente empezando por la cabeza y terminando en las extremidades.",
+      "Sentido ascendente empezando por la espalda y acabando por la cabeza",
+      "Sentido descendente empezando por la cabeza y acabando por la espalda después de haber examinado las extremidades. "
+    ],
+    "answer": "Sentido descendente empezando por la cabeza y acabando por la espalda después de haber examinado las extremidades. "
+  },
+  {
+    "question": "Siempre que se sospeche lesión medular y la situación lo permita, la Policía, como primer interviniente:",
+    "options": [
+      "realizará la asistencia a la víctima moviéndola suavemente.",
+      "realizará la asistencia en la posición encontrada, sin moverla. ",
+      "Si la víctima se encuentra decúbito prono (boca abajo) hay que dejarla en la posición encontrada, sin moverla.",
+      "Si está tumbado boca abajo se debe procurar mantener alineado el eje cabeza-cuello-columna."
+    ],
+    "answer": "realizará la asistencia en la posición encontrada, sin moverla. "
+  },
+  {
+    "question": "Se debe detener la Valoración Primaria SI:",
+    "options": [
+      "No hay obstrucción de la vía aérea",
+      "La escena es segura",
+      "La hemorragia es severa y controlable",
+      "Hay parada respiratoria "
+    ],
+    "answer": "Hay parada respiratoria "
+  },
+  {
+    "question": "La CIANOSIS es:",
+    "options": [
+      "La presencia de piel enrojecida que puede revelar una presión sanguínea elevada.",
+      "Es indicativa de Shock Hipovolémico.",
+      "El color azulado de la sangre y es el resultado de una pobre oxigenación. ",
+      "el término médico que se usa para referirse a una piel pálida y fría."
+    ],
+    "answer": "El color azulado de la sangre y es el resultado de una pobre oxigenación. "
+  },
+  {
+    "question": "¿Qué es AVDNR?",
+    "options": [
+      "Sistema para comprobar el nivel de consciencia. ",
+      "Consiste en identificar y solucionar problemas vitales.",
+      "Asistencia a la víctima en la posición encontrada.",
+      "Valoración de la seguridad de la escena."
+    ],
+    "answer": "Sistema para comprobar el nivel de consciencia. "
+  },
+  {
+    "question": "En la valoración primaria elegir el parámetro incorrecto a seguir en la circulación.",
+    "options": [
+      "Pulsos periféricos.",
+      "Relleno capilar.",
+      "Piel enrojecida. ",
+      "Coloración cutánea y temperatura."
+    ],
+    "answer": "Piel enrojecida. "
+  },
+  {
+    "question": "Cuando se debe parar la valoración secundaria.",
+    "options": [
+      "Signos de shock.",
+      "Sospecha de fractura bilateral fémur.",
+      "Pelvis inestable o dolorosa.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "AVDNR en que letra esta si habla y no abre los ojos.",
+    "options": [
+      "Alerta.",
+      "No responde.",
+      "Verbalización. ",
+      "Dolor."
+    ],
+    "answer": "Verbalización. "
+  },
+  {
+    "question": "El objetivo del triage es salvar el mayor número de víctimas posibles en este orden:",
+    "options": [
+      "Las víctimas menos graves son las últimas en recibir asistencia.",
+      "Las víctimas más graves son las últimas en recibir asistencia. ",
+      "Las víctimas menos graves son las primeras en recibir asistencia.",
+      "Las víctimas más graves son las primeras en recibir asistencia."
+    ],
+    "answer": "Las víctimas más graves son las últimas en recibir asistencia. "
+  },
+  {
+    "question": "El triage básico se realiza:",
+    "options": [
+      "Se realiza en el área de rescate por personas con formación básica en Primeros Auxilios y triage de IMV. ",
+      "Se realiza en el área de socorro por personas con formación básica en Primeros Auxilios y triage de IMV.",
+      "Se realiza en el área de socorro por personal sanitario.",
+      "Se realiza en el área de rescate por personal sanitario."
+    ],
+    "answer": "Se realiza en el área de rescate por personas con formación básica en Primeros Auxilios y triage de IMV. "
+  },
+  {
+    "question": "En un IMV (Incidente de múltiples víctimas) se sectoriza el escenario en 3 áreas. ¿Qué tres áreas son?",
+    "options": [
+      "Área de rescate, área de socorro y área segura.",
+      "Área de rescate, área de socorro y área de base. ",
+      "Área de rescate, área de auxilio y área segura.",
+      "Área de rescate, área de auxilio y área de base."
+    ],
+    "answer": "Área de rescate, área de socorro y área de base. "
+  },
+  {
+    "question": "Los primero intervinientes utilizaran:",
+    "options": [
+      "El método START, tal y como recomienda Osakidetza, y métodos binarios.",
+      "El método START, tal y como recomienda la OMS, y métodos binarios.",
+      "El método SHORT, tal y como recomienda la OMS, y métodos binarios.",
+      "El método SHORT, tal y como recomienda Osakidetza, y métodos binarios. "
+    ],
+    "answer": "El método SHORT, tal y como recomienda Osakidetza, y métodos binarios. "
+  }
+]
+},{
+  "name": "Tema 7",
+  "questions": [
+  {
+    "question": "El AGOTAMIENTO POR CALOR se caracteriza por (SEÑALAR LA INCORRECTA.:",
+    "options": [
+      "Sudoración elevada que puede llevar a la deshidratación.",
+      "Calambres musculares y vómitos.",
+      "Temperatura elevada ",
+      "No hay fiebre. Temperatura Normal."
+    ],
+    "answer": "Temperatura elevada "
+  },
+  {
+    "question": "¿Cuándo se produce la hidrocución?",
+    "options": [
+      "En contacto repentino con agua caliente",
+      "En contacto repentino con agua fría ",
+      "En contacto repentino con hielo",
+      "a y b son correctas"
+    ],
+    "answer": "En contacto repentino con agua fría "
+  },
+  {
+    "question": "¿Qué son las congelaciones?",
+    "options": [
+      "Lesiones que se producen cuando hace mucho frio",
+      "Lesiones localizadas producidas por la acción del frio a temperaturas inferiores a 0ºC ",
+      "Lesiones localizadas realizadas por el frio en invierno",
+      "b y c son correctas"
+    ],
+    "answer": "Lesiones localizadas producidas por la acción del frio a temperaturas inferiores a 0ºC "
+  },
+  {
+    "question": "¿Qué tipos de congelaciones hay?",
+    "options": [
+      "Superficiales y profundas ",
+      "Superficiales e internas",
+      "Superficiales, internas y profundas",
+      "Internas y profundas"
+    ],
+    "answer": "Superficiales y profundas "
+  },
+  {
+    "question": "Que no se debe de hacer ante una víctima de congelación",
+    "options": [
+      "Si está consciente, dar bebidas calientes y dulces",
+      "Retirar anillos, relojes, pulseras etc",
+      "Retirar a la víctima de la exposición al frío",
+      "Friccionar la zona congelada "
+    ],
+    "answer": "Friccionar la zona congelada "
+  },
+  {
+    "question": "Cuando se empieza a producir la hipotermia",
+    "options": [
+      "Temperatura corporal central inferior a 35ºC ",
+      "Temperatura corporal central inferior a 30ºC",
+      "Temperatura corporal central superior a 30ºC",
+      "Temperatura corporal central inferior a 27ºC"
+    ],
+    "answer": "Temperatura corporal central inferior a 35ºC "
+  },
+  {
+    "question": "Cual no es un factor que predispone la hipotermia",
+    "options": [
+      "Contacto con superficies que roban calor",
+      "Ingesta de alcohol",
+      "Llevar una buena alimentación ",
+      "Viento y humedad"
+    ],
+    "answer": "Llevar una buena alimentación "
+  },
+  {
+    "question": "En cuantos grupos podemos clasificar la hipotermia?",
+    "options": [
+      "1",
+      "2",
+      "3 ",
+      "4"
+    ],
+    "answer": "3 "
+  },
+  {
+    "question": "En la hipotermia moderada…",
+    "options": [
+      "El cuerpo pasa a estado de excitación produciendo escalofríos incontrolables",
+      "Se produce un enlentecimiento progresivo ",
+      "Se produce la inconsciencia",
+      "La frecuencia cardiaca y respiratoria sube"
+    ],
+    "answer": "Se produce un enlentecimiento progresivo "
+  },
+  {
+    "question": "Qué ocurre cuando el cuerpo se encuentra entre 15-24ºC?",
+    "options": [
+      "Inconsciencia",
+      "Enlentecimiento progresivo",
+      "Muerte aparente ",
+      "a y b son correctas"
+    ],
+    "answer": "Muerte aparente "
+  },
+  {
+    "question": "Acciones a realizar en un caso de hipotermia",
+    "options": [
+      "Controlar respiración y recuperar temperatura corporal",
+      "Darle bebidas alcohólicas para que su temperatura suba",
+      "Traslado de la víctima",
+      "a y c son correctas "
+    ],
+    "answer": "a y c son correctas "
+  },
+  {
+    "question": "La víctima de hipotermia ha de ser trasladada en posición vertical",
+    "options": [
+      "Verdadero",
+      "Falso "
+    ],
+    "answer": "Falso "
+  },
+  {
+    "question": "La muerte por hipotermia irreversible se produce cuando la víctima esta a <15ºC",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  },
+  {
+    "question": "Se entiende que el cuerpo está en hipotermia leve cuando:",
+    "options": [
+      "La temperatura es de entre 32-35ºC ",
+      "La temperatura es de entre 22-27ºC",
+      "La temperatura es de entre 38-40ºC",
+      "La temperatura es de entre 30-35ºC"
+    ],
+    "answer": "La temperatura es de entre 32-35ºC "
+  },
+  {
+    "question": "Se produce la inconsciencia cuando el cuerpo se encuentra entre 24-28ºC",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  },
+  {
+    "question": "En cuantos grados se clasifican las congelaciones",
+    "options": [
+      "3",
+      "2",
+      "4 ",
+      "5"
+    ],
+    "answer": "4 "
+  },
+  {
+    "question": "La escara aparece en el grado 2 se congelación",
+    "options": [
+      "Verdadero",
+      "Falso "
+    ],
+    "answer": "Falso "
+  },
+  {
+    "question": "Es característica del segundo grado de congelación:",
+    "options": [
+      "Escaras",
+      "Ampollas ",
+      "Grandes lesiones vasculares",
+      "Entumecimiento"
+    ],
+    "answer": "Ampollas "
+  },
+  {
+    "question": "Las quemaduras teniendo en cuenta la naturaleza del agente responsable, se pueden clasificar:",
+    "options": [
+      "quemaduras termicas, electricas, químicas",
+      "quemaduras eléctricas, térmicas, químicas y radiactivas ",
+      "quemaduras térmicas, radiactivas y eléctricas",
+      "quemaduras, termicas, electricas, químicas y solares"
+    ],
+    "answer": "quemaduras eléctricas, térmicas, químicas y radiactivas "
+  },
+  {
+    "question": "¿Qué método se utiliza para medir la extensión de las quemaduras?",
+    "options": [
+      "regla de los nueve ",
+      "regla de los siete",
+      "regla de los ocho",
+      "cualquiera de los anteriores es válido"
+    ],
+    "answer": "regla de los nueve "
+  },
+  {
+    "question": "Las quemaduras que destruyen la dermis y se caracterizan por la aparición de la ampolla acompañada de dolor intenso e inflamación intensa son de:",
+    "options": [
+      "1º Grado",
+      "2º Grado ",
+      "3º Grado",
+      "4º Grado"
+    ],
+    "answer": "2º Grado "
+  },
+  {
+    "question": "Cual de estos factores debemos tener en cuenta a la hora de determinar la la gravedad de una quemadura:",
+    "options": [
+      "edad",
+      "riesgo de infección",
+      "localización de la quemadura",
+      "todos son correctos "
+    ],
+    "answer": "todos son correctos "
+  },
+  {
+    "question": "Cubrir a la víctima con una manta es una de las medidas generales en actuaciones ante quemaduras.",
+    "options": [
+      "verdadero ",
+      "falso"
+    ],
+    "answer": "verdadero "
+  },
+  {
+    "question": "Que no hay que hacer como medida general en actuaciones como ante quemaduras:",
+    "options": [
+      "retirar ropas adheridas a la piel",
+      "romper ampollas",
+      "retirar anillos, reloj, pulseras…",
+      "a y b son correctas "
+    ],
+    "answer": "a y b son correctas "
+  },
+  {
+    "question": "En la actuación ante quemaduras químicas en caso que la sustancia química sea sólida procederemos al cepillado después de la ducha:",
+    "options": [
+      "verdadero",
+      "falso "
+    ],
+    "answer": "falso "
+  },
+  {
+    "question": "En las quemaduras eléctricas la cantidad de tejido dañado no depende de:",
+    "options": [
+      "intensidad de la corriente",
+      "tipo de corriente",
+      "dirección de la corriente",
+      "cantidad de corriente "
+    ],
+    "answer": "cantidad de corriente "
+  },
+  {
+    "question": "La actuación de ante quemaduras eléctricas se comprende de:",
+    "options": [
+      "dos partes, una primaria y otra secundaria",
+      "dos partes, una inmediata y otra posterior",
+      "dos partes, una inmediata y otra tardía ",
+      "ninguna es correcta"
+    ],
+    "answer": "dos partes, una inmediata y otra tardía "
+  },
+  {
+    "question": "Señale la opción correcta respecto al síncope por calor:",
+    "options": [
+      "cuadro benigno y transitorio que se caracteriza por una pérdida leve y fugaz del conocimiento. ",
+      "cuadro producido por exposición directa de la cabeza a los rayos solares.",
+      "cuadro producido por exposición directa de la cabeza y torso a los rayos solares.",
+      "cuadro benigno que se caracteriza por una pérdida leve y fugaz del conocimiento."
+    ],
+    "answer": "cuadro benigno y transitorio que se caracteriza por una pérdida leve y fugaz del conocimiento. "
+  },
+  {
+    "question": "La insolación se caracteriza por:",
+    "options": [
+      "dolor de cabeza y náuseas",
+      "palidez y sensación de frío",
+      "vómitos y convulsiones",
+      "a y c correctas "
+    ],
+    "answer": "a y c correctas "
+  },
+  {
+    "question": "Agotamiento por calor es la sensación de cansancio extrema producida por la pérdida de agua y de sales a través del sudor:",
+    "options": [
+      "verdadero ",
+      "falso"
+    ],
+    "answer": "verdadero "
+  },
+  {
+    "question": "El golpe de calor se caracteriza por:",
+    "options": [
+      "piel seca, caliente y roja ",
+      "no hay fiebre",
+      "náuseas y vómitos",
+      "b y c correctas"
+    ],
+    "answer": "piel seca, caliente y roja "
+  },
+  {
+    "question": "En el golpe de calor si se retrasa el tratamiento hospitalario más de 2 horas tiene una mortalidad del:",
+    "options": [
+      "65%",
+      "70% ",
+      "75%",
+      "80%"
+    ],
+    "answer": "70% "
+  },
+  {
+    "question": "El golpe de calor se produce por un fallo agudo del sistema termorrefrigerador:",
+    "options": [
+      "verdadero",
+      "falso "
+    ],
+    "answer": "falso "
+  }
+]
+},{
+  "name": "Tema 8",
+  "questions": [
+  {
+    "question": "Según la OMS, un tóxico es:",
+    "options": [
+      "Cualquier sustancia que tomada en dosis suficiente provoca daños en el organismo",
+      "Cualquier sustancia sólida o líquida que tomada en grandes dosis provoca daños en el organismo.",
+      "Cualquier sustancia sólida, líquida o gaseosa, que tomada en dosis suficiente, provoca daños en el organismo. ",
+      "Cualquier sustancia sólida, líquida o gaseosa que tomada en grandes dosis provoca daños en el organismo."
+    ],
+    "answer": "Cualquier sustancia sólida, líquida o gaseosa, que tomada en dosis suficiente, provoca daños en el organismo. "
+  },
+  {
+    "question": "Según la OMS, droga es:",
+    "options": [
+      "Toda sustancia que introducida en el organismo, modifica dos o más funciones de este.",
+      "Toda sustancia que introducida en el organismo altera el SNC.",
+      "Toda sustancia que introducida en el organismo en dosis suficiente, provoca daños en el organismo.",
+      "Toda sustancia que introducida en el organismo puede modificar una o más funciones de este. "
+    ],
+    "answer": "Toda sustancia que introducida en el organismo puede modificar una o más funciones de este. "
+  },
+  {
+    "question": "Las drogas perturbadoras del SNC",
+    "options": [
+      "Aceleran todas las funciones del SNC",
+      "Son sustancias que alteran el estado de consciencia y la percepción de la realidad provocando extrañas sensaciones. ",
+      "Son sustancias que producen euforia y bienestar.",
+      "Enlentecen todas las funciones del SNC, tanto psíquicas como orgánicas."
+    ],
+    "answer": "Son sustancias que alteran el estado de consciencia y la percepción de la realidad provocando extrañas sensaciones. "
+  },
+  {
+    "question": "La vía de entrada PARENTERAL de un tóxico es…",
+    "options": [
+      "Digestiva",
+      "Respiratoria",
+      "A través de mucosas",
+      "Subcutánea, intramuscular o intravenosa "
+    ],
+    "answer": "Subcutánea, intramuscular o intravenosa "
+  },
+  {
+    "question": "Según el Instituto Nacional de Toxicología, la mayor parte de las intoxicaciones se dan en…",
+    "options": [
+      "El trabajo",
+      "El ocio nocturno",
+      "El hogar ",
+      "Países subdesarrollados"
+    ],
+    "answer": "El hogar "
+  },
+  {
+    "question": "Ante una intoxicación, el vómito…",
+    "options": [
+      "No se debe provocar nunca y bajo ningún concepto para no hacer pasar por por segunda vez la sustancia corrosiva por el aparato digestivo.",
+      "Sólo se debe provocar a mayores de 5 años.",
+      "Se debe provocar salvo que hayan pasado dos o tres horas desde la ingesta del tóxico.",
+      "Todas son incorrectas. "
+    ],
+    "answer": "Todas son incorrectas. "
+  },
+  {
+    "question": "La falta de una droga produce en un organismo adicto…",
+    "options": [
+      "Síndrome de abstinencia, es decir, el mismo efecto que su consumo.",
+      "Síndrome de abstinencia, es decir, el efecto contrario a su consumo. ",
+      "Dependiendo de la droga, puede producir el mismo efecto o el efecto contrario a su consumo.",
+      "Cuadros de gravedad alta."
+    ],
+    "answer": "Síndrome de abstinencia, es decir, el efecto contrario a su consumo. "
+  },
+  {
+    "question": "Ante una intoxicación etílica…",
+    "options": [
+      "Debemos darle baños de agua fría durante dos segundos.",
+      "Si está consciente, debemos administrarle bebidas azucaradas. ",
+      "Se debe aumentar su temperatura corporal con baños de agua tíbia.",
+      "Si su consciencia está disminuida, debemos ponerlo en posición anti-shock."
+    ],
+    "answer": "Si está consciente, debemos administrarle bebidas azucaradas. "
+  },
+  {
+    "question": "Atendiendo a su efecto, el hachís es una sustancia…",
+    "options": [
+      "Estimulante del SNC, produciendo sensación de euforia y bienestar",
+      "Perturbadora del SNC, modifica la forma de percibir el mundo exterior.",
+      "Estimulante del SNC, atenúa o inhibe los mecanismos cerebrales de la vigilia y pueden provocar diferentes grados de inactivación.",
+      "Depresora del SNC, enlentecen todas las funciones del mismo, tanto psíquicas como orgánicas. "
+    ],
+    "answer": "Depresora del SNC, enlentecen todas las funciones del mismo, tanto psíquicas como orgánicas. "
+  },
+  {
+    "question": "El alcohol…",
+    "options": [
+      "A los 10 minutos ya se detecta en la sangre y alcanza su pico más alto a los 30-90 minutos.",
+      "A los 5 minutos ya se detecta en sangre, y alcanza su pico más alto a los 30-90 minutos ",
+      "A los 5 minutos ya se detecta en sangre y alcanza su pico más alto a los 30-60 minutos.",
+      "A los 10 minutos ya se detecta en sangre y alcanza su pico más alto a los 30-60 minutos."
+    ],
+    "answer": "A los 5 minutos ya se detecta en sangre, y alcanza su pico más alto a los 30-90 minutos "
+  },
+  {
+    "question": "El alcohol es una sustancias….",
+    "options": [
+      "depresora ",
+      "estimulante",
+      "perturbadora",
+      "ninguna es correcta"
+    ],
+    "answer": "depresora "
+  },
+  {
+    "question": "¿Qué drogas son depresivas afectando al SNC?",
+    "options": [
+      "LSD",
+      "barbitúricos ",
+      "cocaína",
+      "speed"
+    ],
+    "answer": "barbitúricos "
+  },
+  {
+    "question": "¿Cuando se da el pico máximo de alcohol?",
+    "options": [
+      "10-40 minutos siguientes",
+      "5-30 minutos siguientes",
+      "40-70 minutos siguientes",
+      "30-90 minutos siguientes "
+    ],
+    "answer": "30-90 minutos siguientes "
+  },
+  {
+    "question": "¿Cuáles son los síntomas de los opiáceos?",
+    "options": [
+      "pupilas mióticas",
+      "somnolencia o coma",
+      "disminución de la frecuencia respiratoria",
+      "todas son correctas "
+    ],
+    "answer": "todas son correctas "
+  },
+  {
+    "question": "El 90% de las intoxicaciones son…..",
+    "options": [
+      "por vía digestiva",
+      "por vía oral",
+      "por vía respiratoria",
+      "a y b son correctas "
+    ],
+    "answer": "a y b son correctas "
+  },
+  {
+    "question": "Cuando hay una sobredosis de alcohol en personas conscientes…..",
+    "options": [
+      "no hay que darle bebidas azucaradas",
+      "conviene sumergir la cabeza en agua",
+      "hay que intentar provocar el vómito para que no se metabolice el alcohol restante ",
+      "la PLS está contraindicada"
+    ],
+    "answer": "hay que intentar provocar el vómito para que no se metabolice el alcohol restante "
+  },
+  {
+    "question": "Cuando hay una sobredosis de alcohol en personas inconscientes…….",
+    "options": [
+      "hay que intentar provocar el vómito para que no se metabolice el alcohol restante",
+      "conviene sumergir la cabeza en agua",
+      "conviene colocarle PLS ",
+      "son todas incorrectas"
+    ],
+    "answer": "conviene colocarle PLS "
+  },
+  {
+    "question": "Las drogas que aceleran las funciones son…..",
+    "options": [
+      "estimulantes ",
+      "perturbadoras",
+      "depresoras",
+      "todas son incorrectas"
+    ],
+    "answer": "estimulantes "
+  },
+  {
+    "question": "Puntos a tener en cuenta a la hora de valorar a un intoxicado……",
+    "options": [
+      "actitud",
+      "color de la piel",
+      "olor corporal",
+      "todas son correctas "
+    ],
+    "answer": "todas son correctas "
+  },
+  {
+    "question": "El concepto de tener que aumentar cada vez más la dosis para conseguir que la droga tenga el mismo efecto se refiere…..",
+    "options": [
+      "abstinencia",
+      "dilución",
+      "tolerancia ",
+      "ninguna es correcta"
+    ],
+    "answer": "tolerancia "
+  }
+]
+},{
+  "name": "Tema 9",
+  "questions": [
+  {
+    "question": "En general las picaduras no son graves excepto:",
+    "options": [
+      "Si son múltiples.",
+      "Si son en la garganta.",
+      "Si se es alérgico.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "Si la persona tiene clavado un aguijón actuaremos:",
+    "options": [
+      "Se lo quitaremos con pinzas.",
+      "Se lo quitaremos con los dedos.",
+      "Se lo quitaremos por raspado.",
+      "la respuesta a y c son correctas. "
+    ],
+    "answer": "la respuesta a y c son correctas. "
+  },
+  {
+    "question": "Si la picadura es en la boca y provoca dificultad respiratoria:",
+    "options": [
+      "Evitaremos que la lengua obstruya.",
+      "Practicaremos un RCP.",
+      "Le haremos chupar hielo. ",
+      "Todas son correctas."
+    ],
+    "answer": "Le haremos chupar hielo. "
+  },
+  {
+    "question": "Si el sujeto es alérgico al tóxico, una sola picadura puede provocar:",
+    "options": [
+      "La muerte.",
+      "Fallo cardiorrespiratorio en los 15 min siguientes a la picadura.",
+      "Shock Anafiláctico.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  },
+  {
+    "question": "En los primeros 30 min. la muerte se produce por:",
+    "options": [
+      "Obstrucción de las vías aéreas.",
+      "Por dolor.",
+      "Por shock.",
+      "Las respuestas a y c son correctas. "
+    ],
+    "answer": "Las respuestas a y c son correctas. "
+  },
+  {
+    "question": "En el caso de shock alérgico:",
+    "options": [
+      "Lo colocaremos en posición anti-shock y lo evacuaremos.",
+      "Si vomita o se ahoga colocar en posición semisentada.",
+      "Le daremos agua.",
+      "Las respuestas a y b son correctas. "
+    ],
+    "answer": "Las respuestas a y b son correctas. "
+  },
+  {
+    "question": "En el caso de las personas alérgicas a picaduras, medicamentos o alimentos dispongan de adrenalina autoinyectable, ¿Cómo actuaremos?:",
+    "options": [
+      "Ayudar si es necesario a su administración.",
+      "Antes de utilizar el medicamento, leer detenidamente el prospecto para evitar errores.",
+      "En caso de duda sobre su uso correcto, consulte con un profesional sanitario.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  },
+  {
+    "question": "Si se queda inconsciente y no respira:",
+    "options": [
+      "Iniciar maniobra de RCP. ",
+      "Colocar en posición anti-shock.",
+      "Colocar semisentado.",
+      "Animarle a toser."
+    ],
+    "answer": "Iniciar maniobra de RCP. "
+  },
+  {
+    "question": "Generalmente, la duración de las convulsiones es menor a:",
+    "options": [
+      "5 minutos. ",
+      "10 minutos.",
+      "2 minutos.",
+      "3 minutos."
+    ],
+    "answer": "5 minutos. "
+  },
+  {
+    "question": "Los 3 síntomas más importantes de las convulsiones son:",
+    "options": [
+      "Pérdida de conocimiento.",
+      "Rigidez muscular.",
+      "Movimientos arrítmicos y violentos clónicos.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Conviene intentar impedir una crisis.",
+    "options": [
+      "Verdadero.",
+      "Falso. "
+    ],
+    "answer": "Falso. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Hay que aflojar las prendas.",
+    "options": [
+      "Verdadero. ",
+      "Falso."
+    ],
+    "answer": "Verdadero. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Se puede meter un palo a la fuerza para evitar la mordedura de la lengua.",
+    "options": [
+      "Verdadero.",
+      "Falso. "
+    ],
+    "answer": "Falso. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Durante la crisis, se puede mover a la víctima para que no se ahogue con sus propias secreciones.",
+    "options": [
+      "Verdadero.",
+      "Falso."
+    ],
+    "answer": "Verdadero."
+  },
+  {
+    "question": "Los indicadores que percibe el propio individuo que le permiten prever la crisis como chasquido de labios, alucinaciones, contracciones generalizadas.... es lo que se denomina:",
+    "options": [
+      "Histeria.",
+      "Aura. ",
+      "Convulsión.",
+      "Epilepsia."
+    ],
+    "answer": "Aura. "
+  },
+  {
+    "question": "¿Cuales son síntomas de la convulsión?:",
+    "options": [
+      "Amnesia.",
+      "Rigidez.",
+      "Dolor de cabeza.",
+      "Todos son correctos. "
+    ],
+    "answer": "Todos son correctos. "
+  },
+  {
+    "question": "¿Cuál no es síntoma en una convulsión?:",
+    "options": [
+      "Grito agudo. ",
+      "Espuma por la boca.",
+      "Movimientos violentos.",
+      "Amnesia."
+    ],
+    "answer": "Grito agudo. "
+  },
+  {
+    "question": "Tipos de diabetes:",
+    "options": [
+      "DM no insulinodependiente (tipo 2).",
+      "Síncope diabético.",
+      "DM insulinodependiente (tipo 1).",
+      "Las respuestas a y c son correctas. "
+    ],
+    "answer": "Las respuestas a y c son correctas. "
+  },
+  {
+    "question": "Falta de insulina:",
+    "options": [
+      "Hiperglucemia.",
+      "Hipoglucemia. "
+    ],
+    "answer": "Hiperglucemia."
+  },
+  {
+    "question": "Ante una hipoglucemia:",
+    "options": [
+      "Beber zumo, 5-10 minutos y ver si mejora. ",
+      "Abanicarlo.",
+      "Colocarlo en posición anti-Shock.",
+      "Ninguna respuesta es correcta."
+    ],
+    "answer": "Beber zumo, 5-10 minutos y ver si mejora. "
+  },
+  {
+    "question": "Síncope más común:",
+    "options": [
+      "Síncope ortostático.",
+      "Síncope del seno carotídeo.",
+      "Síncope vasovagal o vasodepresor. ",
+      "Síncope neurológico."
+    ],
+    "answer": "Síncope vasovagal o vasodepresor. "
+  },
+  {
+    "question": "Síncope vasovagal o vasodepresor:",
+    "options": [
+      "Generalmente aparece en personas sanas y es normal que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional. ",
+      "Generalmente aparece en personas sanas y es extraño que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional.",
+      "Generalmente aparece en personas insanas y es normal que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional.",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Generalmente aparece en personas sanas y es normal que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional. "
+  },
+  {
+    "question": "Las hipoglucemias por antidiabéticos orales puede ser:",
+    "options": [
+      "Prolongadas.",
+      "Profundas.",
+      "De riesgo vital.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  },
+  {
+    "question": "Situaciones en caídas en personas mayores:",
+    "options": [
+      "Caída y sospecha fractura de cadera.",
+      "Caída sin fractura. El anciano no puede levantarse sin ayuda.",
+      "Caída sin fractura. El anciano puede levantarse sin ayuda.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  }
+]
+},{
+  "name": "Tema 10",
+  "questions": [
+  {
+    "question": "En el caso de cisternas o contenedores limpiados o desgasificados, donde deben de llevar los paneles de MMPP?",
+    "options": [
+      "Deben de llevarlos en la parte trasera de la cisterna o el contenedor.",
+      "Uno en la parte trasera y otro en la parte lateral.",
+      "Deberán de ser retirados o tapados y no visibles. ",
+      "Ninguna de las anteriores es correcta."
+    ],
+    "answer": "Deberán de ser retirados o tapados y no visibles. "
+  },
+  {
+    "question": "¿ En cuantas materias peligrosas (MMPP) se puede clasificar los materiales?",
+    "options": [
+      "8",
+      "6",
+      "9 ",
+      "5"
+    ],
+    "answer": "9 "
+  },
+  {
+    "question": "¿ Cuál es la clase 1 de materias?",
+    "options": [
+      "Gases",
+      "Explosivos ",
+      "Sólidos",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Explosivos "
+  },
+  {
+    "question": "¿ En qué tipos de propiedades podemos clasificar los gases?",
+    "options": [
+      "Químicas y físicas. ",
+      "Sólo químicas.",
+      "Gases tóxicos.",
+      "Sólo físicas."
+    ],
+    "answer": "Químicas y físicas. "
+  },
+  {
+    "question": "¿ Cuáles son las siglas de los gases tóxicos e inflamables?",
+    "options": [
+      "TC",
+      "TF",
+      "TFC ",
+      "TOC"
+    ],
+    "answer": "TFC "
+  },
+  {
+    "question": "¿Cuáles son las siglas de los gases tóxicos y comburentes?",
+    "options": [
+      "TOC",
+      "TO ",
+      "TFC",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "TO "
+  },
+  {
+    "question": "¿Cuáles son los gases que a temperaturas normales y bajo presión dentro de un recipiente mantienen su estado gaseoso?",
+    "options": [
+      "Gases licuados",
+      "Gases criogénicos",
+      "Gases comprimidos ",
+      "Gases disueltos a presión."
+    ],
+    "answer": "Gases comprimidos "
+  },
+  {
+    "question": "¿ Qué tipo de gas es, el gas natural?",
+    "options": [
+      "Gas disuelto a presión.",
+      "Gas criogénico. ",
+      "Gas licuado.",
+      "Gas comprimido."
+    ],
+    "answer": "Gas criogénico. "
+  },
+  {
+    "question": "¿ Cuáles son las sustancias sólidas que no están clasificadas como explosivos, pero que se inflaman con facilidad?",
+    "options": [
+      "Sólidos inflamables. ",
+      "Sólidos de combustión espontánea.",
+      "Las dos anteriores.",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Sólidos inflamables. "
+  },
+  {
+    "question": "¿ Cómo tiene que ser el cartel que llevan los vehículos que transporten MMPP?",
+    "options": [
+      "20cm largo, 20cm ancho.",
+      "30cm largo, 40cm ancho. ",
+      "40cm largo, 30cm ancho.",
+      "No tienen medida."
+    ],
+    "answer": "30cm largo, 40cm ancho. "
+  },
+  {
+    "question": "¿ De qué color tiene que ser el cartel en el vehículo?",
+    "options": [
+      "Naranja. ",
+      "Rojo.",
+      "Verde.",
+      "Amarillo."
+    ],
+    "answer": "Naranja. "
+  },
+  {
+    "question": "En qué parte deberán llevar dichos carteles?",
+    "options": [
+      "Parte delantera y trasera. ",
+      "Sólo parte delantera.",
+      "Sólo parte trasera.",
+      "Da igual donde."
+    ],
+    "answer": "Parte delantera y trasera. "
+  },
+  {
+    "question": "En dichos carteles, el primer número nos indica qué tipo de mercancía transporta. Entre ellos, el gas, ¿A qué número nos indica?",
+    "options": [
+      "2 ",
+      "3",
+      "1",
+      "6"
+    ],
+    "answer": "2 "
+  },
+  {
+    "question": "¿ Con qué letra en el cartel nos indica que esa materia reacciona peligrosamente con el agua?",
+    "options": [
+      "Y",
+      "Z",
+      "X ",
+      "H"
+    ],
+    "answer": "X "
+  },
+  {
+    "question": "Cuando hay fuga o derrame de material, de qué tipo de emergencia estamos hablando?",
+    "options": [
+      "TPC TIPO 1",
+      "TPC TIPO 2",
+      "TPC TIPO 3 ",
+      "TPC TIPO 4"
+    ],
+    "answer": "TPC TIPO 3 "
+  },
+  {
+    "question": "Y cuando hay un incendio en esa fuga?",
+    "options": [
+      "TPC TIPO 2",
+      "TPC TIPO 5",
+      "TPC TIPO 1",
+      "TPC TIPO 4 "
+    ],
+    "answer": "TPC TIPO 4 "
+  },
+  {
+    "question": "Dentro de la primera respuesta en las emergencias, ¿En cuántos niveles se diferencian los niveles de respuesta?",
+    "options": [
+      "Primer y segundo nivel, más un tercero especialista. ",
+      "Primer y segundo nivel únicamente.",
+      "Primer nivel.",
+      "Ninguna de las anteriores es correcta."
+    ],
+    "answer": "Primer y segundo nivel, más un tercero especialista. "
+  },
+  {
+    "question": "Dentro de las zonas de seguridad, concretamente en la Zona caliente trabajaran exclusivamente:",
+    "options": [
+      "Policías y Bomberos",
+      "Bomberos ",
+      "Bomberos y sanitarios",
+      "Policías, bomberos y sanitarios"
+    ],
+    "answer": "Bomberos "
+  },
+  {
+    "question": "Las zonas de seguridad se dividen en:",
+    "options": [
+      "Zona caliente, intermedia y fría.",
+      "Zona caliente y templada.",
+      "zona caliente, templada, fría y de seguridad.",
+      "Zona caliente, templada y fría. "
+    ],
+    "answer": "Zona caliente, templada y fría. "
+  },
+  {
+    "question": "Si hay un incendio en un vehículo propulsado por gas natural, electricidad, hidrógeno o en un vehículo híbrido actuaremos:",
+    "options": [
+      "Como si fuese un vehículo propulsado a gasolina.",
+      "No esperaremos a que se apague solo.",
+      "Extremaremos las medidas de precaución. ",
+      "Indistintamente en cada caso."
+    ],
+    "answer": "Extremaremos las medidas de precaución. "
+  },
+  {
+    "question": "Si vemos a una persona envuelta en llamas:",
+    "options": [
+      "Le diremos que corra para que así se puedan apagar las llamas y taparle con una manta.",
+      "Le diremos que se tire al suelo y le echaremos agua.",
+      "le haremos que se tire al suelo y que ruede para después echarle agua.",
+      "Haremos que se tire al suelo y ruede para después cubrirlo con una manta. "
+    ],
+    "answer": "Haremos que se tire al suelo y ruede para después cubrirlo con una manta. "
+  },
+  {
+    "question": "El número de peligro 368 corresponde a materia líquida inflamable, infecciosa y corrosiva.",
+    "options": [
+      "Verdadero",
+      "Falso "
+    ],
+    "answer": "Falso "
+  },
+  {
+    "question": "Toda víctima de incendios, que presente disminución de nivel de consciencia, debe ser considerada víctima traumática.",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  },
+  {
+    "question": "Los gases irritantes son tóxicos a bajas concentraciones:",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  },
+  {
+    "question": "Las materias comburentes son sustancias térmicamente muy inestables.",
+    "options": [
+      "Verdadero",
+      "Falso "
+    ],
+    "answer": "Falso "
+  },
+  {
+    "question": "Las materias radiactivas emiten radiaciones ionizantes capaces de provocar daños en las células.",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  }
+]
+},{
+  "name": "Tema 11",
+  "questions": [
+  {
+    "question": "Las industrias químicas, aunque es improbable, pueden sufrir accidentes, los cuales se pueden agrupar en : Incendios, explosiones y fugas tóxicas. Las explosiones…",
+    "options": [
+      "Reacciones producidas a gran velocidad, con expansión muy violenta de gases, cuyo efecto principal es la generación de ondas de presión, que pueden destruir estructuras cercanas. En el exterior pueden producirse rotura de cristales y daños estructurales de gran magnitud.",
+      "Reacciones producidas a gran velocidad, con expansión muy violenta de gases, cuyo efecto principal es la generación de ondas de presión, que pueden destruir estructuras cercanas. En el exterior pueden producirse rotura de cristales y daños estructurales de pequeña magnitud. ",
+      "Reacciones producidas a gran velocidad, con expansión muy violenta de gases, cuyo efecto principal es la generación de ondas de presión y nubes tóxicas, que pueden destruir estructuras cercanas. En el exterior pueden producirse rotura de cristales y daños estructurales de pequeña magnitud.",
+      "Reacciones producidas a gran velocidad, con expansión muy violenta de gases, cuyo efecto principal es la generación de ondas de presión y nubes tóxicas, que pueden destruir estructuras cercanas. En el exterior pueden producirse rotura de cristales y daños estructurales de gran magnitud."
+    ],
+    "answer": "Reacciones producidas a gran velocidad, con expansión muy violenta de gases, cuyo efecto principal es la generación de ondas de presión, que pueden destruir estructuras cercanas. En el exterior pueden producirse rotura de cristales y daños estructurales de pequeña magnitud. "
+  },
+  {
+    "question": "Estos accidentes también se pueden dar... (NIP73850)",
+    "options": [
+      "Durante la producción de MMPP en carreteras, ferrocarriles,..",
+      "Durante la manipulación de MMPP en carretera, ferrocarril,..",
+      "Durante el almacenamiento de MMPP en carreteras, ferrocarriles,..",
+      "Durante el transporte de MMPP por carretera, ferrocarril,.. "
+    ],
+    "answer": "Durante el transporte de MMPP por carretera, ferrocarril,.. "
+  },
+  {
+    "question": "La gravedad de una intoxicación por vía inhalatoria dependerá fundamentalmente de… (Señale la incorrectA.",
+    "options": [
+      "Caracts. tóxicas de la sustancia.",
+      "Grado de concentración de la sustancia.",
+      "Tiempo de exposición.",
+      "Factores colectivos. "
+    ],
+    "answer": "Factores colectivos. "
+  },
+  {
+    "question": "Señale la correcta.",
+    "options": [
+      "Las áreas que queden en contra del viento, se verán afectadas por la nube tóxica y el grado de afectación dependerá del producto, la concentración, la distancia, y el tiempo de exposición.",
+      "Las áreas que queden a favor del viento, se verán afectadas por la nube tóxica y el grado de afectación dependerá del producto, la concentración, la distancia, y el tiempo de exposición. ",
+      "Las áreas que queden en contra del viento, se verán afectadas por la nube tóxica y el grado de afectación dependerá del producto, la distancia, y el tiempo de exposición.",
+      "Las áreas que queden a favor del viento, se verán afectadas por la nube tóxica y el grado de afectación dependerá del producto, la distancia, y el tiempo de exposición."
+    ],
+    "answer": "Las áreas que queden a favor del viento, se verán afectadas por la nube tóxica y el grado de afectación dependerá del producto, la concentración, la distancia, y el tiempo de exposición. "
+  },
+  {
+    "question": "En las intoxicaciones por gases se distinguen dos grupos, gases irritantes y gases no irritantes. Los gases irritantes....",
+    "options": [
+      "Son tóxicos a bajas concentraciones. Se caracterizan por producir extensas y profundas lesiones en las mucosas de la vía aérea. El nivel de lesión dependerá de la intensidad y duración de la exposición, así como del grado de hidrosolubilidad.",
+      "Son tóxicos a bajas concentraciones. Se caracterizan por producir extensas y profundas lesiones en las mucosas de la vía aérea. El nivel de lesión dependerá de la intensidad y duración de la exposición, así como del tamaño de las partículas y grado de hidrosolubilidad. ",
+      "Son tóxicos a altas concentraciones. Se caracterizan por producir extensas y profundas lesiones en las mucosas de la vía aérea. El nivel de lesión dependerá de la intensidad y duración de la exposición, así como del grado de hidrosolubilidad.",
+      "Son tóxicos a altas concentraciones. Se caracterizan por producir extensas y profundas lesiones en las mucosas de la vía aérea. El nivel de lesión dependerá de la intensidad y duración de la exposición, así como del tamaño de las partículas y grado de hidrosolubilidad."
+    ],
+    "answer": "Son tóxicos a bajas concentraciones. Se caracterizan por producir extensas y profundas lesiones en las mucosas de la vía aérea. El nivel de lesión dependerá de la intensidad y duración de la exposición, así como del tamaño de las partículas y grado de hidrosolubilidad. "
+  },
+  {
+    "question": "En cuanto a los gases irritantes, aquellos gases poco hidrosolubles y con partículas pequeñas, producirán el efecto en…",
+    "options": [
+      "En la vía aérea superior.",
+      "En bronquios terminales.",
+      "En alveolos.",
+      "En bronquios terminales y en alveolos. "
+    ],
+    "answer": "En bronquios terminales y en alveolos. "
+  },
+  {
+    "question": "El sulfuro de hidrógeno...",
+    "options": [
+      "Es un gas no irritante.",
+      "Es un gas irritante de acción irritante intensa. ",
+      "Es un gas irritante de acción irritante moderada.",
+      "Es un gas irritante de acción irritante leve."
+    ],
+    "answer": "Es un gas irritante de acción irritante intensa. "
+  },
+  {
+    "question": "Gas irritante incoloro con olor característico a huevos podridos cuando la concentración del mismo en el ambiente es baja. La vía de entrada del tóxico es inhalatoria y cutánea (piel sanA.. Se produce en fosas séptica, cloacas y minas, pero también es de uso industrial (Fabricación de papel, colas,...)",
+    "options": [
+      "Sulfuro de hidrógeno. ",
+      "Fluoruro de hidrógeno.",
+      "Cloruro de hidrógeno.",
+      "Dióxido de azufre."
+    ],
+    "answer": "Sulfuro de hidrógeno. "
+  },
+  {
+    "question": "Los gases de acción irritante severa tienen como síntomas… (Señale la incorrectA.",
+    "options": [
+      "Lagrimeo.",
+      "Efectos locales inmediatos sobre las mucosas de la vía aérea baja. ",
+      "Tos seca irritativa.",
+      "Aumento mucosidad nasal."
+    ],
+    "answer": "Efectos locales inmediatos sobre las mucosas de la vía aérea baja. "
+  },
+  {
+    "question": "La aparición de edema pulmonar con un período de latencia que, a veces es superior a las 24 horas, es síntoma característico de...",
+    "options": [
+      "Gases de acción irritante moderada.",
+      "Gases de acción irritante leve.",
+      "Gases de acción irritante intensa.",
+      "Gases de acción irritante moderada o leve. "
+    ],
+    "answer": "Gases de acción irritante moderada o leve. "
+  },
+  {
+    "question": "El nivel de lesión de los gases irritantes dependerá de...",
+    "options": [
+      "Grado de concentración, tiempo de exposición, tamaño de las partículas y grado de hidrosolubilidad. ",
+      "Grado de concentración, tiempo de exposición, tamaño de las partículas, grado de hidrosolubilidad y los factores individuales.",
+      "El tipo de producto, grado de concentración, tiempo de exposición, distancia.",
+      "El tipo de producto, grado de concentración, tiempo de exposición y los factores individuales."
+    ],
+    "answer": "Grado de concentración, tiempo de exposición, tamaño de las partículas y grado de hidrosolubilidad. "
+  },
+  {
+    "question": "El ácido clorhídrico está dentro de...",
+    "options": [
+      "Gases irritantes de acción irritante intensa. ",
+      "Gases irritantes de acción irritante moderada.",
+      "Gases irritantes de acción irritante leve.",
+      "Gases no irritantes. 13- Los gases irritantes son tóxicos a bajas concentraciones: (AUTOEVALUACIÓN)",
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Gases irritantes de acción irritante intensa. "
+  },
+  {
+    "question": "Toda víctima de incendios, que presente disminución del nivel de consciencia, debe ser considerada víctima traumática. (AUTOEVALUACIÓN)",
+    "options": [
+      "Verdadero ",
+      "Falso"
+    ],
+    "answer": "Verdadero "
+  },
+  {
+    "question": "Gases no irritantes:",
+    "options": [
+      "Sin acción local, se absorben hacia la sangre ejerciendo su efecto a nivel sistémico e interfiriendo en la cadena respiratoria tisular, provocando hipoxia o desplazando el oxígeno del aire expirado.",
+      "Sin acción local, no se absorben hacia la sangre ejerciendo su efecto a nivel sistémico o interfiriendo en la cadena respiratoria tisular, provocando hipoxia o desplazando el oxígeno del aire inspirado.",
+      "Sin acción local, se absorben hacia la sangre ejerciendo su efecto a nivel sistémico o interfiriendo en la cadena respiratoria tisular, provocando hipoxia o desplazando el oxígeno del aire inspirado. ",
+      "Con acción local, se absorben hacia la sangre ejerciendo su efecto a nivel sistémico o interfiriendo en la cadena respiratoria tisular, provocando hipoxia o desplazando el oxígeno del aire inspirado."
+    ],
+    "answer": "Sin acción local, se absorben hacia la sangre ejerciendo su efecto a nivel sistémico o interfiriendo en la cadena respiratoria tisular, provocando hipoxia o desplazando el oxígeno del aire inspirado. "
+  },
+  {
+    "question": "Los gases asfixiantes simples:",
+    "options": [
+      "Gases fisiológicamente inertes (no envenenan), pero con efectos dependientes de la concentración que alcancen en el aire que respira la víctima porque, a mayor concentración, habrá menos oxígeno ( desplazan al oxígeno del aire inspirado). ",
+      "Gases fisiológicamente inertes (envenenan), pero con efectos dependientes de la concentración que alcancen en el aire que respira la víctima porque, a menor concentración, habrá menos oxígeno ( desplazan al oxígeno del aire inspirado).",
+      "Gases fisiológicamente inertes (no envenenan), pero con efectos dependientes de la concentración que alcancen en el aire que respira la víctima porque, a mayor concentración, habrá menos oxígeno ( desplazan al oxígeno del aire expirado).",
+      "Gases fisiológicamente inertes (no envenenan), pero con efectos dependientes de la concentración que alcancen en el aire que respira la víctima porque, a mayor concentración, habrá más oxígeno ( desplazan al oxígeno del aire inspirado)."
+    ],
+    "answer": "Gases fisiológicamente inertes (no envenenan), pero con efectos dependientes de la concentración que alcancen en el aire que respira la víctima porque, a mayor concentración, habrá menos oxígeno ( desplazan al oxígeno del aire inspirado). "
+  },
+  {
+    "question": "Gases asfixiantes celulares:",
+    "options": [
+      "Provocan un síndrome asfixiante por hipoxia.",
+      "Producen déficit de oxígeno en los tejidos.",
+      "Producen alteraciones del SNC y cardiovasculares.",
+      "Todas las anteriores. "
+    ],
+    "answer": "Todas las anteriores. "
+  },
+  {
+    "question": "Gas inodoro e incoloro que se genera durante la combustión incompleta, con poco oxígeno de cualquier combustible con carbono, es:",
+    "options": [
+      "Sulfuro de hidrógeno.",
+      "Monóxido de carbono. ",
+      "Cianuro de hidrógeno.",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Monóxido de carbono. "
+  },
+  {
+    "question": "El cianuro de hidrógeno se produce en condiciones similares a las del:",
+    "options": [
+      "Sulfuro de hidrógeno.",
+      "Cloruro de metileno.",
+      "Metano.",
+      "Monóxido de carbono. "
+    ],
+    "answer": "Monóxido de carbono. "
+  },
+  {
+    "question": "Las personas intoxicadas por CO suelen presentar inicialmente:",
+    "options": [
+      "Mareo.",
+      "Dolor de cabeza.",
+      "Dificultad respiratoria",
+      "Todas las anteriores. "
+    ],
+    "answer": "Todas las anteriores. "
+  },
+  {
+    "question": "Por vía inhalatoria, además de las intoxicaciones por gases, se pueden dar otras producidas por la absorción de:",
+    "options": [
+      "Vapores procedentes de disolventes inorgánicos.",
+      "Monóxido de carbono.",
+      "Vapores procedentes de disolventes orgánicos. ",
+      "Partículas sólidas."
+    ],
+    "answer": "Vapores procedentes de disolventes orgánicos. "
+  },
+  {
+    "question": "¿De cuál de estas opciones NO depende la composición del humo?",
+    "options": [
+      "De los materiales que se estén quemando.",
+      "De las partículas sólidas que lo forman.",
+      "Riqueza de O2 en el ambiente.",
+      "Temperatura de la combustión. "
+    ],
+    "answer": "Temperatura de la combustión. "
+  },
+  {
+    "question": "En caso de inhalación de humos y gases: la PLS solamente se utilizará si hay múltiples víctimas o si es estrictamente necesario",
+    "options": [
+      "Verdadero. ",
+      "Falso."
+    ],
+    "answer": "Verdadero. "
+  },
+  {
+    "question": "La atención inicial de víctimas en casos de inhalación de humos y gases consiste en: (señala la INCORRECTA.",
+    "options": [
+      "Alejar a la víctima de la fuente de envenenamiento.",
+      "Realizar valoración primaria y secundaria.",
+      "Si está en PCR, realizar maniobras de RCP básicas habituales.",
+      "Administrar oxígeno a flujo medio a todos los pacientes. "
+    ],
+    "answer": "Administrar oxígeno a flujo medio a todos los pacientes. "
+  }
+]
+},{
+  "name": "Bomberos",
+  "questions": [
+  {
+    "question": "Indica la respuesta correcta en cuanto al BLEVE.",
+    "options": [
+      "Se trata de una explosión de vapores que se expanden al hervir el líquido.",
+      "Grandes explosiones con bola de fuego.",
+      "En caso de producirse en cisternas, la metralla puede llegar hasta 1 km de distancia.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "¿Cuál de los siguientes productos presenta el mayor índice de inflamabilidad, es decir, es altamente explosivo?",
+    "options": [
+      "Hidrógeno. ",
+      "Monóxido de propano.",
+      "Metano.",
+      "Monóxido de carbono."
+    ],
+    "answer": "Hidrógeno. "
+  },
+  {
+    "question": "¿En cuál de las fases del desarrollo de un incendio ventilado aumenta más la temperatura?",
+    "options": [
+      "Fase de fuego inicial.",
+      "Fase de fuego en desarrollo. ",
+      "Fase de fuego totalmente desarrollado.",
+      "Flashover. (El fuego respira completamente)"
+    ],
+    "answer": "Fase de fuego en desarrollo. "
+  },
+  {
+    "question": "Como norma general la evacuación será aconsejable…",
+    "options": [
+      "En locales de pública concurrencia. ",
+      "En viviendas bifamiliares.",
+      "En edificios de madera, sin riesgo de propagación del incendio por todo eledificio.",
+      "En incendio propagado a otros pisos o con posible riesgo de propagación."
+    ],
+    "answer": "En locales de pública concurrencia. "
+  },
+  {
+    "question": "El orden de evacuación será el siguiente.",
+    "options": [
+      "Primero la planta afectada, segundo la inmediata inferior con caja de escaleras libre de humo, tercero la planta superior, cuarto resto de plantas.",
+      "Primero la planta afectada, segundo la inmediata superior con caja de escaleras libre de humo, tercero la planta inferior, cuarto resto de plantas. ",
+      "Primero planta superior, segundo la planta afectada con caja de escaleras libre de humo. Generalmente así será suficiente.",
+      "Primero la planta superior, segundo la planta afectada con caja de escaleras libre de humo, tercero la planta inferior, cuarto resto de plantas."
+    ],
+    "answer": "Primero la planta afectada, segundo la inmediata superior con caja de escaleras libre de humo, tercero la planta inferior, cuarto resto de plantas. "
+  },
+  {
+    "question": "El gas envasado/embotellado, que principalmente es el butano, tiene un peso....",
+    "options": [
+      "Mayor que el aire, por tanto se eleva sobre el aire.",
+      "Mayor que el aire, por tanto se concentra debajo del aire. ",
+      "Menor que el aire, por tanto se eleva sobre el aire.",
+      "Menor que el aire, por tanto de concentra debajo del aire."
+    ],
+    "answer": "Mayor que el aire, por tanto se concentra debajo del aire. "
+  },
+  {
+    "question": "¿Qué es una atmósfera explosiva?",
+    "options": [
+      "La mezcla con el aire, en condiciones atmosféricas normales, de sustancias inflamables en forma de gases, vapores, nieblas o polvos, en la que tras una ignición, la combustión se propaga a la totalidad de la mezcla no quemada. ",
+      "La mezcla en condiciones atmosféricas normales, de sustancias inflamables en forma de gases, vapores, nieblas o polvos, en la que tras una ignición, la combustión se propaga a la totalidad de la mezcla no quemada.",
+      "La mezcla con el aire, en condiciones atmosféricas normales, de sustancias inflamables en forma de polvos, en la que tras una ignición, la combustión se propaga a la totalidad de la mezcla no quemada.",
+      "La mezcla en condiciones atmosféricas normales, de sustancias inflamables en forma de polvos, en la que tras una ignición, la combustión se propaga a la totalidad de la mezcla no quemada."
+    ],
+    "answer": "La mezcla con el aire, en condiciones atmosféricas normales, de sustancias inflamables en forma de gases, vapores, nieblas o polvos, en la que tras una ignición, la combustión se propaga a la totalidad de la mezcla no quemada. "
+  },
+  {
+    "question": "La gasolina... (Señale la incorrectA.",
+    "options": [
+      "Tiene un punto de inflamación de -38 grados, a partir de esa temperatura comienza a evaporarse. A temperatura ambiente se evapora rápidamente.",
+      "Mezclada con aire forma atmósfera explosiva.",
+      "Los vapores son más pesados que el aire, por lo que inundan zonas bajas aunque el líquido no haya llegado.",
+      "Usar como acelerante solamente gasolina, no mezclar con gasóleo, resulta más seguro. "
+    ],
+    "answer": "Usar como acelerante solamente gasolina, no mezclar con gasóleo, resulta más seguro. "
+  },
+  {
+    "question": "El Ácido Cianhídrico o Cianuro de Hidrógeno...",
+    "options": [
+      "Mata a un humano en cuestión de minutos con una concentración de 300 partes por millón en aire.",
+      "Su toxicidad se debe al ion Cianuro CN, que inhibe la respiración celular.",
+      "Suele producirse por la combustión de productos sintéticos como aluminio, mármol, hongos, etc",
+      "A y B son correctas. "
+    ],
+    "answer": "A y B son correctas. "
+  },
+  {
+    "question": "La zona TEMPLADA en emergencias de bomberos se encontrará...",
+    "options": [
+      "Personal y vehículos de bomberos.",
+      "Delimitada por mandos Bomberos",
+      "Controlada por la policía.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "Ante un incidente químico, los límites de la zona CALIENTE ...",
+    "options": [
+      "Serán marcados y controlados por personal de policía, delimitando un mínimo de 50 metros en dicho incidente.",
+      "Serán marcados y controlados por personal de bomberos, delimitando un mínimo de 50 metros en dicho incidente. ",
+      "Serán marcados y controlados por personal de policía, delimitando un mínimo de 100 metros en dicho incidente.",
+      "Serán marcados y controlados por personal de bomberos, delimitando un mínimo de 100 metros en dicho incidente."
+    ],
+    "answer": "Serán marcados y controlados por personal de bomberos, delimitando un mínimo de 50 metros en dicho incidente. "
+  },
+  {
+    "question": "¿Qué fenómeno puede darse en un incendio que se ha desarrollado en condiciones de ventilación restringida (NO ventilado)?",
+    "options": [
+      "Flashover, deflagración que ocurre cuando aire rico en oxígeno entra en contacto con un incendio en un entorno con bajos niveles de oxígeno, permitiendo la rápida expansión de la llama.",
+      "Backdraft, deflagración que ocurre cuando aire rico en oxígeno entra en contacto con un incendio en un entorno con bajos niveles de oxígeno, permitiendo la rápida expansión de la llama. ",
+      "Flashover, o combustión súbita generalizada. Todas las superficies combustibles que hasta ese momento no estaban implicadas en el incendio, comienzan a arder por la radiación de la combustión de las capas de gases.",
+      "Backdraft. Todas las superficies combustibles que hasta ese momento no estaban implicadas en el incendio, comienzan a arder por la radiación de la combustión de las capas de gases."
+    ],
+    "answer": "Backdraft, deflagración que ocurre cuando aire rico en oxígeno entra en contacto con un incendio en un entorno con bajos niveles de oxígeno, permitiendo la rápida expansión de la llama. "
+  },
+  {
+    "question": "El límite superior de inflamabilidad (LSI) es ...",
+    "options": [
+      "La concentración mínima de gas en el aire por debajo de la cual el fuego no es posible.",
+      "La concentración máxima de gas en el aire por encima de la cual el fuego es posible.",
+      "Todas son correctas.",
+      "Ninguna es correcta. "
+    ],
+    "answer": "Ninguna es correcta. "
+  },
+  {
+    "question": "Si un bombero echa agua en un contenedor de resto de poda sobre que actúa?",
+    "options": [
+      "Comburente.",
+      "Calor.",
+      "Combustible. ",
+      "Todas son correctas."
+    ],
+    "answer": "Combustible. "
+  },
+  {
+    "question": "¿Qué peligros tiene el acetileno?",
+    "options": [
+      "Puede reaccionar por calor, golpe o fricción.",
+      "Es muy inestable, con alto riesgo de explosión.",
+      "Forma una amplia gradación de mezclas explosivas en el aire.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "¿Qué lleva el extintor de CO2?",
+    "options": [
+      "Gas CO2 a presión.(nieve carbónicA. ",
+      "Agua.",
+      "Polvo.",
+      "Gas CO2 y agua."
+    ],
+    "answer": "Gas CO2 a presión.(nieve carbónicA. "
+  },
+  {
+    "question": "¿Qué peligros tiene la gasolina?",
+    "options": [
+      "Emite gases que pueden ser inflamables a temperatura ambiente. (Se evapora rápidamente) ",
+      "Los gases inundan las zonas altas.",
+      "En caso de derrame no se formará una atmósfera explosiva.",
+      "Todas incorrectas."
+    ],
+    "answer": "Emite gases que pueden ser inflamables a temperatura ambiente. (Se evapora rápidamente) "
+  },
+  {
+    "question": "En caso de darse un incendio en un baserri, lo más recomendable sería…",
+    "options": [
+      "Evacuar. ",
+      "Confinar.",
+      "Dependerá del lugar donde se aloje el fuego.",
+      "Evacuar si la escalera se encuentra libre de humo."
+    ],
+    "answer": "Evacuar. "
+  },
+  {
+    "question": "En caso de darse un incendio en un centro comercial, lo más recomendable sería…",
+    "options": [
+      "Evacuar. ",
+      "Confinar.",
+      "Dependerá del lugar donde se aloje el fuego.",
+      "Evacuar si la escalera se encuentra libre de humo."
+    ],
+    "answer": "Evacuar. "
+  }
+]
+},    {
+        "name": "Modulo 5 2020",
+        "questions": [
+            {
+        'question': 'Si una persona que está diagnosticada de enfermedad coronaria, presenta dolor torácico opresivo en el pecho de más de 5 minutos de duración, lo más correcto sería:',
+        'options': [
+            'Ayudarle, si precisa, en la administración de nitroglicerina sublingual en intervalos de 15 minutos.',
+            'Darle ácido acetil salicílico, aunque tenga una úlcera gástrica.',
+            'Controlar signos vitales y, si se queda inconsciente, valorar la respiración. ',
+            'Taparle para evitar hipotermia',
+        ],
+        'answer': 'Controlar signos vitales y, si se queda inconsciente, valorar la respiración. ',
+    },
+    {
+        'question': 'Indique cuál de los siguientes signos de alarma NO se da en un ataque cerebral:',
+        'options': [
+            'Pérdida de sensibilidad, parcial o completa en medio cuerpo.',
+            'Dolor de cabeza muy intenso, que comienza lentamente. ',
+            'Pérdida de memoria',
+            'Afectación del nivel de consciencia.',
+        ],
+        'answer': 'Dolor de cabeza muy intenso, que comienza lentamente. ',
+    },
+    {
+        'question': 'Una mujer de 55 años presenta súbitamente dolor torácico retroesternal mientras trabaja. No tiene antecedentes conocidos de enfermedad coronaria. ¿Cuándo debemos activar la cadena de supervivencia y llamar al 112?',
+        'options': [
+            'Si el dolor no cede en unas pocas horas',
+            'En el momento que comienza el dolor',
+            'Si el dolor no cede después de 5 minutos de reposo ',
+            'Después de administrar nitroglicerina sublingual',
+        ],
+        'answer': 'Si el dolor no cede después de 5 minutos de reposo ',
+    },
+    {
+        'question': 'En una PCR y en ausencia de DESA, las compresiones torácicas aumentan la supervivencia. ¿Cuándo son efectivas en el adulto?:',
+        'options': [
+            'Si se dan a una frecuencia de 100-120/min y hasta una profundidad menor a 5 cm.',
+            'Si después de cada compresión, se permite la reexpansión completa del tórax. ',
+            'Si se presiona sobre la parte alta del abdomen o la parte final del esternón.',
+            'Todas las anteriores',
+        ],
+        'answer': 'Si después de cada compresión, se permite la reexpansión completa del tórax. ',
+    },
+    {
+        'question': 'Sobre los electrodos del DESA:',
+        'options': [
+            'Uno se coloca encima de la clavícula derecha y, el otro, debajo del esternón.',
+            'Uno se coloca debajo de la clavícula derecha y, el otro, justo debajo del pezón izquierdo.',
+            'Antes de colocar los electrodos, hay que secar el tórax. ',
+            'En los niños de 5 años, se colocan los del adulto.',
+        ],
+        'answer': 'Antes de colocar los electrodos, hay que secar el tórax. ',
+    },
+    {
+        'question': 'En una parada por fibrilación ventricular y tras aplicar la primera descarga, el DEA reanaliza el ritmo y NO recomienda dar una descarga, mientras la víctima reinicia la respiración espontánea. ¿Cuál es el siguiente paso?',
+        'options': [
+            'Continuar sólo con compresiones torácicas',
+            'Continuar 30/2 durante dos minutos más',
+            'Continuar con ventilaciones solo',
+            'Suspender toda maniobra y colocarle en posición lateral de seguridad ',
+        ],
+        'answer': 'Suspender toda maniobra y colocarle en posición lateral de seguridad ',
+    },
+    {
+        'question': '¿Cuál de los siguientes factores NO indica gravedad en una herida?',
+        'options': [
+            'Dolor',
+            'Profundidad',
+            'Rubor ',
+            'Inflamación',
+        ],
+        'answer': 'Dolor',
+    },
+    {
+        'question': '¿Qué debemos sospechar ante una herida de bala en abdomen o tórax?',
+        'options': [
+            'Presencia de orificio de salida',
+            'Lesión en órganos vitales',
+            'Lesión en columna vertebral',
+            'b y c son correctas ',
+        ],
+        'answer': 'b y c son correctas ',
+    },
+    {
+        'question': 'Es conveniente realizar el control de las hemorragias con el herido:',
+        'options': [
+            'De pie',
+            'Tumbado ',
+            'Sentado',
+            'En cuclillas.',
+        ],
+        'answer': 'Tumbado ',
+    },
+    {
+        'question': 'Los apósitos hemostáticos:',
+        'options': [
+            'Deben estar en contacto con toda la superficie de la herida ',
+            'Se utilizan sólo en quirófano.',
+            'Se colocan encima de la herida y luego se sujetan con esparadrapo.',
+            'No es necesario presionar, ya que el control de la hemorragia es inmediato.',
+        ],
+        'answer': 'Deben estar en contacto con toda la superficie de la herida ',
+    },
+    {
+        'question': 'Torniquete:',
+        'options': [
+            'No se utiliza, pues provoca muchas complicaciones.',
+            'Se debe valorar riesgo/beneficio y la supervivencia frente a la pérdida del miembro.',
+            'El diseño del torniquete no es importante.',
+            'El plazo de tiempo considerado seguro para utilizar el torniquete es de 150 minutos. ',
+        ],
+        'answer': 'El plazo de tiempo considerado seguro para utilizar el torniquete es de 150 minutos. ',
+    },
+    {
+        'question': 'EI SHOCK por vasodilatación o secuestro, se produce por:',
+        'options': [
+            'Fallo del corazón.',
+            'Quemaduras extensas.',
+            'Por infección generalizada. ',
+            'Ninguna es correcta',
+        ],
+        'answer': 'Por infección generalizada. ',
+    },
+    {
+        'question': 'En el agotamiento por calor:',
+        'options': [
+            'Hay palidez y sensación de frio ',
+            'La temperatura es elevada, más de 40°C.',
+            'Se pueden dar convulsiones o coma',
+            'La sudoración está ausente.',
+        ],
+        'answer': 'Hay palidez y sensación de frio ',
+    },
+    {
+        'question': 'Ante una quemadura de 2º grado:',
+        'options': [
+            'Abrir las ampollas.',
+            'No cubrir la zona para evitar adherencias.',
+            'Todo es cierto.',
+            'Enfriar la zona ',
+        ],
+        'answer': 'Enfriar la zona ',
+    },
+    {
+        'question': 'Si una picadura produce shock alérgico, se realizará lo siguiente:',
+        'options': [
+            'Hacerle chupar hielo durante el traslado al hospital',
+            'Colocarle en posición anti-shock si vomita o se ahoga.',
+            'Valorar si presenta dificultad respiratoria o se queda inconsciente. ',
+            'Ayudarle en la administración de adrenalina auto inyectable hasta un máximo de 5 dosis.',
+        ],
+        'answer': 'Valorar si presenta dificultad respiratoria o se queda inconsciente. ',
+    },
+    {
+        'question': 'Para la correcta inmovilización del antebrazo (cúbito y radio), ¿Qué partes debe inmovilizar la férula?',
+        'options': [
+            'La zona de la fractura y el codo',
+            'La zona de la fractura, únicamente',
+            'La zona de la fractura y la muñeca',
+            'La zona de la fractura, muñeca y codo. ',
+        ],
+        'answer': 'La zona de la fractura, muñeca y codo. ',
+    },
+    {
+        'question': 'Ante una fractura es necesario valorar:',
+        'options': [
+            'Temperatura',
+            'Coloración de la piel',
+            'Sensibilidad y movilidad',
+            'Todas son correctas ',
+        ],
+        'answer': 'Todas son correctas ',
+    },
+    {
+        'question': '¿Cuál es la secuencia CORRECTA en la valoración primaria de la víctima politraumatizada que no responde a estímulos?',
+        'options': [
+            'Colocar collarín cervical-Valorar dificultad respiratoria-Valorar signos de shock',
+            'Abrir vía aérea-Valorar dificultad respiratoria-Colocar collarín cervical ',
+            'Colocar collarín cervical-Valorar signos de shock-Colocar mascarilla de oxígeno',
+            'Abrir vía aérea -Colocar collarín cervical-Comprobar heridas abiertas de tórax',
+        ],
+        'answer': 'Abrir vía aérea-Valorar dificultad respiratoria-Colocar collarín cervical ',
+    },
+    {
+        'question': 'Ante un herido que está tendido en el suelo boca abajo, sin hemorragia visible y que no responde estímulos lo primero que haremos es:',
+        'options': [
+            'Colocarle un tubo de Guedel',
+            'Valorar si respira ',
+            'Ponerle en posición RCP',
+            'Colocarle en posición lateral de seguridad',
+        ],
+        'answer': 'Valorar si respira ',
+    },
+    {
+        'question': 'El sistema AVDNR:',
+        'options': [
+            'Es un sistema de seguridad especial para proteger a los niños en los accidentes de coche.',
+            'Es un apósito hemostático',
+            'Son correas de sujeción para el tablero espinal',
+            'Sirve para valorar el nivel de consciencia. ',
+        ],
+        'answer': 'Sirve para valorar el nivel de consciencia. ',
+    },
+    {
+        'question': '¿Cuál de los siguientes parámetros NO pertenece a la valoración secundaria?',
+        'options': [
+            'Valoración de frecuencia respiratoria ',
+            'Interrogatorio OPUMA',
+            'Exploración de tórax',
+            'Valoración del relleno capilar',
+        ],
+        'answer': 'Valoración de frecuencia respiratoria ',
+    },
+    {
+        'question': 'En qué situación utilizaremos la maniobra de RAUTEC:',
+        'options': [
+            'Presencia de mercancías peligrosas, valorando riesgo/beneficio. ',
+            'Siempre que la víctima este inconsciente, pero respire.',
+            'En caso de vómito, para evitar broncoaspiracion.',
+            'Si la victima sangra por la nariz.',
+        ],
+        'answer': 'Presencia de mercancías peligrosas, valorando riesgo/beneficio. ',
+    },
+    {
+        'question': '¿Cuál es la respuesta CORRECTA con respecto a la colocación del collarín cervical?',
+        'options': [
+            'La cabeza de la víctima debe estar ladeada.',
+            'Para la medición, se colocan los dedos de nuestra mano entre la clavícula y la oreja del accidentado.',
+            'El cierre excesivo del collarín provoca incomodidad y dificultad respiratoria. ',
+            'Tras colocar el collarín, no es necesario seguir sujetando la cabeza',
+        ],
+        'answer': 'El cierre excesivo del collarín provoca incomodidad y dificultad respiratoria. ',
+    },
+    {
+        'question': 'El área de socorro:',
+        'options': [
+            'Es el área más segura',
+            'Debe estar próxima a la zona del accidente ',
+            'Nunca habrá sanitarios en ella',
+            'Posee las infraestructuras materiales necesarias',
+        ],
+        'answer': 'Debe estar próxima a la zona del accidente ',
+    },
+    {
+        'question': 'En un adulto que sufre convulsiones generalizadas, señale cuál de las siguientes afirmaciones es falsa:',
+        'options': [
+            'Se produce pérdida súbita del nivel de consciencia.',
+            'Se puede producir hipersalivación',
+            'Siempre hay publico delante ',
+            'Puede haber relajación de esfinteres.',
+        ],
+        'answer': 'Siempre hay publico delante ',
+    },
+    {
+        'question': 'Entre los factores desencadenantes de una crisis epiléptica, no se encuentra:',
+        'options': [
+            'Fiebre',
+            'Falta de sueño',
+            'Reposo ',
+            'Estrés',
+        ],
+        'answer': 'Reposo ',
+    },
+    {
+        'question': 'No es causa de hipoglucemia:',
+        'options': [
+            'Demasiada insulina',
+            'Comer menos',
+            'Hacer poco ejercicio. ',
+            'Ingerir medicamentos incompatibles.',
+        ],
+        'answer': 'Hacer poco ejercicio. ',
+    },
+    {
+        'question': 'Un diabético que presenta un nivel de azúcar en sangre de 300, los signos que se pueden observar son:',
+        'options': [
+            'Hambre aguda.',
+            'Nerviosismo.',
+            'Piel caliente y seca ',
+            'Debilidad y temblor.',
+        ],
+        'answer': 'Piel caliente y seca ',
+    },
+    {
+        'question': 'Ante una persona que tiene nivel conciencia disminuido, respira lentamente, tiene signos de pinchazos en los brazos y las pupilas tienen un tamaño muy reducido, se sospechara una intoxicación grave por:',
+        'options': [
+            'Marihuana',
+            'LSD',
+            'Cocaína',
+            'Heroína ',
+        ],
+        'answer': 'Heroína ',
+    },
+    {
+        'question': 'Ante una persona que sufre un coma etílico, la asistencia consistirá en:',
+        'options': [
+            'Provocar el vómito dándole de beber agua con sal.',
+            'Desnudarle si empieza a sudar',
+            'Llamar al 112 y colocarle en posición lateral de seguridad. ',
+            'Sumergir la cabeza en agua fría.',
+        ],
+        'answer': 'Llamar al 112 y colocarle en posición lateral de seguridad. ',
+    },
+    {
+        'question': 'En las caídas de personas mayores, ¿Cuál de las siguientes NO se considera consecuencia de una caída?',
+        'options': [
+            'Hipotermia',
+            'Úlcera por presión',
+            'Trombosis venosa profunda',
+            'Congelación ',
+        ],
+        'answer': 'Congelación ',
+    },
+    {
+        'question': '¿Cuál de las siguientes etiquetas corresponde a un peróxido orgánico?',
+        'options': [
+            'Llama negra o blanca sobre fondo rojo',
+            'Llama negra o blanca sobre fondo blanco teniendo el triángulo inferior color rojo.',
+            'Llama negra o blanca sobre fondo rojo teniendo el triángulo inferior color amarillo ',
+            'Triangulo superior a rayas negras/blancas y el triángulo inferior blanco',
+        ],
+        'answer': 'Llama negra o blanca sobre fondo rojo teniendo el triángulo inferior color amarillo ',
+    },
+    {
+        'question': 'Una materia que en contacto con el agua desprende gases inflamables corresponde a:',
+        'options': [
+            'Subclase 5.2',
+            'Subclase 4.2',
+            'Subclase 3.2',
+            'Subclase 4.3',
+        ],
+        'answer': 'Subclase 4.3',
+    },
+    {
+        'question': 'Un panel naranja con código de peligro X338 indica:',
+        'options': [
+            'Materia muy tóxica que reacciona peligrosamente con el agua',
+            'Líquido inflamable y tóxico que reacciona peligrosamente con el agua',
+            'Materia líquida muy inflamable y corrosiva que reacciona peligrosamente con el agua ',
+            'Materia liquida corrosiva que reacciona peligrosamente con agua desprendiendo gases inflamables.',
+        ],
+        'answer': 'Materia líquida muy inflamable y corrosiva que reacciona peligrosamente con el agua ',
+    },
+    {
+        'question': 'Un transporte de mercancías peligrosas sufre un accidente. Como consecuencia, la cisterna sufre desperfectos, no observándose fugas ni derrames. ¿Qué tipo de emergencia será?',
+        'options': [
+            'TPC-1.',
+            'TPC-2 ',
+            'TPC-3.',
+            'TPC-4.',
+        ],
+        'answer': 'TPC-2 ',
+    },
+    {
+        'question': '¿Cuál de estos gases tiene un olor característico a almendras amargas?',
+        'options': [
+            'Amoniaco',
+            'Ácido cianhídrico ',
+            'Fluoruro de hidrógeno',
+            'Cloruro de metileno',
+        ],
+        'answer': 'Ácido cianhídrico ',
+    },
+    {
+        'question': 'La higiene de manos:',
+        'options': [
+            'Se realiza preferiblemente con una pastilla de jabón',
+            'El uso de guantes sustituye a la higiene de manos',
+            'Se debe realizar antes del contacto con fluidos corporales',
+            'Después del contacto con fluidos corporales, detenido y entorno del detenido. ',
+        ],
+        'answer': 'Después del contacto con fluidos corporales, detenido y entorno del detenido. ',
+    },
+    {
+        'question': 'En un incendio de fardos de paja, cuando se retiran los fardos que aún no han ardido, ¿sobre qué lado del tetraedro del fuego se está actuando?',
+        'options': [
+            'El combustible',
+            'El comburente',
+            'El calor',
+            'La reacción en cadena ',
+        ],
+        'answer': 'La reacción en cadena ',
+    },
+    {
+        'question': 'Un incendio ventilado está limitado por',
+        'options': [
+            'El combustible ',
+            'El comburente',
+            'Ninguno de los componentes actúa como limitante del incendio',
+            'La reacción en cadena',
+        ],
+        'answer': 'El combustible ',
+    },
+    {
+        'question': '¿Para qué se utiliza el acetileno?',
+        'options': [
+            'Corte',
+            'Soldadura',
+            'A y B son correctas ',
+            'Ninguna de las anteriores',
+        ],
+        'answer': 'A y B son correctas ',
+    },
+    {
+        'question': '¿Qué es la mezcla ideal?',
+        'options': [
+            'La concentración de combustible/comburente en la que la reacción tiene su máxima intensidad. ',
+            'El porcentaje mínimo de vapores combustibles a partir del cual se produce la combustión',
+            'El porcentaje máximo de vapores combustibles a partir del cual no puede producirse la combustión',
+            'Un volumen formado por un 50% de vapores combustibles y 50% comburente.',
+        ],
+        'answer': 'La concentración de combustible/comburente en la que la reacción tiene su máxima intensidad. ',
+    },
+    {
+        'question': 'Una freidora con aceite que se incendia, produce un fuego de clase:',
+        'options': [
+            '"A"',
+            '"C"',
+            '"G"',
+            '"F" ',
+        ],
+        'answer': '"F" ',
+    },
+    {
+        'question': '¿Cuál de las tres formas convencionales de transmisión del calor es la que transmite más calor en un incendio a los elementos que quedan por encima?',
+        'options': [
+            'Conducción',
+            'Convección ',
+            'Radiación',
+            'Inducción.',
+        ],
+        'answer': 'Convección ',
+    },
+    {
+        'question': 'Las estructuras de hormigón armado:',
+        'options': [
+            'Tienen una reacción al fuego buena y una resistencia al fuego mala.',
+            'Tienen una reacción al fuego buena y una resistencia al fuego buena.',
+            'Tienen una reacción al fuego mala y una resistencia al fuego buena.',
+            'Tienen una reacción al fuego mala y una resistencia al fuego mala.',
+        ],
+        'answer': 'Tienen una reacción al fuego buena y una resistencia al fuego buena.',
+    },
+    {
+        'question': 'Las primeras acciones a realizar por la Policía al llegar a un incendio son:',
+        'options': [
+            'Dejar el vehículo correctamente sin obstaculizar la llegada de los bomberos',
+            'Confirmar el incidente.',
+            'Habilitar vías de entrada y salida',
+            'Todas son correctas ',
+        ],
+        'answer': 'Todas son correctas ',
+    },
+    {
+        'question': 'En una bombona de gas propano sometida a un incendio',
+        'options': [
+            'Es más peligroso que el fuego incida en la zona de fase líquida',
+            'Es más peligroso que el fuego incida en zona de fase gas ',
+            'Es indiferente que fuego indica en la zona de fase líquida o zona de fase gas',
+            'La bombona explotará, en cualquier caso',
+        ],
+        'answer': 'Es más peligroso que el fuego incida en zona de fase gas ',
+    },
+    {
+        'question': 'En un incendio, la Policía, sanitarios... etc. deben estar en la',
+        'options': [
+            'Zona caliente',
+            'Zona templada',
+            'Zona de exclusión',
+            'Zona fría ',
+        ],
+        'answer': 'Zona fría ',
+    },
+    {
+        'question': 'Si al llegar a un incendio en un edificio de viviendas encontramos a un vecino que ha salido del edificio',
+        'options': [
+            'Intentaremos que nos proporcione la mayor información posible y lo mantendremos bajo control en todo momento ',
+            'Le apartaremos de la escena para que no nos moleste',
+            'Le pediremos que avise a sus vecinos para que evacuen el edificio.',
+            'La información que pueda darnos carece de valor.',
+        ],
+        'answer': 'Intentaremos que nos proporcione la mayor información posible y lo mantendremos bajo control en todo momento ',
+    },
+    {
+        'question': 'En un incendio en un edificio de hormigón con la escalera inundada de humo',
+        'options': [
+            'La puerta de acceso a una vivienda en una planta superior a la del incendio detendrá la propagación del fuego el tiempo suficiente hasta la llegada de los bomberos. ',
+            'La puerta de acceso a una vivienda en una planta superior a la del incendio NO podrá detener la propagación del fuego el tiempo suficiente hasta la llegada de los bomberos.',
+            'En cualquier caso, será más seguro salir a la escalera agachado que quedarse en el edificio',
+            'Dejaremos la puerta de la vivienda abierta para que los bomberos puedan entrar a recatarnos.',
+        ],
+        'answer': 'La puerta de acceso a una vivienda en una planta superior a la del incendio detendrá la propagación del fuego el tiempo suficiente hasta la llegada de los bomberos. ',
+    },
+    {
+        'question': 'La temperatura de ignición:',
+        'options': [
+            'Es igual para todos los productos combustibles.',
+            'Es diferente para todos los productos combustibles, pero no determina su peligrosidad.',
+            'Cuanto más alta sea la temperatura de ignición más peligroso es el producto.',
+            'Cuanto más baja sea la temperatura de ignición más peligroso es el producto. ',
+        ],
+        'answer': 'Cuanto más baja sea la temperatura de ignición más peligroso es el producto. ',
+    },
+    {
+        'question': 'El tipo de síncope más frecuente es el:',
+        'options': [
+            'Ortostático',
+            'Del seno carotídeo',
+            'Cardiogénico',
+            'Vasovagal ',
+        ],
+        'answer': 'Vasovagal ',
+    },
+    {
+        'question': 'Para poder usar una Boca de Incendio Equipada que sea de manguera plana:',
+        'options': [
+            'La manguera se debe desenrollar completamente antes de abrir la válvula ',
+            'Son de uso exclusivo para los bomberos.',
+            'Siempre tienen tapa de cristal por lo que hay que tener cuidado de no cortarse al abrirla.',
+            'La válvula sólo se debe girar un cuarto de vuelta para que el caudal sea eficaz',
+        ],
+        'answer': 'La manguera se debe desenrollar completamente antes de abrir la válvula ',
+    },
+        ]
+    },
+    ]
+
+// Variables
+let theme=null,index=0,correct=0,incorrect=0,startTime=Date.now(),answers=[],timerInterval;
+let mode = "study"; // Valor por defecto
+
+// DOM
+const themeTitle=document.getElementById("themeTitle");
+const questionText=document.getElementById("questionText");
+const optionsDiv=document.getElementById("options");
+const nextBtn=document.getElementById("nextBtn");
+const prevBtn=document.getElementById("prevBtn");
+const backBtn=document.getElementById("backBtn");
+const progress=document.getElementById("progress");
+const timer=document.getElementById("timer");
+const quizCard=document.getElementById("quizCard");
+const finalScreen=document.getElementById("finalScreen");
+const lastFailsScreen=document.getElementById("lastFailsScreen");
+const summary=document.getElementById("summary");
+const finalTime=document.getElementById("finalTime");
+const finalNote=document.getElementById("finalNote");
+const finalTheme=document.getElementById("finalTheme");
+const lastFailsTheme=document.getElementById("lastFailsTheme");
+const failedContainer=document.getElementById("failedContainer");
+const lastFailsContainer=document.getElementById("lastFailsContainer");
+const resumeDialog=document.getElementById("resumeDialog");
+const continueBtn=document.getElementById("continueBtn");
+const newBtn=document.getElementById("newBtn");
+const testSelection=document.getElementById("testSelection");
+const testButtonsDiv=document.getElementById("testButtons");
+const modeIndicator=document.getElementById("modeIndicator");
+const studyNoteContainer=document.getElementById("studyNoteContainer");
+const confirmDialog=document.getElementById("confirmDialog");
+const confirmExitBtn=document.getElementById("confirmExitBtn");
+const cancelExitBtn=document.getElementById("cancelExitBtn");
+
+// Nuevos elementos para los interruptores
+const studyExamToggle = document.getElementById("studyExamToggle");
+const studyExamLabel = document.getElementById("studyExamLabel");
+const darkModeToggle = document.getElementById("darkModeToggle");
+const darkModeLabel = document.getElementById("darkModeLabel");
+
+// Funciones para el toggle de modo estudio/examen
+function toggleStudyExamMode() {
+    if (mode === "study") {
+        setMode("exam");
+    } else {
+        setMode("study");
+    }
+}
+
+function setMode(newMode) {
+    mode = newMode;
+    
+    // Guardar el modo seleccionado en localStorage
+    localStorage.setItem("testMode", mode);
+    
+    // Actualizar interruptor estudio/examen visualmente
+    if (mode === "exam") {
+        studyExamToggle.className = "mode-toggle exam-mode";
+        studyExamLabel.textContent = "Modo Examen";
+        modeIndicator.textContent = "Modo: Examen - Solo verás las respuestas al final";
+        modeIndicator.className = "current-mode-indicator exam";
+    } else {
+        studyExamToggle.className = "mode-toggle study-mode";
+        studyExamLabel.textContent = "Modo Estudio";
+        modeIndicator.textContent = "Modo: Estudio - Verás las respuestas inmediatamente";
+        modeIndicator.className = "current-mode-indicator study";
+    }
+    
+    // Reconstruir los botones de test
+    buildTestButtons();
+}
+
+// Cargar el modo guardado del localStorage al iniciar
+function loadSavedMode() {
+    const savedMode = localStorage.getItem("testMode");
+    if (savedMode === "study" || savedMode === "exam") {
+        setMode(savedMode);
+    } else {
+        setMode("study"); // Valor por defecto si no hay nada guardado
+    }
+}
+
+// Funciones para el modo oscuro
+function initDarkMode() {
+    // Cargar preferencia de modo oscuro
+    const darkMode = localStorage.getItem("darkMode") === "true";
+    
+    if (darkMode) {
+        enableDarkMode();
+    } else {
+        disableDarkMode();
+    }
+    
+    // Configurar eventos para los interruptores
+    studyExamToggle.addEventListener("click", toggleStudyExamMode);
+    darkModeToggle.addEventListener("click", toggleDarkMode);
+    
+    // También permitir arrastre como el otro toggle
+    setupToggleDrag(studyExamToggle, toggleStudyExamMode);
+    setupToggleDrag(darkModeToggle, toggleDarkMode);
+}
+
+function toggleDarkMode() {
+    if (document.body.classList.contains("dark-mode")) {
+        disableDarkMode();
+    } else {
+        enableDarkMode();
+    }
+}
+
+function enableDarkMode() {
+    document.body.classList.add("dark-mode");
+    darkModeToggle.className = "mode-toggle dark-mode";
+    darkModeLabel.textContent = "Modo Oscuro";
+    localStorage.setItem("darkMode", "true");
+}
+
+function disableDarkMode() {
+    document.body.classList.remove("dark-mode");
+    darkModeToggle.className = "mode-toggle light-mode";
+    darkModeLabel.textContent = "Modo Claro";
+    localStorage.setItem("darkMode", "false");
+}
+
+// Función genérica para arrastre en toggles
+function setupToggleDrag(toggleElement, toggleFunction) {
+    let dragStart = 0;
+    let isDragging = false;
+    
+    toggleElement.addEventListener('touchstart', (e) => {
+        dragStart = e.touches[0].clientX;
+        isDragging = true;
+        e.preventDefault();
+    }, {passive: false});
+    
+    toggleElement.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+    }, {passive: false});
+    
+    toggleElement.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        
+        const dragEnd = e.changedTouches[0].clientX;
+        const deltaX = dragEnd - dragStart;
+        
+        // Si se arrastra horizontalmente más de 20px, cambiar modo
+        if (Math.abs(deltaX) > 20) {
+            toggleFunction();
+        }
+        
+        isDragging = false;
+        e.preventDefault();
+    }, {passive: false});
+    
+    // Para mouse
+    toggleElement.addEventListener('mousedown', (e) => {
+        dragStart = e.clientX;
+        isDragging = true;
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mouseup', (e) => {
+        if (!isDragging) return;
+        
+        const dragEnd = e.clientX;
+        const deltaX = dragEnd - dragStart;
+        
+        // Si se arrastra horizontalmente más de 20px, cambiar modo
+        if (Math.abs(deltaX) > 20) {
+            toggleFunction();
+        }
+        
+        isDragging = false;
+        e.preventDefault();
+    });
+}
+
+// Funciones
+function getTestStateKey(){ return "testState_" + theme.name + "_" + mode; }
+
+function buildTestButtons(){
+    testButtonsDiv.innerHTML="";
+    const scores=JSON.parse(localStorage.getItem("moduleScores"))||{};
+    themes.forEach((t,i)=>{
+        const btn=document.createElement("button"); 
+        btn.textContent=t.name;
+
+        const saved = localStorage.getItem("testState_" + t.name + "_" + mode);
+        if(saved){ btn.textContent += " 💾"; }
+
+        btn.onclick=()=>startSelectedTest(i); 
+        testButtonsDiv.appendChild(btn);
+
+        const s=scores[t.name]?.[mode];
+        if(s?.ultimaNota!==undefined && s?.mejorNota!==undefined){
+            const scoreDiv=document.createElement("div");
+            const clase=s.ultimaNota<5?"low":s.ultimaNota<8?"mid":"high";
+            scoreDiv.className=`saved-module ${clase}`; 
+            scoreDiv.id=`score-${i}`;
+            scoreDiv.innerHTML=`<p>Última nota: ${s.ultimaNota}/10</p>
+                                  <p>Mejor nota: ${s.mejorNota}/10</p>`;
+            const answersList=s.answers||[];
+            const failed=answersList.filter(a=>!a.selected || a.selected!==a.correct);
+            if(failed.length>0){
+                const failBtn=document.createElement("button"); 
+                failBtn.textContent="Últimos fallos";
+                failBtn.style.marginTop="6px"; 
+                failBtn.className = "cuart";
+                failBtn.onclick=()=>showLastFails(t.name);
+                scoreDiv.appendChild(failBtn);
+            }
+            testButtonsDiv.appendChild(scoreDiv);
+        }
+    });
+}
+
+function startSelectedTest(i){ 
+    theme=themes[i]; 
+    testSelection.style.display="none"; 
+    initTest(false);
+}
+
+function goToIndex(){ 
+    window.location.href="../index.html";
+}
+
+function backToSelection(){ 
+    clearInterval(timerInterval); 
+    quizCard.style.display="none"; 
+    finalScreen.style.display="none"; 
+    lastFailsScreen.style.display="none"; 
+    buildTestButtons(); 
+    testSelection.style.display="block";
+}
+
+function showExitConfirmation() {
+    confirmDialog.style.display = "flex";
+}
+
+function initTest(loadSaved=false){
+    if(!theme){ 
+        buildTestButtons(); 
+        testSelection.style.display="block"; 
+        quizCard.style.display="none"; 
+        finalScreen.style.display="none"; 
+        return;
+    }
+    
+    const saved = localStorage.getItem(getTestStateKey());
+    if(!loadSaved && saved){ 
+        resumeDialog.style.display="flex"; 
+        quizCard.style.display="none"; 
+        finalScreen.style.display="none"; 
+        return;
+    }
+    
+    resumeDialog.style.display="none"; 
+    quizCard.style.display="block"; 
+    finalScreen.style.display="none"; 
+    lastFailsScreen.style.display="none";
+    
+    if(loadSaved && saved){ 
+        const state=JSON.parse(saved); 
+        index=state.index; 
+        correct=state.correct; 
+        incorrect=state.incorrect; 
+        startTime=state.startTime; 
+        answers=state.answers; 
+        // Recalcular correct e incorrect basado en las respuestas guardadas
+        recalculateCounts();
+    } else{ 
+        index=0; 
+        correct=0; 
+        incorrect=0; 
+        startTime=Date.now(); 
+        answers=[]; 
+        localStorage.removeItem(getTestStateKey()); 
+    }
+    
+    themeTitle.textContent=theme.name; 
+    clearInterval(timerInterval); 
+    timerInterval=setInterval(updateTimer,1000); 
+    loadQuestion();
+}
+
+function recalculateCounts() {
+    correct = 0;
+    incorrect = 0;
+    answers.forEach((answer, idx) => {
+        if (answer && answer.selected) {
+            if (answer.selected === answer.correct) {
+                correct++;
+            } else {
+                incorrect++;
+            }
+        }
+    });
+}
+
+function loadQuestion() {
+    const q = theme.questions[index];
+    questionText.textContent = q.question;
+    optionsDiv.innerHTML = "";
+    progress.textContent = `Pregunta ${index+1}/${theme.questions.length}`;
+
+    q.options.forEach(opt => {
+        const label = document.createElement("label");
+        label.textContent = opt;
+
+        // Si ya habías respondido
+        if (answers[index] && answers[index].selected === opt) {
+            label.classList.add("selected");
+            
+            // En modo estudio, mostrar si la respuesta seleccionada es correcta o incorrecta
+            if (mode === "study") {
+                if (opt === q.answer) {
+                    label.classList.add("option-correct");
+                } else {
+                    label.classList.add("option-wrong");
+                    // Mostrar también la respuesta correcta
+                    document.querySelectorAll(".options label").forEach(l => {
+                        if (l.textContent === q.answer) l.classList.add("option-correct");
+                    });
+                }
+            }
+        }
+
+        label.addEventListener("click", () => {
+            // Quitar seleccionadas
+            document.querySelectorAll(".options label").forEach(l => {
+                l.classList.remove("selected", "option-correct", "option-wrong");
+            });
+            label.classList.add("selected");
+
+            // Guardar respuesta
+            const previousAnswer = answers[index];
+            const wasCorrect = previousAnswer && previousAnswer.selected === previousAnswer?.correct;
+            
+            // Si ya había una respuesta anterior, quitar su conteo
+            if (previousAnswer && previousAnswer.selected) {
+                if (wasCorrect) {
+                    correct--;
+                } else if (previousAnswer.selected) {
+                    incorrect--;
+                }
+            }
+
+            answers[index] = {
+                question: q.question,
+                options: q.options,
+                correct: q.answer,
+                selected: opt,
+                number: index + 1
+            };
+
+            // Contar correctas/incorrectas
+            if (opt === q.answer) {
+                correct++;
+            } else {
+                incorrect++;
+            }
+
+            // En modo estudio, mostrar inmediatamente si es correcta o incorrecta
+            if (mode === "study") {
+                document.querySelectorAll(".options label").forEach(l => {
+                    if (l.textContent === q.answer) l.classList.add("option-correct");
+                    if (l.textContent === opt && opt !== q.answer) l.classList.add("option-wrong");
+                });
+                
+                // Actualizar nota en tiempo real con penalización
+                const correctCount = answers.filter(a => a && a.selected === a.correct).length;
+                const incorrectCount = answers.filter(a => a && a.selected && a.selected !== a.correct).length;
+                const rawScore = correctCount - (incorrectCount/3);
+                const notaActual = Math.max(0, (rawScore / theme.questions.length) * 10).toFixed(1);
+            }
+
+            saveProgress();
+        });
+
+        optionsDiv.appendChild(label);
+    });
+
+    prevBtn.style.display = index === 0 ? "none" : "inline-block";
+    nextBtn.textContent = index === theme.questions.length - 1 ? "Finalizar" : "Siguiente";
+}
+
+function saveProgress(){ 
+    localStorage.setItem(getTestStateKey(), JSON.stringify({ 
+        index, 
+        correct, 
+        incorrect, 
+        startTime, 
+        answers 
+    })); 
+}
+
+nextBtn.addEventListener("click",()=>{
+    const selectedAnswer = answers[index]?.selected || null;
+    const q = theme.questions[index];
+    
+    // Si no hay respuesta guardada, guardar una vacía
+    if (!answers[index]) {
+        answers[index] = { 
+            question: q.question, 
+            options: q.options, 
+            correct: q.answer, 
+            selected: selectedAnswer, 
+            number: index+1 
+        };
+    }
+    
+    saveProgress();
+    
+    if(index < theme.questions.length-1){ 
+        index++; 
+        loadQuestion(); 
+    } else { 
+        finishTest(); 
+    }
+});
+
+prevBtn.addEventListener("click",()=>{ 
+    if(index>0) {
+        index--; 
+        loadQuestion(); 
+    }
+});
+
+backBtn.addEventListener("click", showExitConfirmation);
+
+confirmExitBtn.addEventListener("click", () => {
+    confirmDialog.style.display = "none";
+    // Guardar el progreso antes de salir
+    saveProgress();
+    backToSelection();
+});
+
+cancelExitBtn.addEventListener("click", () => {
+    confirmDialog.style.display = "none";
+});
+
+function finishTest(){
+    clearInterval(timerInterval); 
+    localStorage.removeItem(getTestStateKey()); 
+    quizCard.style.display="none"; 
+    finalScreen.style.display="block";
+    
+    // Mostrar el nombre del tema en los resultados
+    finalTheme.textContent = `${theme.name}`;
+    
+    const totalSeconds=Math.floor((Date.now()-startTime)/1000); 
+    const min=String(Math.floor(totalSeconds/60)).padStart(2,"0"); 
+    const sec=String(totalSeconds%60).padStart(2,"0");
+    
+    // AMBOS MODOS USAN PENALIZACIÓN (1/3 por incorrecta)
+    const rawScore = correct - (incorrect/3);
+    const note = Math.max(0,(rawScore/theme.questions.length)*10).toFixed(2);
+    
+    summary.innerHTML=`✔️ Correctas: ${correct}<br>❌ Incorrectas: ${incorrect}<br>📝 Total preguntas: ${theme.questions.length}`;
+    finalTime.textContent=`⏱ Tiempo: ${min}:${sec}`;
+    finalNote.innerHTML=`🎯 Nota final: <strong>${note}/10</strong>`;
+    
+    saveModuleScore(theme.name,note);
+
+    failedContainer.style.display="block"; 
+    failedContainer.innerHTML="";
+    const failed=answers.filter(a=> !a.selected || (a.selected !== a.correct));
+    if(failed.length){
+        const failedDiv=document.createElement("div"); 
+        failedDiv.innerHTML=`<h3>Preguntas incorrectas o sin responder.</h3>`;
+        failed.forEach(a=>{
+            const div=document.createElement("div"); 
+            div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); 
+            opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label"); 
+                label.textContent=opt;
+                if(opt===a.correct) label.classList.add("option-correct");
+                if(opt===a.selected && opt !== a.correct) label.classList.add("option-wrong");
+                opts.appendChild(label);
+            });
+            div.appendChild(opts); 
+            failedDiv.appendChild(div);
+        });
+        failedContainer.appendChild(failedDiv);
+    }
+}
+
+function saveModuleScore(moduleName,nota){
+    const numericNote=parseFloat(nota);
+    const scores=JSON.parse(localStorage.getItem("moduleScores"))||{};
+    if(!scores[moduleName]) scores[moduleName]={};
+    if(!scores[moduleName][mode]) scores[moduleName][mode]={};
+    scores[moduleName][mode].ultimaNota=numericNote;
+    scores[moduleName][mode].answers=answers;
+    if(!scores[moduleName][mode].mejorNota || numericNote>scores[moduleName][mode].mejorNota) scores[moduleName][mode].mejorNota=numericNote;
+    localStorage.setItem("moduleScores",JSON.stringify(scores));
+    buildTestButtons();
+}
+
+function updateTimer(){ 
+    const elapsed=Math.floor((Date.now()-startTime)/1000); 
+    const m=String(Math.floor(elapsed/60)).padStart(2,"0"); 
+    const s=String(elapsed%60).padStart(2,"0"); 
+    timer.textContent=`⏱ ${m}:${s}`; 
+}
+
+function restartTest(){ 
+    correct=0; 
+    incorrect=0; 
+    index=0; 
+    answers=[]; 
+    startTime=Date.now(); 
+    localStorage.removeItem(getTestStateKey()); 
+    initTest(false); 
+}
+
+continueBtn.addEventListener("click",()=>initTest(true));
+newBtn.addEventListener("click",()=>restartTest());
+
+function showLastFails(moduleName){
+    const scores=JSON.parse(localStorage.getItem("moduleScores"))||{};
+    const s = scores[moduleName]?.[mode];
+    if(!s?.answers){ alert("No hay respuestas guardadas"); return;}
+    const failed=s.answers.filter(a=>!a.selected || a.selected!==a.correct);
+    if(failed.length===0){ alert("No hay fallos o sin responder"); return;}
+    
+    // Mostrar el nombre del tema
+    lastFailsTheme.textContent = `${moduleName}`;
+    
+    lastFailsContainer.innerHTML="";
+    failed.forEach(a=>{
+        const div=document.createElement("div"); div.className="failed-question";
+        div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+        const opts=document.createElement("div"); opts.className="options";
+        a.options.forEach(opt=>{
+            const label=document.createElement("label"); label.textContent=opt;
+            if(opt===a.correct) label.classList.add("option-correct");
+            if(opt===a.selected) label.classList.add("option-wrong");
+            opts.appendChild(label);
+        });
+        div.appendChild(opts); lastFailsContainer.appendChild(div);
+    });
+    testSelection.style.display="none"; finalScreen.style.display="none"; quizCard.style.display="none"; lastFailsScreen.style.display="block";
+}
+
+// Inicializar
+loadSavedMode(); // Cargar el modo guardado en localStorage
+initDarkMode(); // Inicializar modo oscuro
+initTest();
+</script>
+</body>
+</html>
