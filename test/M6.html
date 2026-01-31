@@ -1,0 +1,1473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Test Módulo 5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { box-sizing: border-box; }
+body { font-family: Arial, sans-serif; background: #f2f4f7; margin:0; }
+.container { max-width: 900px; margin:auto; padding:15px; }
+.card { background:white; border-radius:10px; padding:20px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+h1,h2,h3{text-align:center;}
+.question{font-size:1.1rem;margin-bottom:15px;font-weight:bold;}
+.options label{
+    display:block;
+    padding:12px;
+    margin-bottom:12px;
+    border-radius:8px;
+    border:2px solid #ddd;
+    cursor:pointer;
+    transition: background 0.2s, border 0.2s;
+}
+.options label.selected{background:#cce5ff;border-color:#007bff;}
+.options label.option-wrong{border-color:#dc3545;background:#f8d7da;}
+.options label.option-correct{border-color:#28a745;background:#d4edda;}
+button{padding:14px;font-size:1rem;border-radius:8px;border:none;background:#007bff;color:white;width:100%;cursor:pointer;margin-top:15px;}
+button.secondary{background:#007bff;}
+button.third{background:#dc3545;}
+button.cuart{background:#fd7e14;}
+.info{display:flex;justify-content:space-between;margin-bottom:10px;font-weight:bold;}
+.final{display:none;}
+.failed-question{margin-top:30px;padding-top:20px;border-top:1px solid #ddd;}
+.failed-question .question-text{margin-bottom:15px;font-weight:bold;}
+.saved-module{
+    margin:8px 0 20px 0; 
+    font-size:0.95rem; 
+    padding:10px;
+    border-radius:10px;
+    box-shadow:0 3px 8px rgba(0,0,0,0.1);
+    transition: background 0.3s;
+}
+.saved-module p{margin:3px 0;}
+.saved-module.low{background:#f8d7da; color:#842029;}
+.saved-module.mid{background:#fff3cd; color:#664d03;}
+.saved-module.high{background:#d1e7dd; color:#0f5132;}
+#resumeDialog {
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0,0,0,0.5); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center;
+}
+#resumeDialog .card {
+    max-width: 400px; 
+    background: white;        
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; 
+    text-align: center;
+}
+#resumeDialog h2 { margin:0; }
+#resumeDialog p { margin:0; font-size:1rem; }
+#resumeDialog button { width: 80%; padding: 12px; font-size:1rem; border-radius:8px; border:none; cursor:pointer; transition: background 0.2s; }
+#resumeDialog button#continueBtn { background:#28a745; color:white; }
+#resumeDialog button#continueBtn:hover { background:#1e7e34; }
+#resumeDialog button#newBtn { background:#dc3545; color:white; }
+#resumeDialog button#newBtn:hover { background:#a71d2a; }
+#resumeDialog button + button { margin-top: 6px; } 
+#testSelection { display:none; }
+#testButtons button { margin-bottom: 12px; }
+
+/* Eliminamos el toggle switch original del modo estudio/examen */
+.mode-toggle-container {
+    display: none; /* Ocultamos el toggle original */
+}
+
+.mode-label {
+    display: none; /* Ocultamos las etiquetas del toggle original */
+}
+
+/* Indicador de modo actual */
+.current-mode-indicator {
+    text-align: center;
+    font-weight: bold;
+    margin: 10px 0;
+    padding: 8px;
+    border-radius: 6px;
+    background-color: #f8f9fa;
+    font-size: 0.9rem;
+}
+
+.current-mode-indicator.exam {
+    color: #dc3545;
+    border: 2px solid #dc3545;
+}
+
+.current-mode-indicator.study {
+    color: #28a745;
+    border: 2px solid #28a745;
+}
+
+/* Estilos para mostrar nota en modo estudio */
+.study-mode-note {
+    background-color: #e7f5ff;
+    border-left: 4px solid #007bff;
+    padding: 10px;
+    margin: 15px 0;
+    border-radius: 0 8px 8px 0;
+    font-weight: bold;
+}
+
+/* Diálogo de confirmación para salir */
+#confirmDialog {
+    display: none; 
+    position: fixed; 
+    top: 0; left: 0; right: 0; bottom: 0; 
+    background: rgba(0,0,0,0.5); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center;
+}
+
+#confirmDialog .card {
+    max-width: 400px; 
+    background: white;        
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 12px; 
+    text-align: center;
+}
+
+#confirmDialog h2 { margin:0; }
+#confirmDialog p { margin:0; font-size:1rem; }
+#confirmDialog button { width: 80%; padding: 12px; font-size:1rem; border-radius:8px; border:none; cursor:pointer; transition: background 0.2s; }
+#confirmDialog button#confirmExitBtn { background:#dc3545; color:white; }
+#confirmDialog button#confirmExitBtn:hover { background:#a71d2a; }
+#confirmDialog button#cancelExitBtn { background:#6c757d; color:white; }
+#confirmDialog button#cancelExitBtn:hover { background:#545b62; }
+
+/* Estilos para los botones del test en la misma línea */
+.button-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.button-row button {
+    margin-top: 0;
+    flex: 1;
+}
+
+/* Estilos para los interruptores de modo estudio/examen y modo oscuro */
+.mode-toggle-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 140px;
+    margin: 20px 0;
+}
+
+.mode-toggle-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.mode-toggle-label {
+    font-size: 0.7rem;
+    color: #666;
+    text-align: center;
+    white-space: nowrap;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.mode-toggle {
+    position: relative;
+    width: 60px;
+    height: 30px;
+    background-color: #f1f1f1;
+    border-radius: 30px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: background-color 0.3s;
+}
+
+.mode-toggle::after {
+    content: '';
+    position: absolute;
+    width: 26px;
+    height: 26px;
+    background-color: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+/* Interruptor de modo estudio/examen (izquierda) */
+#studyExamToggle.study-mode {
+    background-color: #28a745;
+}
+
+#studyExamToggle.study-mode::after {
+    content: '📚';
+    transform: translateX(0px);
+    background-color: white;
+    color: #333;
+}
+
+#studyExamToggle.exam-mode {
+    background-color: #dc3545;
+}
+
+#studyExamToggle.exam-mode::after {
+    content: '📝';
+    transform: translateX(30px);
+    background-color: white;
+    color: #333;
+}
+
+/* Interruptor de modo oscuro (derecha) */
+#darkModeToggle.light-mode {
+    background-color: #ffd700;
+}
+
+#darkModeToggle.light-mode::after {
+    content: '☀️';
+    transform: translateX(0px);
+    background-color: white;
+    color: #333;
+}
+
+#darkModeToggle.dark-mode {
+    background-color: #333;
+}
+
+#darkModeToggle.dark-mode::after {
+    content: '🌙';
+    transform: translateX(30px);
+    background-color: #555;
+    color: white;
+}
+
+/* Estilos para modo oscuro */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .card {
+    background-color: #1e1e1e;
+    color: #e0e0e0;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+body.dark-mode .question {
+    color: #ffffff;
+}
+
+body.dark-mode .options label {
+    background-color: #2d2d2d;
+    border-color: #444;
+    color: #e0e0e0;
+}
+
+body.dark-mode .options label.selected {
+    background-color: #1a3d5c;
+    border-color: #007bff;
+}
+
+body.dark-mode .options label.option-correct {
+    background-color: #1e4620;
+    border-color: #28a745;
+    color: #ffffff;
+}
+
+body.dark-mode .options label.option-wrong {
+    background-color: #5a1a1a;
+    border-color: #dc3545;
+    color: #ffffff;
+}
+
+body.dark-mode button {
+    background-color: #0056b3;
+}
+
+body.dark-mode button.third {
+    background-color: #c82333;
+}
+
+body.dark-mode button.cuart {
+    background-color: #e06c00;
+}
+
+body.dark-mode .saved-module.low {
+    background-color: #5a1a1a;
+    color: #f8d7da;
+}
+
+body.dark-mode .saved-module.mid {
+    background-color: #5a4a00;
+    color: #fff3cd;
+}
+
+body.dark-mode .saved-module.high {
+    background-color: #1e4620;
+    color: #d1e7dd;
+}
+
+body.dark-mode .current-mode-indicator {
+    background-color: #2d2d2d;
+    border-color: #444;
+}
+
+body.dark-mode .study-mode-note {
+    background-color: #1a3d5c;
+    border-left-color: #007bff;
+    color: #e0e0e0;
+}
+
+body.dark-mode .failed-question {
+    border-top-color: #444;
+}
+
+body.dark-mode #resumeDialog .card,
+body.dark-mode #confirmDialog .card {
+    background-color: #2d2d2d;
+    color: #e0e0e0;
+}
+
+body.dark-mode .mode-toggle-label {
+    color: #aaa;
+}
+
+body.dark-mode .mode-toggle {
+    background-color: #2d2d2d;
+}
+
+/* Responsive para pantallas pequeñas */
+@media (max-width: 600px) {
+    .mode-toggle-group {
+        gap: 120px;
+        flex-wrap: wrap;
+    }
+    
+    .mode-toggle {
+        width: 55px;
+        height: 28px;
+    }
+    
+    .mode-toggle::after {
+        width: 24px;
+        height: 24px;
+    }
+    
+    #studyExamToggle.exam-mode::after,
+    #darkModeToggle.dark-mode::after {
+        transform: translateX(27px);
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<div id="resumeDialog">
+    <div class="card">
+        <h2>💾 Intento guardado 💾</h2>
+        <p>Se detectó un intento previo guardado. ¿Deseas continuar o empezar de nuevo?</p>
+        <button id="continueBtn">Continuar</button>
+        <button id="newBtn">Empezar de nuevo</button>
+    </div>
+</div>
+
+<div id="confirmDialog">
+    <div class="card">
+        <h2>⚠️ Salir del test ⚠️</h2>
+        <p>¿Estás seguro de que quieres salir? Tu progreso se guardará automáticamente y podrás continuar más tarde.</p>
+        <button id="confirmExitBtn">Sí, salir</button>
+        <button id="cancelExitBtn">Cancelar</button>
+    </div>
+</div>
+
+<div class="card" id="testSelection">
+    <h1>📚 M6 📚</h1>
+    
+    <!-- Grupo de interruptores uno al lado del otro -->
+    <div class="mode-toggle-group">
+        <!-- Interruptor de modo estudio/examen (izquierda) -->
+        <div class="mode-toggle-wrapper">
+            <div class="mode-toggle-label" id="studyExamLabel">Modo Estudio</div>
+            <div class="mode-toggle study-mode" id="studyExamToggle"></div>
+        </div>
+        
+        <!-- Interruptor de modo oscuro (derecha) -->
+        <div class="mode-toggle-wrapper">
+            <div class="mode-toggle-label" id="darkModeLabel">Modo Claro</div>
+            <div class="mode-toggle light-mode" id="darkModeToggle"></div>
+        </div>
+    </div>
+    
+    <!-- Indicador del modo actual -->
+    <div class="current-mode-indicator study" id="modeIndicator">
+        Modo: Estudio - Verás las respuestas inmediatamente
+    </div>
+    
+    <div id="testButtons"></div>
+    <button class="third" onclick="goToIndex()">Volver</button>
+</div>
+
+<div class="card" id="quizCard">
+    <h1 id="themeTitle"></h1>
+    <div class="info">
+        <div id="progress"></div>
+        <div id="timer">⏱ 00:00</div>
+    </div>
+    <div class="question" id="questionText"></div>
+    
+    <!-- Contenedor para mostrar nota en modo estudio durante el test -->
+    <div id="studyNoteContainer" style="display:none;"></div>
+    
+    <div class="options" id="options"></div>
+    
+    <!-- Botones en la misma línea -->
+    <div class="button-row">
+        <button id="prevBtn">Anterior</button>
+         <button class="third" id="backBtn">Volver</button>
+        <button id="nextBtn">Siguiente</button>
+       
+    </div>
+</div>
+
+<div class="card final" id="finalScreen">
+    <h1 id="finalTheme"></h1>
+    <h2>📊 Resultado final</h2>
+    <p id="summary"></p>
+    <p id="finalTime"></p>
+    <p id="finalNote"></p>
+    <div id="failedContainer" style="display:none;"></div>
+    <button class="secondary" onclick="restartTest()">Repetir test</button>
+    <button class="third" onclick="backToSelection()">Volver</button>
+</div>
+
+<div class="card final" id="lastFailsScreen">
+    <h1 id="lastFailsTheme"></h1>
+    <h2>Preguntas incorrectas o sin responder</h2>
+    <div id="lastFailsContainer"></div>
+    <button class="third" onclick="backToSelection()">Volver</button>
+</div>
+
+</div>
+
+<script>
+// === Datos del test ===
+const themes = [
+    {
+  "name": "Examen",
+  "questions": [
+  {
+    "question": "Señale la INCORRECTA",
+    "options": [
+      "Las amenazas de un mal constitutivo de delito pueden ser condicionales o no condicionales.",
+      "La amenaza leve proferida por una persona a su vecino es considerada delito leve.",
+      "La amenaza leve proferida por una persona a su vecino precisa para su persecución denuncia de la persona agraviada.",
+      "las amenazas de un mal no constitutivo de delito pueden ser condicionales o no condicionales, siempre que la condición no consistiere en una conducta debida. "
+    ],
+    "answer": "las amenazas de un mal no constitutivo de delito pueden ser condicionales o no condicionales, siempre que la condición no consistiere en una conducta debida. "
+  },
+  {
+    "question": "Los que opusieren resistencia grave con intimidación grave o violencia a un agente de la autoridad en el ejercicio de sus funciones incurren:",
+    "options": [
+      "En un delito de resistencia y en un delito de atentado si se causare resultado lesivo.",
+      "En un delito de atentado ",
+      "En una infracción de la Ley Orgánica de Protección de la Seguridad Ciudadana y en un delito de lesiones si se causare resultado lesivo",
+      "En un delito de resistencia y en una infracción de la Ley Orgánica de Protección de la Seguridad Ciudadana"
+    ],
+    "answer": "En un delito de atentado "
+  },
+  {
+    "question": "Señale la respuesta CORRECTA:",
+    "options": [
+      "Constituye delito leve de lesiones dolosas:",
+      "Causar lesiones a otro que requieran paca su sanidad, además de una primera asistencia facultativa, tratamiento médico o quirúrgico.",
+      "Causar lesiones a otro que requieran para su sanidad una primera asistencia. ",
+      "Causar lesiones a otro que requieran para su sanidad tratamiento médico.",
+      "Causar a otro una deformidad que no tenga el carácter de grave"
+    ],
+    "answer": "Causar lesiones a otro que requieran para su sanidad una primera asistencia. "
+  },
+  {
+    "question": "La sustracción de un objeto valorado en 120 euros en un establecimiento comercial procediendo a inutilizar el dispositivo de alarma instalado en el mismo, se considera:",
+    "options": [
+      "Un delito de robo con fuerza en las cosas por la inutilización de los sistemas específicos de alarma o guarda",
+      "Un delito de hurto agravado",
+      "Un delito leve de hurto agravado ",
+      "Un delito de robo con fuerza en las cosas por fractura de los mecanismos de seguridad"
+    ],
+    "answer": "Un delito leve de hurto agravado "
+  },
+  {
+    "question": "Señale la CORRECTA:",
+    "options": [
+      "La resistencia leve a un agente de la autoridad en el ejercicio de sus funciones, es constitutiva de delito leve",
+      "La desobediencia leve a un agente de la autoridad en el ejercicio de sus funciones es constitutiva de un delito leve",
+      "La resistencia al personal de seguridad privada debidamente identificado constituye delito de resistencia.",
+      "La desobediencia o la resistencia a un agente de la autoridad en el ejercicio de sus funciones, cuando no sean constitutivas de delito se sancionan como infracción grave en la LOPSC. "
+    ],
+    "answer": "La desobediencia o la resistencia a un agente de la autoridad en el ejercicio de sus funciones, cuando no sean constitutivas de delito se sancionan como infracción grave en la LOPSC. "
+  },
+  {
+    "question": "Fernando F.P. encontró en el suelo del portal de su vivienda un llavero con dos llaves que identificó como perteneciente a un vecino del 4° c del inmueble. Al mediodía, aprovechando la absencia de su vecino, se introdujo en la vivienda haciendo uso de las llaves y se apoderó de efectos por valor de 200 euros. Indica la infracción penal ante la que nos encontramos:",
+    "options": [
+      "Delito leve de robo",
+      "Delito leve de hurto agravado por utilización de la llave falsa",
+      "Delito de robo ",
+      "Delito de robo por inutilización de los sistemas específicos de guarda"
+    ],
+    "answer": "Delito de robo "
+  },
+  {
+    "question": "La conducta consistente en una coacción leve entre dos personas sin ningún vínculo personal:",
+    "options": [
+      "Constituye una infracción de la LOPSC",
+      "Es considerada delito leve",
+      "Es considerada delito leve cuando exista violencia ",
+      "Es atípica."
+    ],
+    "answer": "Es considerada delito leve cuando exista violencia "
+  },
+  {
+    "question": "En relación con las drogas toxicas, estupefacientes o sustancias psicotrópicas, constituye infracción penal:",
+    "options": [
+      "La tenencia ilícita de tales sustancias para consumo propio, en lugares, vías, establecimiento o trasportes públicos.",
+      "La ejecución la actos que promuevan, favorezcan o faciliten el consumo de tales sustancias ",
+      "La ejecución de actos de plantación y cultivo ilícitos de tales sustancias, para consumo propio en lugares visibles al publico",
+      "El consumo particular de tales sustancias en lugares abiertos al publico"
+    ],
+    "answer": "La ejecución la actos que promuevan, favorezcan o faciliten el consumo de tales sustancias "
+  },
+  {
+    "question": "Señale la INCORRECTA",
+    "options": [
+      "En el delito de atentado es requisito qee el sujeto pasivo se halle en el ejercicio de sus funciones o que el acto integrante del atentado se verifique con ocasión de ellas.",
+      "La desobediencia grave es constitutiva de delito.",
+      "la Perturbación grave del orden con motivo de la celebración de un espectáculo deportivo o cultural constituye delito",
+      "El delito de daños es un delito contra el orden público. "
+    ],
+    "answer": "El delito de daños es un delito contra el orden público. "
+  },
+  {
+    "question": "Señales la respuesta correcta:",
+    "options": [
+      "El homicidio cometido por imprudencia grave solo es perseguible mediante denuncia de la persona agraviada o de su representante legal",
+      "Es delito la cooperación al suicidio de una persona con actos no necesarios",
+      "Se agrava el delito de asesinato cuando la víctima sea menor de 16 años de edad ",
+      "La eutanasia no se sanciona en nuestro CP"
+    ],
+    "answer": "Se agrava el delito de asesinato cuando la víctima sea menor de 16 años de edad "
+  },
+  {
+    "question": "La falsificación del número de bastidor de un vehículo a motor, constituye:",
+    "options": [
+      "Una infracción administrativa",
+      "Un delito leve de falsificación",
+      "Un delito de falsedad en documento oficial. ",
+      "Ninguna de las respuestas anteriores es correcta."
+    ],
+    "answer": "Un delito de falsedad en documento oficial. "
+  },
+  {
+    "question": "Señale la respuesta incorrecta. Constituye un delito de robo:",
+    "options": [
+      "Apoderarse de un bien mueble ajeno empleando fuerza en las cosas para acceder al lugar donde este se encuentre",
+      "Apoderarse de un bien mueble ajeno empleando fuerza en las cosas para abandonar el lugar donde este se encuentra",
+      "Tomar un bien mueble ajeno sin la voluntad de su dueño inutilizando los dispositivos de alarma o seguridad instalados sobre la cosa sustraída ",
+      "Apoderarse de un bien mueble con violencia o intimidación en las personas"
+    ],
+    "answer": "Tomar un bien mueble ajeno sin la voluntad de su dueño inutilizando los dispositivos de alarma o seguridad instalados sobre la cosa sustraída "
+  },
+  {
+    "question": "El delito de allanamiento de morada:",
+    "options": [
+      "Requiere que se cometa durante un período dilatado de tiempo.",
+      "Precisa que se cometa con violencia o intimidación",
+      "Precisa ánimo de lucro por parte del sujeto activo.",
+      "Se agrava si se comete con violencia o intimidación. "
+    ],
+    "answer": "Se agrava si se comete con violencia o intimidación. "
+  },
+  {
+    "question": "Miguel M.A. sustrajo en la estación del metro de Abando 400 metros de hilo de cobre que se encontraba a la vista, cortándolo con unos alicates, siendo sorprendido cuando se dirigía a venderlo a un taller próximo, indique ante que infracción penal nos encontramos:",
+    "options": [
+      "Delito de robo",
+      "Delito de hurto ",
+      "Delito de desordenes públicos",
+      "Delito de perturbación de un servicio publico"
+    ],
+    "answer": "Delito de hurto "
+  },
+  {
+    "question": "ML incumple una medida cautelar que le impide acercarse a su esposa. ¿En qué responsabilidad incurre?",
+    "options": [
+      "En un delito contra el orden público",
+      "En un delito de desobediencia",
+      "En un delito contra la Administración de Justicia ",
+      "En ninguno de los anteriores."
+    ],
+    "answer": "En un delito contra la Administración de Justicia "
+  },
+  {
+    "question": "Señale la respuesta correcta:",
+    "options": [
+      "La falta de respeto a la autoridad será constituyente de un delito ",
+      "La falta de respeto a la autoridad supone una infracción administrativa contemplada en la Ley Orgánica de Protección de la Seguridad Ciudadana",
+      "La desobediencia grave a los agentes de la autoridad constituye una infracción administrativa contemplada en Ley Orgánica de Protección Ciudadana",
+      "La falta de respeto a los agentes de la autoridad será constitutiva de delito leve"
+    ],
+    "answer": "La falta de respeto a la autoridad será constituyente de un delito "
+  },
+  {
+    "question": "Un ciudadano se presenta en la comisaría de Zumárraga y denuncia la sustracción de su bicicleta manifestando que la dejó candada a un árbol y que al salir de un establecimiento comercial próximo ya no estaba y que el candado fracturado se encontraba en el suelo. Comprobado el hecho se constata que no existió tal sustracción. Señale ante qué infracción penal nos encontramos:",
+    "options": [
+      "Un delito leve de acusación falsa.",
+      "Un delito de denuncia falsa,",
+      "Un delito de simulación de delito. ",
+      "Un delito de realización arbitraria del propio derecho."
+    ],
+    "answer": "Un delito de simulación de delito. "
+  },
+  {
+    "question": "El delito de omisión del deber de socorro:",
+    "options": [
+      "Requiere que el sujeto activo sea funcionario",
+      "Resulta agravado cuando la victima lo sea por accidente ocasionado por el que omitió el auxilio ",
+      "Requiere como comportamiento típico el no socorrer a una persona que requiera cualquier tipo de ayuda",
+      "Ante la comisión por imprudencia siempre que sea grave"
+    ],
+    "answer": "Resulta agravado cuando la victima lo sea por accidente ocasionado por el que omitió el auxilio "
+  },
+  {
+    "question": "El que a sabiendas de la comisión de un delito, interviene con posterioridad ayudando al responsable a eludir la investigación o sustraerse a su busca y captura incurre en un delito de encubrimiento, siempre que:",
+    "options": [
+      "El hecho encubierto se hubiere cometido con violencia.",
+      "El hecho sea constitutivo de un delito de homicidio. ",
+      "El hecho encubierto sea cometido con fuerza en las cosas.",
+      "El hecho encubierto sea de un delito menos grave."
+    ],
+    "answer": "El hecho sea constitutivo de un delito de homicidio. "
+  },
+  {
+    "question": "Manu L.C.. sustrajo un vehículo a motor forzando su cerradura en la gasolinera de la calle Zabalgana de Vitoria-Gasteiz, trasladándose a continuación con el indicado vehículo a Agurain, dejándolo en un aparcamiento a la entrada de la localidad. ¿ante que delito nos encontramos?",
+    "options": [
+      "Delito de hurto de vehículos a motor",
+      "Delito de robo de uso de vehículo a motor ",
+      "Delito de hurto de uso de vehículo a motor",
+      "Delito de robo de vehículo a motor"
+    ],
+    "answer": "Delito de robo de uso de vehículo a motor "
+  },
+  {
+    "question": "Cuál de las siguientes conductas NO precisa denuncia para su persecución:",
+    "options": [
+      "Delito de homicidio causado por imprudencia menos grave",
+      "Delito consistente en dejar de pagar cualquier prestación económica establecida, en favor del cónyuge, en un convenio judicial en un supuesto de divorcio.",
+      "Delito de detención ilegal. ",
+      "Delito leve de coacciones entre particulares"
+    ],
+    "answer": "Delito de detención ilegal. "
+  },
+  {
+    "question": "El delito de trata de seres humanos:",
+    "options": [
+      "Necesariamente debe cometerse con violencia o intimidación",
+      "Tiene necesariamente como finalidad la explotación sexual",
+      "Puede cometerse abusando de una situación de superioridad o de necesidad ",
+      "Necesariamente debe cometerse con engaño"
+    ],
+    "answer": "Puede cometerse abusando de una situación de superioridad o de necesidad "
+  },
+  {
+    "question": "Kepa prestó a su amigo Jon un ordenador durante un mes. Finalizado dicho plazo, Kepa le pide a su amigo que se lo devuelva, manifestando Jon que no sabe nada de ningún ordenador y que a él no le ha prestado nada. ¿En qué responsabilidad incurre Jon?",
+    "options": [
+      "Delito de estafa",
+      "Delito de apropiación indebida ",
+      "Delito de hurto",
+      "Delito de estafa agravado por abuso de confianza."
+    ],
+    "answer": "Delito de apropiación indebida "
+  },
+  {
+    "question": "Señale la respuesta incorrecta:",
+    "options": [
+      "En el delito de acoso escolar el atentado a la integridad moral debe ser grave",
+      "El delito de tortura debe tener como finalidad la obtención de una confesión ",
+      "El delito de acoso inmobiliario tiene por objeto impedir el legítimo disfrute de la vivienda",
+      "Las conductas de acoso moral se encuadran en el CP dentro de los delitos de torturas y otros delitos contra la integridad moral"
+    ],
+    "answer": "El delito de tortura debe tener como finalidad la obtención de una confesión "
+  },
+  {
+    "question": "El delito de realización arbitraria del propio derecho:",
+    "options": [
+      "Es un delito contra el patrimonio.",
+      "Puede cometerse con fuerza en las cosas. ",
+      "Necesariamente debe cometerse con violencia sobre las personas.",
+      "No precisa ni del empleo de fuerza en las cosas ni de violencia o intimidación en las personas."
+    ],
+    "answer": "Puede cometerse con fuerza en las cosas. "
+  },
+  {
+    "question": "Señale la respuesta incorrecta:",
+    "options": [
+      "La conducta de no socorrer a una persona que se halle desamparada y en peligro manifiesto y grave cuando pudiera hacerlo sin riesgo propio ni de terceros:",
+      "Es un delito leve",
+      "Se trata de un delito de denegación de auxilio ",
+      "Se trata de un delito de omisión del deber de socorro",
+      "Necesariamente ha de ser dolosa."
+    ],
+    "answer": "Se trata de un delito de denegación de auxilio "
+  },
+  {
+    "question": "Quien afirme falsamente una situación de peligro para la comunidad a consecuencia de la cual es necesario prestar auxilio a otro, Y con ello se provocare la movilización de los servicios de policía, asistencia o salvamento, incurre en:",
+    "options": [
+      "Un delito contra la Administración del Estado",
+      "Un delito contra el Orden Público ",
+      "Un delito contra la administración de Justicia",
+      "Una infracción administrativa contemplada en la LOPSC."
+    ],
+    "answer": "Un delito contra el Orden Público "
+  },
+  {
+    "question": "Señale la respuesta correcta:",
+    "options": [
+      "El acusado por delito de calumnia e injuria quedará exento de toda responsabilidad probando el hecho que hubiere imputado",
+      "Las injurias son siempre constitutivas de delito leve",
+      "El delito de calumnia consiste en atribuir falsamente a una persona un hecho constitutivo de delito con conocimiento de su falsedad o con temerario desprecio a la verdad ",
+      "Ninguna de las respuestas anteriores es correcta"
+    ],
+    "answer": "El delito de calumnia consiste en atribuir falsamente a una persona un hecho constitutivo de delito con conocimiento de su falsedad o con temerario desprecio a la verdad "
+  },
+  {
+    "question": "El lunes MA se persona en comisaria, manifestando que tiene la custodia de su hijo menos de edad y que el fin de semana, en cumplimiento del convenio judicial, su hijo menor de edad estuvo pasando el fin de semana con su padre TL del que ella se encuentra separada. El domingo por la noche no restituyó a su hijo a su domicilio. Los vecinos le han contado que el domingo por la tarde vieron como TL se introducía en su vehículo provisto de varias maletas en compañía de su hijo y les manifestó que se iban de viaje.",
+    "options": [
+      "Ante qué infracción nos encontramos:",
+      "Un delito de inducción al abandono del domicilio familiar.",
+      "Un delito de detención ilegal",
+      "Un delito de sustracción de menores",
+      "Un delito de secuestro. "
+    ],
+    "answer": "Un delito de secuestro. "
+  },
+  {
+    "question": "La conducta consistente en dañar las conducciones o transmisiones de agua, gas o electricidad para las poblaciones, interrumpiendo o alterando gravemente el suministro o servicio es típica del delito de:",
+    "options": [
+      "Estragos",
+      "Atentado",
+      "Daños agravados",
+      "Desordenes públicos "
+    ],
+    "answer": "Desordenes públicos "
+  },
+  {
+    "question": "El que, con ánimo de lucro, y valiéndose de alguna manipulación informática o artificio semejante consiga la transferencia de un dinero en perjuicio de tercero, comete:",
+    "options": [
+      "Delito de estafa ",
+      "Delito de robo con fuerza en las cosas.",
+      "Delito de apropiación indebida.",
+      "No comete delito."
+    ],
+    "answer": "Delito de estafa "
+  },
+  {
+    "question": "Cuál de las siguientes circunstancias no agrava el delito de atentado, en virtud de lo dispuesto en el C.P.:",
+    "options": [
+      "Cuando se haga uso de armas u otros objetos peligrosos",
+      "Cuando el acto de violencia ejecutado resulte potencialmente peligroso para la vida de las personas o pueda causar lesiones graves",
+      "Cuando se acometa haciendo uso de un vehículo a motor",
+      "Cuando los hechos sean particularmente degradantes o vejatorios "
+    ],
+    "answer": "Cuando los hechos sean particularmente degradantes o vejatorios "
+  },
+  {
+    "question": "La característica esencial de los delincuentes habituales sociales, es:",
+    "options": [
+      "Sus actividades sólo serán escasamente planificadas, actuando de forma individual, o en grupos reducidos. ",
+      "Tienen conocimientos técnicos y utilizan los medios necesarios para cada caso.",
+      "Son aquellas personas que, sin historial delictivo, en un momento puntual y ante la necesidad de obtener dinero rápido, realizan un robo.",
+      "trabajan en grupos organizados especializados en la comisión de hurtos en aparcamientos de grandes superficies comerciales."
+    ],
+    "answer": "Sus actividades sólo serán escasamente planificadas, actuando de forma individual, o en grupos reducidos. "
+  },
+  {
+    "question": "Los individuos que se dedican a la adquisición de objetos robados a precios muy inferiores a su valor real de denominan",
+    "options": [
+      "Santeros",
+      "Nazaremos",
+      "Peristas ",
+      "Loneros"
+    ],
+    "answer": "Peristas "
+  },
+  {
+    "question": "Hablando de cerraduras, si nos referimos a la apertura de cilindros de forma limpia, sin rotura mediante la percusión de pitones a través de llaves manipuladas para ello se denomina:",
+    "options": [
+      "Impresioning",
+      "Saturación",
+      "Bumping ",
+      "Magic Key"
+    ],
+    "answer": "Bumping "
+  },
+  {
+    "question": "En el Timo de la Estampita:",
+    "options": [
+      "El dinero tintado es sacado de un país y que mediante unos productos químicos se vuelven de curso legal",
+      "El timador se gana primero la confianza de la empresa proveedora haciendo algunos pequeños pedidos.",
+      "El estafador lleva consigo un billete de lotería presuntamente premiado",
+      "El estafador lleva consigo un sobre lleno de billetes, a los que no da ninguna importancia "
+    ],
+    "answer": "El estafador lleva consigo un sobre lleno de billetes, a los que no da ninguna importancia "
+  },
+  {
+    "question": "¿ Cuál es el software malicioso que al infectar un equipo le da al ciberdelincuente la capacidad de bloquear un dispositivo desde una ubicación remota y cifrar archivos quitando el control de toda la información y datos almacenados?",
+    "options": [
+      "Phishing",
+      "Spyware",
+      "Scalping",
+      "Ransomware "
+    ],
+    "answer": "Ransomware "
+  },
+  {
+    "question": "El relación a la organización y estructura de las bandas dedicadas al trafico ilícito de vehículos, el organigrama se desglosa en los siguientes componentes:",
+    "options": [
+      "Jefe de la banda, mecánicos ajustadores, ojeadores, robacoches y conductores, pasadores o correos",
+      "Jefe de la banda, falsificador, retroqueladores o maquilladores; robacoches y conductores, pasadores o correos",
+      "Jefe de la banda, falsificadores, retroqueladores o maquilladores, ojeadores, robacoches y conductores, pasadores o correos ",
+      "Jefe de la banda, falsificadores de documentación del vehículo, ojeadores, robacoches y conductores"
+    ],
+    "answer": "Jefe de la banda, falsificadores, retroqueladores o maquilladores, ojeadores, robacoches y conductores, pasadores o correos "
+  },
+  {
+    "question": "¿Qué suele designar el identificador VDS ( Descripción del modelo del vehículo)?",
+    "options": [
+      "Suele designar el n° de serie de fabricación de cada vehículo",
+      "Suele designar la serie del automóvil, el tipo de carrocería y la motorización. ",
+      "Suele designar el fabricante del vehículo.",
+      "Suele designar el continente y el país de fabricación."
+    ],
+    "answer": "Suele designar la serie del automóvil, el tipo de carrocería y la motorización. "
+  },
+  {
+    "question": "Existen varios tipos de impresión entre los cuales se encuentra la tipografía. ¿qué tipo de relieve produce este sistema de impresión?",
+    "options": [
+      "La tipografía produce relieve en positivo ",
+      "La tipografía produce relieve en negativo",
+      "La tipografía no produce relieve ya que es plana",
+      "Ninguna de las anteriores respuestas es correcta"
+    ],
+    "answer": "La tipografía produce relieve en positivo "
+  },
+  {
+    "question": "El delito de detención ilegal resulta atenuado:",
+    "options": [
+      "Si el autor de la detención ilegal deja en libertad al encerrado o detenido tras haber logrado su propósito.",
+      "Si el autor de la detención ilegal exige una condición para poner en libertad a la víctima.",
+      "Cuando el autor de la detención dé razón del paradero de la víctima aunque no la deje en libertad.",
+      "Si se pone en libertad a la víctima dentro de los 3 días de su detención por voluntad del culpable y sin haber logrado su propósito. "
+    ],
+    "answer": "Si se pone en libertad a la víctima dentro de los 3 días de su detención por voluntad del culpable y sin haber logrado su propósito. "
+  },
+  {
+    "question": "Señale la afirmación correcta",
+    "options": [
+      "Para la comisión de un delito de allanamiento de morada es indispensable el empleo de violencia o intimidación",
+      "Es delito de usurpación la ocupación sin la autorización debida de un inmueble que constituya morada",
+      "Es delito de usurpación la ocupación sin la autorización debida, de un inmueble que no constituya morada ",
+      "En el delito de allanamiento y usurpación el bien jurídico protegido es el patrimonio individual"
+    ],
+    "answer": "Es delito de usurpación la ocupación sin la autorización debida, de un inmueble que no constituya morada "
+  },
+  {
+    "question": "Cuando hablamos de medidas de seguridad ¿ a qué nos referimos con el término planchetes?",
+    "options": [
+      ". Es la denominación que da la Fábrica Nacional de Moneda y Timbre a las planchas utilizadas para la confección de billetes de euro",
+      "Los planchetes serán introducidos en el momento de fabricación del papel, son de composición sintética y pueden de forma variables. La disposición es en masa (aleatoria ) o en banda, ",
+      "Los planchetes se introducen al finalizar el proceso de impresión, para ello se utilizan planchas de impresión. La disposición es en masa (aleatoria. o en banda.",
+      "Ninguna de las anteriores respuestas es correcta."
+    ],
+    "answer": "Los planchetes serán introducidos en el momento de fabricación del papel, son de composición sintética y pueden de forma variables. La disposición es en masa (aleatoria ) o en banda, "
+  }
+]
+},
+    ]
+
+// Variables
+let theme=null,index=0,correct=0,incorrect=0,startTime=Date.now(),answers=[],timerInterval;
+let mode = "study"; // Valor por defecto
+
+// DOM
+const themeTitle=document.getElementById("themeTitle");
+const questionText=document.getElementById("questionText");
+const optionsDiv=document.getElementById("options");
+const nextBtn=document.getElementById("nextBtn");
+const prevBtn=document.getElementById("prevBtn");
+const backBtn=document.getElementById("backBtn");
+const progress=document.getElementById("progress");
+const timer=document.getElementById("timer");
+const quizCard=document.getElementById("quizCard");
+const finalScreen=document.getElementById("finalScreen");
+const lastFailsScreen=document.getElementById("lastFailsScreen");
+const summary=document.getElementById("summary");
+const finalTime=document.getElementById("finalTime");
+const finalNote=document.getElementById("finalNote");
+const finalTheme=document.getElementById("finalTheme");
+const lastFailsTheme=document.getElementById("lastFailsTheme");
+const failedContainer=document.getElementById("failedContainer");
+const lastFailsContainer=document.getElementById("lastFailsContainer");
+const resumeDialog=document.getElementById("resumeDialog");
+const continueBtn=document.getElementById("continueBtn");
+const newBtn=document.getElementById("newBtn");
+const testSelection=document.getElementById("testSelection");
+const testButtonsDiv=document.getElementById("testButtons");
+const modeIndicator=document.getElementById("modeIndicator");
+const studyNoteContainer=document.getElementById("studyNoteContainer");
+const confirmDialog=document.getElementById("confirmDialog");
+const confirmExitBtn=document.getElementById("confirmExitBtn");
+const cancelExitBtn=document.getElementById("cancelExitBtn");
+
+// Nuevos elementos para los interruptores
+const studyExamToggle = document.getElementById("studyExamToggle");
+const studyExamLabel = document.getElementById("studyExamLabel");
+const darkModeToggle = document.getElementById("darkModeToggle");
+const darkModeLabel = document.getElementById("darkModeLabel");
+
+// Funciones para el toggle de modo estudio/examen
+function toggleStudyExamMode() {
+    if (mode === "study") {
+        setMode("exam");
+    } else {
+        setMode("study");
+    }
+}
+
+function setMode(newMode) {
+    mode = newMode;
+    
+    // Guardar el modo seleccionado en localStorage
+    localStorage.setItem("testMode", mode);
+    
+    // Actualizar interruptor estudio/examen visualmente
+    if (mode === "exam") {
+        studyExamToggle.className = "mode-toggle exam-mode";
+        studyExamLabel.textContent = "Modo Examen";
+        modeIndicator.textContent = "Modo: Examen - Solo verás las respuestas al final";
+        modeIndicator.className = "current-mode-indicator exam";
+    } else {
+        studyExamToggle.className = "mode-toggle study-mode";
+        studyExamLabel.textContent = "Modo Estudio";
+        modeIndicator.textContent = "Modo: Estudio - Verás las respuestas inmediatamente";
+        modeIndicator.className = "current-mode-indicator study";
+    }
+    
+    // Reconstruir los botones de test
+    buildTestButtons();
+}
+
+// Cargar el modo guardado del localStorage al iniciar
+function loadSavedMode() {
+    const savedMode = localStorage.getItem("testMode");
+    if (savedMode === "study" || savedMode === "exam") {
+        setMode(savedMode);
+    } else {
+        setMode("study"); // Valor por defecto si no hay nada guardado
+    }
+}
+
+// Funciones para el modo oscuro
+function initDarkMode() {
+    // Cargar preferencia de modo oscuro
+    const darkMode = localStorage.getItem("darkMode") === "true";
+    
+    if (darkMode) {
+        enableDarkMode();
+    } else {
+        disableDarkMode();
+    }
+    
+    // Configurar eventos para los interruptores
+    studyExamToggle.addEventListener("click", toggleStudyExamMode);
+    darkModeToggle.addEventListener("click", toggleDarkMode);
+    
+    // También permitir arrastre como el otro toggle
+    setupToggleDrag(studyExamToggle, toggleStudyExamMode);
+    setupToggleDrag(darkModeToggle, toggleDarkMode);
+}
+
+function toggleDarkMode() {
+    if (document.body.classList.contains("dark-mode")) {
+        disableDarkMode();
+    } else {
+        enableDarkMode();
+    }
+}
+
+function enableDarkMode() {
+    document.body.classList.add("dark-mode");
+    darkModeToggle.className = "mode-toggle dark-mode";
+    darkModeLabel.textContent = "Modo Oscuro";
+    localStorage.setItem("darkMode", "true");
+}
+
+function disableDarkMode() {
+    document.body.classList.remove("dark-mode");
+    darkModeToggle.className = "mode-toggle light-mode";
+    darkModeLabel.textContent = "Modo Claro";
+    localStorage.setItem("darkMode", "false");
+}
+
+// Función genérica para arrastre en toggles
+function setupToggleDrag(toggleElement, toggleFunction) {
+    let dragStart = 0;
+    let isDragging = false;
+    
+    toggleElement.addEventListener('touchstart', (e) => {
+        dragStart = e.touches[0].clientX;
+        isDragging = true;
+        e.preventDefault();
+    }, {passive: false});
+    
+    toggleElement.addEventListener('touchmove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+    }, {passive: false});
+    
+    toggleElement.addEventListener('touchend', (e) => {
+        if (!isDragging) return;
+        
+        const dragEnd = e.changedTouches[0].clientX;
+        const deltaX = dragEnd - dragStart;
+        
+        // Si se arrastra horizontalmente más de 20px, cambiar modo
+        if (Math.abs(deltaX) > 20) {
+            toggleFunction();
+        }
+        
+        isDragging = false;
+        e.preventDefault();
+    }, {passive: false});
+    
+    // Para mouse
+    toggleElement.addEventListener('mousedown', (e) => {
+        dragStart = e.clientX;
+        isDragging = true;
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        e.preventDefault();
+    });
+    
+    document.addEventListener('mouseup', (e) => {
+        if (!isDragging) return;
+        
+        const dragEnd = e.clientX;
+        const deltaX = dragEnd - dragStart;
+        
+        // Si se arrastra horizontalmente más de 20px, cambiar modo
+        if (Math.abs(deltaX) > 20) {
+            toggleFunction();
+        }
+        
+        isDragging = false;
+        e.preventDefault();
+    });
+}
+
+// Funciones
+function getTestStateKey(){ return "testState_" + theme.name + "_" + mode; }
+
+function buildTestButtons(){
+    testButtonsDiv.innerHTML="";
+    const scores=JSON.parse(localStorage.getItem("moduleScores"))||{};
+    themes.forEach((t,i)=>{
+        const btn=document.createElement("button"); 
+        btn.textContent=t.name;
+
+        const saved = localStorage.getItem("testState_" + t.name + "_" + mode);
+        if(saved){ btn.textContent += " 💾"; }
+
+        btn.onclick=()=>startSelectedTest(i); 
+        testButtonsDiv.appendChild(btn);
+
+        const s=scores[t.name]?.[mode];
+        if(s?.ultimaNota!==undefined && s?.mejorNota!==undefined){
+            const scoreDiv=document.createElement("div");
+            const clase=s.ultimaNota<5?"low":s.ultimaNota<8?"mid":"high";
+            scoreDiv.className=`saved-module ${clase}`; 
+            scoreDiv.id=`score-${i}`;
+            scoreDiv.innerHTML=`<p>Última nota: ${s.ultimaNota}/10</p>
+                                  <p>Mejor nota: ${s.mejorNota}/10</p>`;
+            const answersList=s.answers||[];
+            const failed=answersList.filter(a=>!a.selected || a.selected!==a.correct);
+            if(failed.length>0){
+                const failBtn=document.createElement("button"); 
+                failBtn.textContent="Últimos fallos";
+                failBtn.style.marginTop="6px"; 
+                failBtn.className = "cuart";
+                failBtn.onclick=()=>showLastFails(t.name);
+                scoreDiv.appendChild(failBtn);
+            }
+            testButtonsDiv.appendChild(scoreDiv);
+        }
+    });
+}
+
+function startSelectedTest(i){ 
+    theme=themes[i]; 
+    testSelection.style.display="none"; 
+    initTest(false);
+}
+
+function goToIndex(){ 
+    window.location.href="../index.html";
+}
+
+function backToSelection(){ 
+    clearInterval(timerInterval); 
+    quizCard.style.display="none"; 
+    finalScreen.style.display="none"; 
+    lastFailsScreen.style.display="none"; 
+    buildTestButtons(); 
+    testSelection.style.display="block";
+}
+
+function showExitConfirmation() {
+    confirmDialog.style.display = "flex";
+}
+
+function initTest(loadSaved=false){
+    if(!theme){ 
+        buildTestButtons(); 
+        testSelection.style.display="block"; 
+        quizCard.style.display="none"; 
+        finalScreen.style.display="none"; 
+        return;
+    }
+    
+    const saved = localStorage.getItem(getTestStateKey());
+    if(!loadSaved && saved){ 
+        resumeDialog.style.display="flex"; 
+        quizCard.style.display="none"; 
+        finalScreen.style.display="none"; 
+        return;
+    }
+    
+    resumeDialog.style.display="none"; 
+    quizCard.style.display="block"; 
+    finalScreen.style.display="none"; 
+    lastFailsScreen.style.display="none";
+    
+    if(loadSaved && saved){ 
+        const state=JSON.parse(saved); 
+        index=state.index; 
+        correct=state.correct; 
+        incorrect=state.incorrect; 
+        startTime=state.startTime; 
+        answers=state.answers; 
+        // Recalcular correct e incorrect basado en las respuestas guardadas
+        recalculateCounts();
+    } else{ 
+        index=0; 
+        correct=0; 
+        incorrect=0; 
+        startTime=Date.now(); 
+        answers=[]; 
+        localStorage.removeItem(getTestStateKey()); 
+    }
+    
+    themeTitle.textContent=theme.name; 
+    clearInterval(timerInterval); 
+    timerInterval=setInterval(updateTimer,1000); 
+    loadQuestion();
+}
+
+function recalculateCounts() {
+    correct = 0;
+    incorrect = 0;
+    answers.forEach((answer, idx) => {
+        if (answer && answer.selected) {
+            if (answer.selected === answer.correct) {
+                correct++;
+            } else {
+                incorrect++;
+            }
+        }
+    });
+}
+
+function loadQuestion() {
+    const q = theme.questions[index];
+    questionText.textContent = q.question;
+    optionsDiv.innerHTML = "";
+    progress.textContent = `Pregunta ${index+1}/${theme.questions.length}`;
+
+    q.options.forEach(opt => {
+        const label = document.createElement("label");
+        label.textContent = opt;
+
+        // Si ya habías respondido
+        if (answers[index] && answers[index].selected === opt) {
+            label.classList.add("selected");
+            
+            // En modo estudio, mostrar si la respuesta seleccionada es correcta o incorrecta
+            if (mode === "study") {
+                if (opt === q.answer) {
+                    label.classList.add("option-correct");
+                } else {
+                    label.classList.add("option-wrong");
+                    // Mostrar también la respuesta correcta
+                    document.querySelectorAll(".options label").forEach(l => {
+                        if (l.textContent === q.answer) l.classList.add("option-correct");
+                    });
+                }
+            }
+        }
+
+        label.addEventListener("click", () => {
+            // Quitar seleccionadas
+            document.querySelectorAll(".options label").forEach(l => {
+                l.classList.remove("selected", "option-correct", "option-wrong");
+            });
+            label.classList.add("selected");
+
+            // Guardar respuesta
+            const previousAnswer = answers[index];
+            const wasCorrect = previousAnswer && previousAnswer.selected === previousAnswer?.correct;
+            
+            // Si ya había una respuesta anterior, quitar su conteo
+            if (previousAnswer && previousAnswer.selected) {
+                if (wasCorrect) {
+                    correct--;
+                } else if (previousAnswer.selected) {
+                    incorrect--;
+                }
+            }
+
+            answers[index] = {
+                question: q.question,
+                options: q.options,
+                correct: q.answer,
+                selected: opt,
+                number: index + 1
+            };
+
+            // Contar correctas/incorrectas
+            if (opt === q.answer) {
+                correct++;
+            } else {
+                incorrect++;
+            }
+
+            // En modo estudio, mostrar inmediatamente si es correcta o incorrecta
+            if (mode === "study") {
+                document.querySelectorAll(".options label").forEach(l => {
+                    if (l.textContent === q.answer) l.classList.add("option-correct");
+                    if (l.textContent === opt && opt !== q.answer) l.classList.add("option-wrong");
+                });
+                
+                // Actualizar nota en tiempo real con penalización
+                const correctCount = answers.filter(a => a && a.selected === a.correct).length;
+                const incorrectCount = answers.filter(a => a && a.selected && a.selected !== a.correct).length;
+                const rawScore = correctCount - (incorrectCount/3);
+                const notaActual = Math.max(0, (rawScore / theme.questions.length) * 10).toFixed(1);
+            }
+
+            saveProgress();
+        });
+
+        optionsDiv.appendChild(label);
+    });
+
+    prevBtn.style.display = index === 0 ? "none" : "inline-block";
+    nextBtn.textContent = index === theme.questions.length - 1 ? "Finalizar" : "Siguiente";
+}
+
+function saveProgress(){ 
+    localStorage.setItem(getTestStateKey(), JSON.stringify({ 
+        index, 
+        correct, 
+        incorrect, 
+        startTime, 
+        answers 
+    })); 
+}
+
+nextBtn.addEventListener("click",()=>{
+    const selectedAnswer = answers[index]?.selected || null;
+    const q = theme.questions[index];
+    
+    // Si no hay respuesta guardada, guardar una vacía
+    if (!answers[index]) {
+        answers[index] = { 
+            question: q.question, 
+            options: q.options, 
+            correct: q.answer, 
+            selected: selectedAnswer, 
+            number: index+1 
+        };
+    }
+    
+    saveProgress();
+    
+    if(index < theme.questions.length-1){ 
+        index++; 
+        loadQuestion(); 
+    } else { 
+        finishTest(); 
+    }
+});
+
+prevBtn.addEventListener("click",()=>{ 
+    if(index>0) {
+        index--; 
+        loadQuestion(); 
+    }
+});
+
+backBtn.addEventListener("click", showExitConfirmation);
+
+confirmExitBtn.addEventListener("click", () => {
+    confirmDialog.style.display = "none";
+    // Guardar el progreso antes de salir
+    saveProgress();
+    backToSelection();
+});
+
+cancelExitBtn.addEventListener("click", () => {
+    confirmDialog.style.display = "none";
+});
+
+function finishTest(){
+    clearInterval(timerInterval); 
+    localStorage.removeItem(getTestStateKey()); 
+    quizCard.style.display="none"; 
+    finalScreen.style.display="block";
+    
+    // Mostrar el nombre del tema en los resultados
+    finalTheme.textContent = `${theme.name}`;
+    
+    const totalSeconds=Math.floor((Date.now()-startTime)/1000); 
+    const min=String(Math.floor(totalSeconds/60)).padStart(2,"0"); 
+    const sec=String(totalSeconds%60).padStart(2,"0");
+    
+    // AMBOS MODOS USAN PENALIZACIÓN (1/3 por incorrecta)
+    const rawScore = correct - (incorrect/3);
+    const note = Math.max(0,(rawScore/theme.questions.length)*10).toFixed(2);
+    
+    summary.innerHTML=`✔️ Correctas: ${correct}<br>❌ Incorrectas: ${incorrect}<br>📝 Total preguntas: ${theme.questions.length}`;
+    finalTime.textContent=`⏱ Tiempo: ${min}:${sec}`;
+    finalNote.innerHTML=`🎯 Nota final: <strong>${note}/10</strong>`;
+    
+    saveModuleScore(theme.name,note);
+
+    failedContainer.style.display="block"; 
+    failedContainer.innerHTML="";
+    const failed=answers.filter(a=> !a.selected || (a.selected !== a.correct));
+    if(failed.length){
+        const failedDiv=document.createElement("div"); 
+        failedDiv.innerHTML=`<h3>Preguntas incorrectas o sin responder.</h3>`;
+        failed.forEach(a=>{
+            const div=document.createElement("div"); 
+            div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); 
+            opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label"); 
+                label.textContent=opt;
+                if(opt===a.correct) label.classList.add("option-correct");
+                if(opt===a.selected && opt !== a.correct) label.classList.add("option-wrong");
+                opts.appendChild(label);
+            });
+            div.appendChild(opts); 
+            failedDiv.appendChild(div);
+        });
+        failedContainer.appendChild(failedDiv);
+    }
+}
+
+function saveModuleScore(moduleName,nota){
+    const numericNote=parseFloat(nota);
+    const scores=JSON.parse(localStorage.getItem("moduleScores"))||{};
+    if(!scores[moduleName]) scores[moduleName]={};
+    if(!scores[moduleName][mode]) scores[moduleName][mode]={};
+    scores[moduleName][mode].ultimaNota=numericNote;
+    scores[moduleName][mode].answers=answers;
+    if(!scores[moduleName][mode].mejorNota || numericNote>scores[moduleName][mode].mejorNota) scores[moduleName][mode].mejorNota=numericNote;
+    localStorage.setItem("moduleScores",JSON.stringify(scores));
+    buildTestButtons();
+}
+
+function updateTimer(){ 
+    const elapsed=Math.floor((Date.now()-startTime)/1000); 
+    const m=String(Math.floor(elapsed/60)).padStart(2,"0"); 
+    const s=String(elapsed%60).padStart(2,"0"); 
+    timer.textContent=`⏱ ${m}:${s}`; 
+}
+
+function restartTest(){ 
+    correct=0; 
+    incorrect=0; 
+    index=0; 
+    answers=[]; 
+    startTime=Date.now(); 
+    localStorage.removeItem(getTestStateKey()); 
+    initTest(false); 
+}
+
+continueBtn.addEventListener("click",()=>initTest(true));
+newBtn.addEventListener("click",()=>restartTest());
+
+function showLastFails(moduleName){
+    const scores=JSON.parse(localStorage.getItem("moduleScores"))||{};
+    const s = scores[moduleName]?.[mode];
+    if(!s?.answers){ alert("No hay respuestas guardadas"); return;}
+    const failed=s.answers.filter(a=>!a.selected || a.selected!==a.correct);
+    if(failed.length===0){ alert("No hay fallos o sin responder"); return;}
+    
+    // Mostrar el nombre del tema
+    lastFailsTheme.textContent = `${moduleName}`;
+    
+    lastFailsContainer.innerHTML="";
+    failed.forEach(a=>{
+        const div=document.createElement("div"); div.className="failed-question";
+        div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+        const opts=document.createElement("div"); opts.className="options";
+        a.options.forEach(opt=>{
+            const label=document.createElement("label"); label.textContent=opt;
+            if(opt===a.correct) label.classList.add("option-correct");
+            if(opt===a.selected) label.classList.add("option-wrong");
+            opts.appendChild(label);
+        });
+        div.appendChild(opts); lastFailsContainer.appendChild(div);
+    });
+    testSelection.style.display="none"; finalScreen.style.display="none"; quizCard.style.display="none"; lastFailsScreen.style.display="block";
+}
+
+// Inicializar
+loadSavedMode(); // Cargar el modo guardado en localStorage
+initDarkMode(); // Inicializar modo oscuro
+initTest();
+</script>
+</body>
+</html>
