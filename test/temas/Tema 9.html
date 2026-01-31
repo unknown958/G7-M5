@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Test Módulo 5</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+* { 
+    box-sizing: border-box; 
+    margin: 0;
+    padding: 0;
+}
+
+body { 
+    font-family: 'Arial', sans-serif; 
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container { 
+    max-width: 900px; 
+    width: 100%;
+    margin: auto; 
+}
+
+/* Tarjeta principal */
+.card { 
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Decoración de la tarjeta */
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1);
+}
+
+/* Títulos */
+h1, h2, h3 {
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+h1 {
+    color: #2d3436;
+    font-size: 2.5rem;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #2d3436;
+    font-size: 2rem;
+    margin-bottom: 30px;
+}
+
+/* Información de progreso */
+.info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
+    font-weight: bold;
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 12px;
+    border: 2px solid #e9ecef;
+}
+
+#progress {
+    color: #495057;
+    font-size: 1.1rem;
+}
+
+#timer {
+    color: #667eea;
+    font-size: 1.1rem;
+    font-weight: bold;
+}
+
+/* Pregunta */
+.question {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    font-weight: bold;
+    color: #2d3436;
+    line-height: 1.5;
+    padding: 0 10px;
+}
+
+/* Opciones */
+.options {
+    margin-bottom: 30px;
+}
+
+.options label {
+    display: block;
+    padding: 20px 25px;
+    margin-bottom: 15px;
+    border-radius: 15px;
+    border: 3px solid #e9ecef;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+    color: #495057;
+    font-size: 1.1rem;
+    line-height: 1.4;
+    position: relative;
+}
+
+.options label:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.1);
+    border-color: #667eea;
+    background: white;
+}
+
+.options label.selected {
+    background: #e8f4ff;
+    border-color: #667eea;
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.2);
+}
+
+.options label.option-wrong {
+    border-color: #ff6b6b;
+    background: #fff5f5;
+}
+
+.options label.option-correct {
+    border-color: #4ecdc4;
+    background: #f0fffd;
+}
+
+/* Botones */
+button {
+    padding: 18px 30px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: bold;
+    width: 100%;
+    margin-top: 10px;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+button.secondary {
+    background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+}
+
+#prevBtn, #nextBtn {
+    width: 48%;
+    padding: 18px;
+}
+
+.button-container {
+    display: flex;
+    gap: 4%;
+    margin-top: 20px;
+    justify-content: flex-end;
+}
+
+/* Pantalla final */
+.final { 
+    display: none; 
+    text-align: center;
+}
+
+.final h2 {
+    font-size: 2.5rem;
+    margin-bottom: 30px;
+}
+
+#summary, #finalTime, #finalNote {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    color: #495057;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 12px;
+}
+
+#finalNote {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #667eea;
+    background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+    padding: 20px;
+    border-left: 5px solid #667eea;
+}
+
+/* Preguntas incorrectas */
+.failed-question {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 2px solid #e9ecef;
+}
+
+.failed-question .question-text {
+    margin-bottom: 20px;
+    font-weight: bold;
+    color: #2d3436;
+    font-size: 1.2rem;
+}
+
+/* ===== Diálogo de test guardado ===== */
+#resumeDialog {
+    display: none; 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background: rgba(0,0,0,0.8); 
+    z-index: 9999;
+    justify-content: center; 
+    align-items: center;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#resumeDialog .card {
+    max-width: 500px; 
+    background: white;        
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    display: flex; 
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+#resumeDialog h2 { 
+    margin: 0; 
+    font-size: 2rem;
+    color: #2d3436;
+}
+
+#resumeDialog p { 
+    margin: 0; 
+    font-size: 1.2rem;
+    color: #636e72;
+    line-height: 1.6;
+}
+
+#resumeDialog button { 
+    width: 80%; 
+    padding: 18px; 
+    font-size: 1.1rem; 
+    border-radius: 12px; 
+    border: none; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    font-weight: bold;
+}
+
+#resumeDialog button#continueBtn { 
+    background: linear-gradient(135deg, #4ecdc4, #45b7d1);
+    color: white; 
+}
+
+#resumeDialog button#continueBtn:hover { 
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(78, 205, 196, 0.3);
+}
+
+#resumeDialog button#newBtn { 
+    background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+    color: white; 
+}
+
+#resumeDialog button#newBtn:hover { 
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+}
+
+#resumeDialog button + button { 
+    margin-top: 10px; 
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card {
+        padding: 25px;
+    }
+    
+    h1 {
+        font-size: 2rem;
+    }
+    
+    h2 {
+        font-size: 1.8rem;
+    }
+    
+    .question {
+        font-size: 1.1rem;
+    }
+    
+    .options label {
+        padding: 15px 20px;
+        font-size: 1rem;
+    }
+    
+    button {
+        padding: 16px 20px;
+        font-size: 1rem;
+    }
+    
+    #prevBtn, #nextBtn {
+        width: 48%;
+        padding: 16px;
+    }
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+    <!-- Diálogo para continuar test guardado -->
+    <div id="resumeDialog">
+        <div class="card">
+            <h2>💾 Test guardado</h2>
+            <p>Se detectó un test previo guardado. ¿Deseas continuar o empezar uno nuevo?</p>
+            <button id="continueBtn">Continuar</button>
+            <button id="newBtn">Empezar de nuevo</button>
+        </div>
+    </div>
+
+    <!-- Pantalla de cuestionario -->
+    <div class="card" id="quizCard">
+        <h1 id="themeTitle"></h1>
+        <div class="info">
+            <div id="progress"></div>
+            <div id="timer">⏱ 00:00</div>
+        </div>
+        <div class="question" id="questionText"></div>
+        <div class="options" id="options"></div>
+        <div class="button-container">
+            <button id="prevBtn">Anterior</button>
+            <button id="nextBtn">Siguiente</button>
+        </div>
+    </div>
+
+    <!-- Pantalla final -->
+    <div class="card final" id="finalScreen">
+        <h2>📊 Resultado final</h2>
+        <p id="summary"></p>
+        <p id="finalTime"></p>
+        <p id="finalNote"></p>
+        <div id="failedContainer" style="display:none;"></div>
+        <button class="secondary" id="restartBtn">Repetir test</button>
+    </div>
+
+</div>
+
+<script>
+// === Preguntas ===
+const themes = [
+{
+  "name": "Tema 9",
+  "questions": [
+  {
+    "question": "En general las picaduras no son graves excepto:",
+    "options": [
+      "Si son múltiples.",
+      "Si son en la garganta.",
+      "Si se es alérgico.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "Si la persona tiene clavado un aguijón actuaremos:",
+    "options": [
+      "Se lo quitaremos con pinzas.",
+      "Se lo quitaremos con los dedos.",
+      "Se lo quitaremos por raspado.",
+      "la respuesta a y c son correctas. "
+    ],
+    "answer": "la respuesta a y c son correctas. "
+  },
+  {
+    "question": "Si la picadura es en la boca y provoca dificultad respiratoria:",
+    "options": [
+      "Evitaremos que la lengua obstruya.",
+      "Practicaremos un RCP.",
+      "Le haremos chupar hielo. ",
+      "Todas son correctas."
+    ],
+    "answer": "Le haremos chupar hielo. "
+  },
+  {
+    "question": "Si el sujeto es alérgico al tóxico, una sola picadura puede provocar:",
+    "options": [
+      "La muerte.",
+      "Fallo cardiorrespiratorio en los 15 min siguientes a la picadura.",
+      "Shock Anafiláctico.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  },
+  {
+    "question": "En los primeros 30 min. la muerte se produce por:",
+    "options": [
+      "Obstrucción de las vías aéreas.",
+      "Por dolor.",
+      "Por shock.",
+      "Las respuestas a y c son correctas. "
+    ],
+    "answer": "Las respuestas a y c son correctas. "
+  },
+  {
+    "question": "En el caso de shock alérgico:",
+    "options": [
+      "Lo colocaremos en posición anti-shock y lo evacuaremos.",
+      "Si vomita o se ahoga colocar en posición semisentada.",
+      "Le daremos agua.",
+      "Las respuestas a y b son correctas. "
+    ],
+    "answer": "Las respuestas a y b son correctas. "
+  },
+  {
+    "question": "En el caso de las personas alérgicas a picaduras, medicamentos o alimentos dispongan de adrenalina autoinyectable, ¿Cómo actuaremos?:",
+    "options": [
+      "Ayudar si es necesario a su administración.",
+      "Antes de utilizar el medicamento, leer detenidamente el prospecto para evitar errores.",
+      "En caso de duda sobre su uso correcto, consulte con un profesional sanitario.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  },
+  {
+    "question": "Si se queda inconsciente y no respira:",
+    "options": [
+      "Iniciar maniobra de RCP. ",
+      "Colocar en posición anti-shock.",
+      "Colocar semisentado.",
+      "Animarle a toser."
+    ],
+    "answer": "Iniciar maniobra de RCP. "
+  },
+  {
+    "question": "Generalmente, la duración de las convulsiones es menor a:",
+    "options": [
+      "5 minutos. ",
+      "10 minutos.",
+      "2 minutos.",
+      "3 minutos."
+    ],
+    "answer": "5 minutos. "
+  },
+  {
+    "question": "Los 3 síntomas más importantes de las convulsiones son:",
+    "options": [
+      "Pérdida de conocimiento.",
+      "Rigidez muscular.",
+      "Movimientos arrítmicos y violentos clónicos.",
+      "Todas son correctas. "
+    ],
+    "answer": "Todas son correctas. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Conviene intentar impedir una crisis.",
+    "options": [
+      "Verdadero.",
+      "Falso. "
+    ],
+    "answer": "Falso. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Hay que aflojar las prendas.",
+    "options": [
+      "Verdadero. ",
+      "Falso."
+    ],
+    "answer": "Verdadero. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Se puede meter un palo a la fuerza para evitar la mordedura de la lengua.",
+    "options": [
+      "Verdadero.",
+      "Falso. "
+    ],
+    "answer": "Falso. "
+  },
+  {
+    "question": "Ante un enfermo con convulsiones Durante la crisis, se puede mover a la víctima para que no se ahogue con sus propias secreciones.",
+    "options": [
+      "Verdadero.",
+      "Falso."
+    ],
+    "answer": "Verdadero."
+  },
+  {
+    "question": "Los indicadores que percibe el propio individuo que le permiten prever la crisis como chasquido de labios, alucinaciones, contracciones generalizadas.... es lo que se denomina:",
+    "options": [
+      "Histeria.",
+      "Aura. ",
+      "Convulsión.",
+      "Epilepsia."
+    ],
+    "answer": "Aura. "
+  },
+  {
+    "question": "¿Cuales son síntomas de la convulsión?:",
+    "options": [
+      "Amnesia.",
+      "Rigidez.",
+      "Dolor de cabeza.",
+      "Todos son correctos. "
+    ],
+    "answer": "Todos son correctos. "
+  },
+  {
+    "question": "¿Cuál no es síntoma en una convulsión?:",
+    "options": [
+      "Grito agudo. ",
+      "Espuma por la boca.",
+      "Movimientos violentos.",
+      "Amnesia."
+    ],
+    "answer": "Grito agudo. "
+  },
+  {
+    "question": "Tipos de diabetes:",
+    "options": [
+      "DM no insulinodependiente (tipo 2).",
+      "Síncope diabético.",
+      "DM insulinodependiente (tipo 1).",
+      "Las respuestas a y c son correctas. "
+    ],
+    "answer": "Las respuestas a y c son correctas. "
+  },
+  {
+    "question": "Falta de insulina:",
+    "options": [
+      "Hiperglucemia.",
+      "Hipoglucemia. "
+    ],
+    "answer": "Hiperglucemia."
+  },
+  {
+    "question": "Ante una hipoglucemia:",
+    "options": [
+      "Beber zumo, 5-10 minutos y ver si mejora. ",
+      "Abanicarlo.",
+      "Colocarlo en posición anti-Shock.",
+      "Ninguna respuesta es correcta."
+    ],
+    "answer": "Beber zumo, 5-10 minutos y ver si mejora. "
+  },
+  {
+    "question": "Síncope más común:",
+    "options": [
+      "Síncope ortostático.",
+      "Síncope del seno carotídeo.",
+      "Síncope vasovagal o vasodepresor. ",
+      "Síncope neurológico."
+    ],
+    "answer": "Síncope vasovagal o vasodepresor. "
+  },
+  {
+    "question": "Síncope vasovagal o vasodepresor:",
+    "options": [
+      "Generalmente aparece en personas sanas y es normal que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional. ",
+      "Generalmente aparece en personas sanas y es extraño que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional.",
+      "Generalmente aparece en personas insanas y es normal que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional.",
+      "Ninguna de las anteriores."
+    ],
+    "answer": "Generalmente aparece en personas sanas y es normal que exista una situación desencadenante reconocible, por lo que es llamado también síncope situacional. "
+  },
+  {
+    "question": "Las hipoglucemias por antidiabéticos orales puede ser:",
+    "options": [
+      "Prolongadas.",
+      "Profundas.",
+      "De riesgo vital.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  },
+  {
+    "question": "Situaciones en caídas en personas mayores:",
+    "options": [
+      "Caída y sospecha fractura de cadera.",
+      "Caída sin fractura. El anciano no puede levantarse sin ayuda.",
+      "Caída sin fractura. El anciano puede levantarse sin ayuda.",
+      "Todas las respuestas son correctas. "
+    ],
+    "answer": "Todas las respuestas son correctas. "
+  }
+]
+},
+]
+
+// === Variables ===
+let theme = themes[0];
+let index=0, correct=0, incorrect=0, startTime=Date.now(), answers=[], timerInterval;
+
+// === DOM ===
+const themeTitle = document.getElementById("themeTitle");
+const questionText = document.getElementById("questionText");
+const optionsDiv = document.getElementById("options");
+const nextBtn = document.getElementById("nextBtn");
+const prevBtn = document.getElementById("prevBtn");
+const progress = document.getElementById("progress");
+const timer = document.getElementById("timer");
+
+const quizCard = document.getElementById("quizCard");
+const finalScreen = document.getElementById("finalScreen");
+const summary = document.getElementById("summary");
+const finalTime = document.getElementById("finalTime");
+const finalNote = document.getElementById("finalNote");
+const failedContainer = document.getElementById("failedContainer");
+
+const resumeDialog = document.getElementById("resumeDialog");
+const continueBtn = document.getElementById("continueBtn");
+const newBtn = document.getElementById("newBtn");
+const restartBtn = document.getElementById("restartBtn");
+
+// === Funciones ===
+function initTest(loadSaved=false){
+    const saved = localStorage.getItem("testState");
+    if(!loadSaved && saved){
+        resumeDialog.style.display="flex";
+        quizCard.style.display="none";
+        finalScreen.style.display="none";
+        return;
+    }
+
+    resumeDialog.style.display="none";
+    quizCard.style.display="block";
+    finalScreen.style.display="none";
+
+    if(loadSaved && saved){
+        const state = JSON.parse(saved);
+        index=state.index; correct=state.correct; incorrect=state.incorrect;
+        startTime=state.startTime; answers=state.answers;
+    }else{
+        index=0; correct=0; incorrect=0; startTime=Date.now(); answers=[];
+        localStorage.removeItem("testState");
+    }
+
+    themeTitle.textContent = theme.name;
+    clearInterval(timerInterval);
+    timerInterval=setInterval(updateTimer,1000);
+    loadQuestion();
+}
+
+function loadQuestion(){
+    const q = theme.questions[index];
+    questionText.textContent=q.question;
+    optionsDiv.innerHTML="";
+    progress.textContent=`Pregunta ${index+1} / ${theme.questions.length}`;
+
+    q.options.forEach(opt=>{
+        const label=document.createElement("label");
+        label.textContent=opt;
+        if(answers[index]?.selected===opt) label.classList.add("selected");
+        label.addEventListener("click",()=>{
+            document.querySelectorAll(".options label").forEach(l=>l.classList.remove("selected"));
+            label.classList.add("selected");
+            answers[index]={question:q.question, options:q.options, correct:q.answer, selected:opt, number:index+1};
+            saveProgress();
+        });
+        optionsDiv.appendChild(label);
+    });
+
+    prevBtn.style.display = index===0 ? "none" : "inline-block";
+    nextBtn.textContent = index===theme.questions.length-1 ? "Finalizar" : "Siguiente";
+}
+
+function saveProgress(){
+    localStorage.setItem("testState", JSON.stringify({index, correct, incorrect, startTime, answers}));
+}
+
+nextBtn.addEventListener("click", ()=>{
+    const selectedAnswer = answers[index]?.selected || null; // null si no respondió
+    const q = theme.questions[index];
+
+    answers[index] = { question:q.question, options:q.options, correct:q.answer, selected:selectedAnswer, number:index+1 };
+    saveProgress();
+
+    if(selectedAnswer){
+        if(selectedAnswer === q.answer) correct++;
+        else incorrect++;
+    }
+
+    if(index < theme.questions.length-1){ index++; loadQuestion();}
+    else finishTest();
+});
+
+prevBtn.addEventListener("click", ()=>{
+    if(index>0) index--; loadQuestion();
+});
+
+function finishTest(){
+    clearInterval(timerInterval);
+    localStorage.removeItem("testState");
+    quizCard.style.display="none";
+    finalScreen.style.display="block";
+
+    const totalSeconds = Math.floor((Date.now()-startTime)/1000);
+    const min = String(Math.floor(totalSeconds/60)).padStart(2,"0");
+    const sec = String(totalSeconds %60).padStart(2,"0");
+    const rawScore = correct - (incorrect/3);
+    const note = Math.max(0,(rawScore/theme.questions.length)*10).toFixed(2);
+
+    summary.innerHTML=`✔️ Correctas: <strong>${correct}</strong><br>❌ Incorrectas: <strong>${incorrect}</strong>`;
+    finalTime.textContent=`⏱ Tiempo total: ${min}:${sec}`;
+    finalNote.innerHTML=`🎯 Nota final: <strong style="font-size: 2rem; color: #667eea;">${note}/10</strong>`;
+
+    failedContainer.style.display="block";
+    failedContainer.innerHTML = "";
+
+    // Preguntas incorrectas
+    const failed = answers.filter(a=>a.selected && a.selected!==a.correct);
+    if(failed.length){
+        const failedDiv = document.createElement("div");
+        failedDiv.innerHTML = "<h3 style='color: #ff6b6b; margin-bottom: 20px;'>📝 Preguntas incorrectas</h3>";
+        failed.forEach(a=>{
+            const div=document.createElement("div"); div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label");
+                if(opt===a.correct) label.classList.add("option-correct");
+                if(opt===a.selected) label.classList.add("option-wrong");
+                label.textContent=opt;
+                opts.appendChild(label);
+            });
+            div.appendChild(opts);
+            failedDiv.appendChild(div);
+        });
+        failedContainer.appendChild(failedDiv);
+    }
+
+    // Preguntas no respondidas
+    const unanswered = answers.filter(a=>a.selected===null);
+    if(unanswered.length){
+        const unDiv = document.createElement("div");
+        unDiv.innerHTML="<h3 style='color: #636e72; margin-bottom: 20px;'>❓ Preguntas no respondidas</h3>";
+        unanswered.forEach(a=>{
+            const div=document.createElement("div"); div.className="failed-question";
+            div.innerHTML=`<div class="question-text">Pregunta ${a.number}: ${a.question}</div>`;
+            const opts=document.createElement("div"); opts.className="options";
+            a.options.forEach(opt=>{
+                const label=document.createElement("label");
+                if(opt===a.correct) label.classList.add("option-correct");
+                label.textContent=opt;
+                opts.appendChild(label);
+            });
+            div.appendChild(opts);
+            unDiv.appendChild(div);
+        });
+        failedContainer.appendChild(unDiv);
+    }
+}
+
+function updateTimer(){
+    const elapsed = Math.floor((Date.now()-startTime)/1000);
+    const m = String(Math.floor(elapsed/60)).padStart(2,"0");
+    const s = String(elapsed%60).padStart(2,"0");
+    timer.textContent=`⏱ ${m}:${s}`;
+}
+
+function restartTest(){
+    correct=0; incorrect=0; index=0; answers=[]; startTime=Date.now();
+    localStorage.removeItem("testState");
+    initTest(false);
+}
+
+// === Botones ===
+continueBtn.addEventListener("click", ()=>initTest(true));
+newBtn.addEventListener("click", ()=>restartTest());
+restartBtn.addEventListener("click", ()=>restartTest());
+
+// Añadir botón de volver al inicio
+const backButton = document.createElement("button");
+backButton.textContent = "Volver al inicio";
+backButton.style.background = "linear-gradient(135deg, #ff6b6b, #ee5a52)";
+backButton.style.marginTop = "20px";
+backButton.addEventListener("click", () => {
+    window.location.href = "../index.html";
+});
+document.getElementById("finalScreen").appendChild(backButton);
+
+initTest();
+</script>
+</body>
+</html>
