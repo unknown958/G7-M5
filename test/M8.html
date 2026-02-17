@@ -544,7 +544,416 @@ body.dark-mode .modulo8-section {
 <script>
 // === Datos del test ===
 const themes = [
-
+ {
+        'question': 'En relación con las consecuencias psicológicas de las agresiones sexuales, la reacción a corto plazo, caracterizada por la reevaluación cognitiva del hecho, corresponde a:',
+        'options': [
+            'Fase de shock emocional.',
+            'La fase de reordenación. ',
+            'La fase de adaptación.',
+            'A cualquier fase en función del tipo, intensidad y duración del ataque',
+        ],
+        'answer': 'La fase de reordenación. ',
+    },
+    {
+        'question': 'En la atención a las víctimas de agresiones sexuales...',
+        'options': [
+            'La fase de acogida no es tan importante ya que la agresión se ha producido y la víctima se encuentra en estado de shock.',
+            'No importa nada el modo de formular las preguntas, lo importante es el acceso a la información.',
+            'Se debe vigilar la formulación de las preguntas para que la víctima no se sienta juzgada por la policía. ',
+            'Cualquier lugar es ideal para atender y solicitar información.',
+        ],
+        'answer': 'Se debe vigilar la formulación de las preguntas para que la víctima no se sienta juzgada por la policía. ',
+    },
+    {
+        'question': 'La mujer víctima de violencia en la relación de pareja trata de cambiar su estrategia de afrontamiento porque con la anterior no ha obtenido ningún beneficio, sustituyéndola por la de asumir que no puede evitar lo que le viene en gana. ¿Qué situación vive esta mujer?',
+        'options': [
+            'Aceptación condicionada.',
+            'Aceptación incondicional.',
+            'Indefensión aprendida. ',
+            'Desprotección estudiada',
+        ],
+        'answer': 'Indefensión aprendida. ',
+    },
+    {
+        'question': 'Según la teoría de Leonor Walker sobre el ciclo violento, los episodios de maltrato forman parte de un proceso. Indique la opción correcta:',
+        'options': [
+            'El proceso consta de tres fases, en este orden: fase de lanzamiento, fase de generación de tensión y fase de calma cariñosa',
+            'El proceso consta de tres fases, en este orden: fase de generación/acumulación de tensión, fase de explosión o descarga de violencia física, y fase de arrepentimiento y dulzura. ',
+            'El proceso consta de tres fases, en este orden: fase de recuperación, fase de arrepentimiento y fase de dulzura.',
+            'El proceso consta de cinco fases, en este orden: fase inicial, fase de recuperación, fase de explosión, fase de descarga de violencia física, y fase de arrepentimiento y dulzura.',
+        ],
+        'answer': 'El proceso consta de tres fases, en este orden: fase de generación/acumulación de tensión, fase de explosión o descarga de violencia física, y fase de arrepentimiento y dulzura. ',
+    },
+    {
+        'question': 'En cuanto a los indicadores de maltrato y abandono infantil y juvenil...',
+        'options': [
+            'Los malos tratos y el abandono se producen en un ambiente privado, por lo que es muy probable que sean observados directamente a través de intervenciones policiales.',
+            'La aparición de un indicador, aunque sea único y aparezca de forma esporádica, es una prueba suficiente para dar cuenta de los malos tratos.',
+            'La presencia reiterada de algún indicador (combinación de diferentes indicadores, aparición de lesiones serias...) debe llamar la atención de cualquier persona sobre si estamos ante un caso de maltrato, pero la policía no puede intervenir (detenciones, notificaciones penales...) hasta que los servicios sociales de atención a la infancia y a la adolescencia lo autoricen.',
+            'No es tarea imprescindible de los agentes policiales demostrar la existencia de malos tratos y encontrar evidencias. ',
+        ],
+        'answer': 'No es tarea imprescindible de los agentes policiales demostrar la existencia de malos tratos y encontrar evidencias. ',
+    },
+    {
+        'question': 'Cuando aparecen burlas y crónicos verbales de este tipo, ¿qué maltrato a los menoresse nos va a presentar?',
+        'options': [
+            'Abuso sexual.',
+            'Abandono emocional.',
+            'Abandono físico.',
+            'Maltrato emocional. ',
+        ],
+        'answer': 'Maltrato emocional. ',
+    },
+    {
+        'question': 'Factores de riesgo asociados a la violencia parental:',
+        'options': [
+            'Las características psicológicas de los agresores no están relacionadas con la baja tolerancia a la frustración, la falta de empatía, la impulsividad y el egocentrismo como factores de crispación.',
+            'El hecho de que los hijos hayan presenciado episodios violentos dentro de la familia no aumenta en absoluto el riesgo individual de reproducción de la violencia.',
+            'Los cambios en los modelos familiares y laborales son dos de los factores identificados en el contexto social. ',
+            'Sólo las familias con padres mayores de edad son factores de riesgo familiar.',
+        ],
+        'answer': 'Los cambios en los modelos familiares y laborales son dos de los factores identificados en el contexto social. ',
+    },
+    {
+        'question': 'Indica cuál es la conducta CORRECTA en situaciones de crisis en las que están implicadas personas con delirios o alucinaciones:',
+        'options': [
+            'Es fundamental mostrar acuerdo con los delirios y alucinaciones para que la persona se sienta protegida y responda a su estado emocional.',
+            'Es fundamental intentar su recuperación de forma directa y abierta para que tome conciencia del estado mental.',
+            'Puede llegar al enfermo para que no se sienta amenazado.',
+            'Aceptar sus delirios, como si fueran ciertos para el enfermo, reconociendo los sentimientos que le inspiran. ',
+        ],
+        'answer': 'Aceptar sus delirios, como si fueran ciertos para el enfermo, reconociendo los sentimientos que le inspiran. ',
+    },
+    {
+        'question': 'Indica la conducta CORRECTA en situaciones de crisis en las que están implicadas personas con trastornos mentales:',
+        'options': [
+            'Es importante que los dos miembros de la patrulla traten de tranquilizarla: le hablarán en voz alta para captar su atención y ofrecerle seguridad.',
+            'Es conveniente acercarse a él con seguridad y firmeza, por lo que le diremos en voz alta y contundente que estamos allí para ayudarle.',
+            'Es posible que esa persona escuche voces mientras nos comunicamos con ella, por lo que es conveniente utilizar frases cortas y sencillas. ',
+            'Se trata de un problema de salud y no policial, por lo que esperaremos entre los servicios sanitarios y evitaremos actuar con la persona afectada por la crisis.',
+        ],
+        'answer': 'Es posible que esa persona escuche voces mientras nos comunicamos con ella, por lo que es conveniente utilizar frases cortas y sencillas. ',
+    },
+    {
+        'question': 'Dentro de la fase de intervención con una persona que intenta suicidarse de forma leve:',
+        'options': [
+            'La policía tratará de "ganar tiempo" para preparar a los intervinientes para que tengan tiempo (poner redes, controlar entradas desde otros lugares...). ',
+            'Priorizar la llegada de los agentes, lo más rápido posible por necesidades, procurando resolver la situación lo antes posible.',
+            'El agente deberá dar importancia a lo que indique el suicida y le contará ejemplos personales de su vida como forma de prestarle ayuda.',
+            'Cuando intervengamos con un suicida, colocaremos varios agentes cerca de él, por si todos tuvieran que intervenir en el ataque.',
+        ],
+        'answer': 'La policía tratará de "ganar tiempo" para preparar a los intervinientes para que tengan tiempo (poner redes, controlar entradas desde otros lugares...). ',
+    },
+    {
+        'question': '¿Por qué hay que considerar más negativa la victimización secundaria que la primaria?',
+        'options': [
+            'Porque la victimización secundaria responde adecuadamente a las necesidades sociales y emocionales de las víctimas.',
+            'Porque la victimización secundaria es la respuesta a un servicio policial de calidad.',
+            'Porque el propio sistema victimiza a la persona que acude al sistema en busca de justicia y protección. ',
+            'Porque el propio sistema defiende siempre más a los delincuentes que a las víctimas.',
+        ],
+        'answer': 'Porque el propio sistema victimiza a la persona que acude al sistema en busca de justicia y protección. ',
+    },
+    {
+        'question': 'Se consideran factores de riesgo de acoso escolar:',
+        'options': [
+            'Estilo educativo y titularidad de gestión del centro (público o privado)',
+            'Cualquier valor de austeridad que permita una relación democrática entre el alumnado y el profesorado, que fomente la interacción entre iguales.',
+            'La pérdida de la capacidad socializadora de la escuela y la influencia de los medios de comunicación y las nuevas tecnologías. ',
+            'las dificultades económicas de las familias para garantizar una educación de calidad.',
+        ],
+        'answer': 'La pérdida de la capacidad socializadora de la escuela y la influencia de los medios de comunicación y las nuevas tecnologías. ',
+    },
+    {
+        'question': 'En el ámbito del acoso escolar y desde el punto de vista de la prevención policial, se recogen diferentes actividades. Por ejemplo:',
+        'options': [
+            'Presencia continuada de policía no uniformada únicamente en aquellos centros en los que se haya detectado algún caso de acoso, especialmente contra el profesorado.',
+            'Presencia policial reducida sólo en aquellos centros en los que se ha detectado algún caso de acoso, especialmente contra el profesorado.',
+            'Realización de patrullas selectivas y conversaciones periódicas con los responsables de los centros. ',
+            'Colocación del vehículo policial en un lugar relativamente oculto, posible caso de inducción del factor sorpresa e identificación más rápida a partir de indicadores observados directamente.',
+        ],
+        'answer': 'Realización de patrullas selectivas y conversaciones periódicas con los responsables de los centros. ',
+    },
+    {
+        'question': 'En funciones policiales relacionadas con la seguridad de las personas mayores, algunas de ellas serán:',
+        'options': [
+            'Realizar el trabajo de profesionales sanitarios, psicológicos, asistentes sociales, etc., en función de las necesidades concretas de la persona mayor, siendo la policía el cuerpo que aparece en primer lugar en la intervención en casos de maltrato.',
+            'Proteger a este colectivo de determinados delitos contra el patrimonio y los bienes, impidiendo su victimización, facilitando información a ámbitos como la educación vial, el maltrato, etc. ',
+            'No implicarse con las necesidades de protección de este colectivo, ya que en ningún caso se exigirá la intervención policial como cuestión exclusiva de los servicios sociales.',
+            'Responsabilizarse únicamente de la recepción de la denuncia en caso de delitos (estafa, maltrato, etc.).',
+        ],
+        'answer': 'Proteger a este colectivo de determinados delitos contra el patrimonio y los bienes, impidiendo su victimización, facilitando información a ámbitos como la educación vial, el maltrato, etc. ',
+    },
+    {
+        'question': 'Teniendo en cuenta los riesgos de la intervención policial en los fenómenos de violencia en comportamientos colectivos... ¿Qué es el efecto contagio?',
+        'options': [
+            'Efecto producido por la sola presencia de materiales ofensivos y defensivos con los que se sostiene la ordenación.',
+            'Es el "efecto de los guantes de boxeo"; es decir, que se producen efectos distintos a los esperados en determinados fenómenos sociales.',
+            'Que el propio equipo policial adopte alguna característica del grupo a disolver ',
+            'No existe tal efecto en la intervención policial ante fenómenos violentos',
+        ],
+        'answer': 'Que el propio equipo policial adopte alguna característica del grupo a disolver ',
+    },
+    {
+        'question': '¿Cuál de los siguientes factores se considera motivo de NO DENUNCIA de delitos de odio?',
+        'options': [
+            'Vergüenza: algunas víctimas se sienten avergonzadas o culpables tras haber sido víctimas de un delito de odio. ',
+            'Negarse a solicitar los beneficios de algún programa de compensación a las víctimas.',
+            'Que la víctima se siente integrada en su comunidad.',
+            'Actitud positiva hacia la policía y el proceso judicial.',
+        ],
+        'answer': 'Vergüenza: algunas víctimas se sienten avergonzadas o culpables tras haber sido víctimas de un delito de odio. ',
+    },
+    {
+        'question': 'En el ámbito de la violencia doméstica, las coacciones leves...',
+        'options': [
+            'Se considerarán delitos leves. ',
+            'Se consideran conductas atípicas.',
+            'Deben ser denunciados para ser perseguidos.',
+            'Ninguna de las respuestas anteriores es correcta.',
+        ],
+        'answer': 'Se considerarán delitos leves. ',
+    },
+    {
+        'question': 'Señale la respuesta INCORRECTA: La pena del delito de maltrato habitual recogido en el artículo 173.2 del Código Penal será más severa cuando se trate de uno o varios actos violentos...',
+        'options': [
+            'Se realicen en sede común o en el domicilio de la víctima.',
+            'Se realicen con armas.',
+            'Cuando se cometan contra una víctima que conviva con el autor de los hechos y sea especialmente vulnerable. ',
+            'Cuando se cometan por infracción de alguna de las penas previstas en el artículo 48 del Código Penal.',
+        ],
+        'answer': 'Cuando se cometan contra una víctima que conviva con el autor de los hechos y sea especialmente vulnerable. ',
+    },
+    {
+        'question': 'El 23 de febrero, por una supuesta infidelidad, Jon J.K. golpeó a Ander H.L., causándole un hematoma que no requirió tratamiento médico. Ambas personas estaban unidas por una relación afectiva similar a la conyugal. ¿Qué tipo de caso es?',
+        'options': [
+            'Violencia de género.',
+            'Violencia doméstica. ',
+            'Violencia de género cuando la víctima sea una persona vulnerable.',
+            'La vulgaridad.',
+        ],
+        'answer': 'Violencia doméstica. ',
+    },
+    {
+        'question': 'Que cualquier acto de violencia de género o doméstica se haya llevado a cabo con armas...',
+        'options': [
+            'No siempre supone una agravación de la pena. ',
+            'Podrá, en todo caso, agravar la pena.',
+            'Sólo agravará la pena en los casos de violencia de género.',
+            'Sólo podrá agravar la pena en los casos de violencia doméstica.',
+        ],
+        'answer': 'No siempre supone una agravación de la pena. ',
+    },
+    {
+        'question': 'Señale la respuesta INCORRECTA:',
+        'options': [
+            'En los delitos contra la libertad sexual, la intención obscena debe deducirse de acuerdo con los medios empleados y los actos cometidos.',
+            'En el delito de agresión sexual, la condición activa y pasiva puede ser tanto de mujer como de hombre.',
+            'En todo caso, se considerará abuso sexual no consensuado agravado el que se comete abusando del trastorno mental de una persona. ',
+            'Los actos de exhibición obscena cometidos ante mayores de edad pueden ser constitutivos de infracción administrativa.',
+        ],
+        'answer': 'En todo caso, se considerará abuso sexual no consensuado agravado el que se comete abusando del trastorno mental de una persona. ',
+    },
+    {
+        'question': 'Actos que atenten contra la libertad e indemnidad sexual de una persona mediante el uso de fármacos para eliminar la violación de la víctima...',
+        'options': [
+            'Se considerarán abusos sexuales',
+            'Se considerarán agresiones sexuales. ',
+            'Se considerarán abusos o agresiones sexuales en función de la edad de la víctima.',
+            'Como abuso sexual, salvo que el autor sea una persona con una edad similar a la de la víctima y un grado de desarrollo o madurez.',
+        ],
+        'answer': 'Se considerarán agresiones sexuales. ',
+    },
+    {
+        'question': 'Señale la respuesta CORRECTA: Delito de acoso sexual',
+        'options': [
+            'Es un delito leve.',
+            'Sólo es posible a través de Internet, el teléfono o cualquier otra tecnología de la información o de los medios de comunicación.',
+            'Se agravará cuando se trate de penetración, tanto vaginal, anal como oral.',
+            'Ninguna de las respuestas anteriores es correcta.',
+        ],
+        'answer': 'None',
+    },
+    {
+        'question': 'En el delito de abuso sexual por engaño regulado en el artículo 182.2 del Código Penal.',
+        'options': [
+            'La víctima puede ser cualquiera.',
+            'Es necesario recurrir a la violencia o a la intimidación.',
+            'Si la víctima tiene más de 18 años se agravará aún más la pena.',
+            'Ninguna de las respuestas anteriores es correcta. ',
+        ],
+        'answer': 'Ninguna de las respuestas anteriores es correcta. ',
+    },
+    {
+        'question': 'Señale la respuesta CORRECTA',
+        'options': [
+            'El ejercicio del derecho de reunión y manifestación requiere autorización previa de la autoridad porque puede afectar a los derechos de otras personas.',
+            'Sólo será necesaria la autorización previa de la autoridad cuando afecte a derechos de otras personas.',
+            'El derecho de reunión y manifestación es un derecho absoluto y sin límites.',
+            'El derecho de reunión y manifestación no es absoluto, es decir, tiene ciertos límites. ',
+        ],
+        'answer': 'El derecho de reunión y manifestación no es absoluto, es decir, tiene ciertos límites. ',
+    },
+    {
+        'question': 'Según el artículo 20 de la Ley Orgánica de Seguridad Ciudadana se permite la exploración externa y superficial del cuerpo de la persona.',
+        'options': [
+            'Sólo si existe una situación de urgencia por grave riesgo inminente para los agentes.',
+            'Cuando existan indicios racionales de que se pueden encontrar instrumentos, efectos u otros objetos relevantes para realizar funciones de investigación y prevención. ',
+            'No sea contrario a la voluntad del afectado.',
+            'Funciones de investigación, pero no de prevención.',
+        ],
+        'answer': 'Cuando existan indicios racionales de que se pueden encontrar instrumentos, efectos u otros objetos relevantes para realizar funciones de investigación y prevención. ',
+    },
+    {
+        'question': 'En el procedimiento administrativo sancionador:',
+        'options': [
+            'Rige el principio de irretroactividad de la norma sancionadora siempre y en todo caso.',
+            'La fase de instrucción y la sancionadora corresponden al mismo órgano.',
+            'Cualquier persona tiene derecho a conocer, en cualquier momento, el estado de la tramitación del procedimiento.',
+            'La Ley señala un plazo fuera del cual ya no podrán ser sancionados los hechos constitutivos de una presunta infracción administrativa. ',
+        ],
+        'answer': 'La Ley señala un plazo fuera del cual ya no podrán ser sancionados los hechos constitutivos de una presunta infracción administrativa. ',
+    },
+    {
+        'question': 'En caso de conflicto entre el vendedor y un cliente en el supermercado "Sustrai", los agentes actuantes actuarán, con carácter general, de la siguiente manera:',
+        'options': [
+            'Separar - relajar la situación - identificar - dar soluciones - actuar conforme a derecho.',
+            'Separar - identificar - relajar la situación - actuar conforme a derecho - dar soluciones.',
+            'Separar -relajar la situación - identificar - actuar según derecho - dar soluciones. ',
+            'Relajar la situación - separar - identificar - actuar conforme a derecho - dar soluciones.',
+        ],
+        'answer': 'Separar -relajar la situación - identificar - actuar según derecho - dar soluciones. ',
+    },
+    {
+        'question': 'Señale qué documentación tendrán que cumplimentar los agentes de la Ertzaintza en el siguiente caso: A las 01:15 horas del día de hoy, agentes de la Ertzaintza realizando inspección de locales de juego observan en un bingo a dos jóvenes. Los agentes verifican sus identidades y comprueban que ambos tienen 16 años, razón por la cual los agentes proceden a denunciar la situación detectada, para ello:',
+        'options': [
+            'Cumplimentarán un acta de menores en la que figurarán como denunciados los padres o tutores de los menores y dos diligencias de identificación de la persona menor de edad.',
+            'Cumplimentarán un acta de menores en la que figurarán como denunciados los dos menores.',
+            'Cumplimentarán un informe que se remitirá a los servicios sociales competentes.',
+            'Cumplimentarán un acta de menores en la que figurará como denunciado el titular del establecimiento y dos diligencias de identificación de las personas menores de edad. ',
+        ],
+        'answer': 'Cumplimentarán un acta de menores en la que figurará como denunciado el titular del establecimiento y dos diligencias de identificación de las personas menores de edad. ',
+    },
+    {
+        'question': 'Cuando se dice que la Policía tiene funciones de mediación en el ámbito de la inmigración nos referimos a:',
+        'options': [
+            'Las funciones relacionadas con la aplicación de la ley - Código Penal y legislación extranjera -.',
+            'Funciones orientadas a ofrecer información que corrobore los estereotipos sociales y culturales y su vigencia. ',
+            'La intervención policía en conflictos de connotación racista, facilitando el acercamiento entre los grupos implicados y contribuyendo así a una solución.',
+            'Las funciones encaminadas a la condonación de los delitos que contengan algún elemento relacionado con la diversidad cultural.',
+        ],
+        'answer': 'Funciones orientadas a ofrecer información que corrobore los estereotipos sociales y culturales y su vigencia. ',
+    },
+    {
+        'question': 'El agente policial, al intervenir con alguien que amenace con suicidarse, se preguntará por el motivo que le ha llevado a esta situación:',
+        'options': [
+            'Es un tema tabú y, por tanto, que hay que evitar siempre, porque provoca el suicidio.',
+            'No provoca el suicidio, sino que ayuda a la persona a exteriorizar sus sentimientos. ',
+            'Sólo los familiares más cercanos pueden preguntárselo.',
+            'Todas las respuestas anteriores son erróneas.',
+        ],
+        'answer': 'No provoca el suicidio, sino que ayuda a la persona a exteriorizar sus sentimientos. ',
+    },
+    {
+        'question': 'Señale la respuesta CORRECTA:',
+        'options': [
+            'Se prohíbe la entrada y permanencia de menores de 18 años en establecimientos públicos cerrados que sirven bebidas alcohólicas.',
+            'Se prohíbe la venta de alcohol a personas de hasta 16 uretras.',
+            'Se prohíbe suministrar alcohol a los alumnos de hasta 16 años en los centros educativos.',
+            'Se prohíbe la entrada y permanencia de menores de 16 años en establecimientos públicos cerrados que sirven bebidas alcohólicas, salvo que estén acompañados por sus responsables. ',
+        ],
+        'answer': 'Se prohíbe la entrada y permanencia de menores de 16 años en establecimientos públicos cerrados que sirven bebidas alcohólicas, salvo que estén acompañados por sus responsables. ',
+    },
+    {
+        'question': '¿Qué son las "tintas iridiscentes"?',
+        'options': [
+            'Son tintas en las que se produce el efecto relieve debido al sistema de estampación a altas presiones y temperaturas',
+            'Necesitan la acción de una lámpara de ultravioleta para ser visibles',
+            'Con luz viva y cambiando de posición, cambian de brillo ',
+            'Son tintas de impresión con pigmentos ópticamente volátiles que presentan grandes cambios de color en función del ángulo de observación - O iluminación',
+        ],
+        'answer': 'Con luz viva y cambiando de posición, cambian de brillo ',
+    },
+    {
+        'question': 'Estas son tres de las medidas de seguridad fundamentales que se pueden ver en los billetes de euro de la serie Europa:',
+        'options': [
+            'Marca de agua con la imagen de la diosa Europa, holograma con la imagen de la diosa Europa y la palabra Euro impresa por tipografía',
+            'Holograma con la imagen de la diosa Europa, número verde esmeralda y término Euro impreso con tinta OVI (imagen ópticamente variable)',
+            'Marca de agua con la imagen de la diosa Europa, número verde esmeralda y fibrillas (que reaccionan con luz ultravioleta. ',
+            'Marca de agua con la imagen de la diosa Europa, número verde esmeralda y planchetes (que reaccionan con luz ultravioleta.',
+        ],
+        'answer': 'Marca de agua con la imagen de la diosa Europa, número verde esmeralda y fibrillas (que reaccionan con luz ultravioleta. ',
+    },
+    {
+        'question': '¿Cuáles de las siguientes medidas se pueden adoptar para evitar la victimización secundaria en la solicitud policial?',
+        'options': [
+            '"La primera barrera, que debe ser rápida en el tiempo para priorizar la detención del delincuente sobre cualquier otra atención a la víctima.',
+            'Formular preguntas sin valorar necesariamente el estado emocional de la víctima, priorizando la detención del delincuente y garantizando el cumplimiento de las funciones represivas.',
+            'Escuchar a la víctima transmitiendo empatía y apoyo, evitando comportamientos verbales o no verbales inadecuados. ',
+            'La práctica de diligencias administrativas, ya que el agente policial no puede realizar las tareas de atención y escucha que corresponden a otros profesionales.',
+        ],
+        'answer': 'Escuchar a la víctima transmitiendo empatía y apoyo, evitando comportamientos verbales o no verbales inadecuados. ',
+    },
+    {
+        'question': '¿Qué son los micromachismos, según la definición de Luis Bonino?',
+        'options': [
+            'Manifestaciones que favorecen la simetría de las relaciones y la autonomía femenina.',
+            'Maniobras ejercidas por el hombre: avalan el aumento del poder personal o interpersonal de la mujer afectivamente vinculada',
+            'Los comportamientos de control y dominación de los hombres, que obstaculizan y dificultan la paridad entre mujeres y hombres en la vida cotidiana. ',
+            'Un conjunto de maniobras en las que el hombre hace uso de la fuerza moral, psíquica, económica y de personalidad para dominar a la mujer tanto en el ámbito público como en el privado.',
+        ],
+        'answer': 'Los comportamientos de control y dominación de los hombres, que obstaculizan y dificultan la paridad entre mujeres y hombres en la vida cotidiana. ',
+    },
+    {
+        'question': 'Entre las intervenciones que se están llevando a cabo para reducir la violencia contra las mujeres en las relaciones de pareja, se encuentran las incluidas dentro del término PREVENCIÓN. ¿A qué se refiere exactamente este término?',
+        'options': [
+            'A la primera intervención ante el problema: protección legal y social.',
+            'Desarrollar los medios materiales y las herramientas de intervención de todos los grupos de profesionales que trabajan directamente con la víctima en las actuaciones de las Administraciones Públicas.',
+            'La educación en los principios de igualdad entre mujeres y hombres, con especial implicación de la familia, la escuela y los medios de comunicación. ',
+            'Recabar información sobre los denunciantes.',
+        ],
+        'answer': 'La educación en los principios de igualdad entre mujeres y hombres, con especial implicación de la familia, la escuela y los medios de comunicación. ',
+    },
+    {
+        'question': '¿Cuál es el objetivo de la prevención social en el marco de las actuaciones policiales con menores?',
+        'options': [
+            'Impedir o cortar las carreras criminales. ',
+            'Desarrollar un enfoque estrictamente legal en las intervenciones policiales.',
+            'Controlar la negligencia de las familias desestructuradas en situación de exclusión.',
+            'Promover la lucha jurídico-penal y policial contra la reincidencia de menores.',
+        ],
+        'answer': 'Impedir o cortar las carreras criminales. ',
+    },
+    {
+        'question': 'Entre las funciones de prevención policial a desarrollar con los menores se encuentran:',
+        'options': [
+            'Únicamente el control del consumo de bebidas alcohólicas y otras drogas.',
+            'Controlar la evolución del fracaso escolar y de la indisciplina de los centros educativos en familias en riesgo de exclusión social.',
+            'La escolarización y el control del consumo de bebidas alcohólicas. ',
+            'El control exclusivo de las familias en situación de riesgo de exclusión social.',
+        ],
+        'answer': 'La escolarización y el control del consumo de bebidas alcohólicas. ',
+    },
+    {
+        'question': 'Para ver el interior de un edificio que ha sonado una alarma, el encargado nos deja entrar. ¿Qué acceso vamos a seguir?',
+        'options': [
+            'La inspección se realizará de forma coordinada entre ambos agentes de la patrulla, pudiendo perderse el contacto visual entre ambos para agilizar el trabajo.',
+            'Se comprobará si los objetos contienen señales de violencia. Para ello se inspeccionarán las puertas, ventanas, cristales y todas las dependencias del local. Sin olvidar el techo o el tejado. ',
+            'los agentes del recurso de apoyo nunca podrán inspeccionar el local, ya que deben controlar el exterior.',
+            'Si el responsable del local está presente, se le permitirá el acceso. Así, proporcionará información sobre las características del local.',
+        ],
+        'answer': 'Se comprobará si los objetos contienen señales de violencia. Para ello se inspeccionarán las puertas, ventanas, cristales y todas las dependencias del local. Sin olvidar el techo o el tejado. ',
+    },
+    {
+        'question': 'Si en una pelea en el interior de una vivienda existe un riesgo inminente para la integridad física o la vida de las personas, los agentes actuarán de la siguiente manera:',
+        'options': [
+            'La apertura de la puerta será forzada con los medios que se consideren oportunos o que estén a nuestro alcance. ',
+            'Estarán pendientes del orden del Agente Primero o Jefe de Patrulla, aunque éstos no estén en el lugar.',
+            'Se comunicará a Ardatz y esperaremos las instrucciones.',
+            'Se comunicará a Ardatz y esperaremos al recurso de los bomberos que ponga en marcha.',
+        ],
+        'answer': 'La apertura de la puerta será forzada con los medios que se consideren oportunos o que estén a nuestro alcance. ',
+    },
     ]
 
 // Variables
