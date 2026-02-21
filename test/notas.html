@@ -31,7 +31,7 @@ body{
     color:#111827;
 }
 
-/* HEADER PROFESIONAL */
+/* HEADER */
 header{
     background: linear-gradient(90deg,var(--azul),var(--azul-claro));
     color:white;
@@ -39,11 +39,10 @@ header{
     padding:22px;
     font-size:20px;
     font-weight:700;
-    letter-spacing:0.5px;
     box-shadow:0 4px 20px rgba(0,0,0,0.15);
 }
 
-/* TARJETAS DE ÁREA */
+/* TARJETAS */
 .area{
     background: var(--card);
     margin:22px auto;
@@ -53,11 +52,6 @@ header{
     border-radius:16px;
     border:1px solid var(--borde);
     box-shadow:0 10px 25px rgba(0,0,0,0.06);
-    transition:0.3s ease;
-}
-
-.area:hover{
-    box-shadow:0 12px 30px rgba(0,0,0,0.1);
 }
 
 .area h2{
@@ -69,7 +63,6 @@ header{
     padding-left:10px;
 }
 
-/* MÓDULOS */
 .modulo{
     display:grid;
     grid-template-columns: 1fr 85px 110px;
@@ -80,20 +73,13 @@ header{
     border-radius:10px;
     background:#f9fafc;
     border:1px solid #eef1f6;
-    transition:0.2s ease;
-}
-
-.modulo:hover{
-    background:#f1f5ff;
 }
 
 .modulo span:first-child{
     font-weight:600;
     font-size:14px;
-    color:#374151;
 }
 
-/* INPUTS MODERNOS */
 .modulo input{
     width:100%;
     padding:8px;
@@ -101,36 +87,23 @@ header{
     border:1px solid #d1d5db;
     text-align:center;
     font-weight:600;
-    font-size:14px;
-    background:white;
-    transition:0.2s ease;
-}
-
-.modulo input:focus{
-    border-color:var(--azul-claro);
-    box-shadow:0 0 0 3px rgba(59,130,246,0.2);
-    outline:none;
 }
 
 .modulo span:last-child{
     text-align:right;
     font-weight:700;
     color:var(--azul);
-    font-size:13px;
 }
 
-/* RESULTADO ÁREA */
+/* RESULTADOS */
 .resultado-area{
     margin-top:14px;
     padding:12px;
     background:#eef2ff;
     border-radius:10px;
     font-weight:600;
-    color:var(--azul);
-    font-size:14px;
 }
 
-/* TOTAL FINAL */
 .total-final{
     margin:30px auto;
     width:95%;
@@ -142,46 +115,48 @@ header{
     color:white;
     font-size:18px;
     font-weight:700;
-    box-shadow:0 12px 35px rgba(0,0,0,0.15);
 }
 
-.total-final span{
-    font-size:22px;
-    color:#ffdddd;
+/* ========================= */
+/*        MODO OSCURO        */
+/* ========================= */
+
+body.dark-mode{
+    background:#111827;
+    color:#e5e7eb;
 }
 
-/* RESPONSIVE PERFECTO */
-@media(max-width:600px){
+body.dark-mode .area{
+    background:#1f2937;
+    border-color:#374151;
+}
 
-    header{
-        font-size:17px;
-        padding:18px;
-    }
+body.dark-mode .area h2{
+    color:#60a5fa;
+}
 
-    .area{
-        padding:16px;
-    }
+body.dark-mode .modulo{
+    background:#111827;
+    border-color:#374151;
+}
 
-    .modulo{
-        grid-template-columns: 1fr;
-        gap:6px;
-    }
+body.dark-mode .modulo span:first-child{
+    color:#f3f4f6;
+}
 
-    .modulo span:last-child{
-        text-align:left;
-    }
+body.dark-mode .modulo input{
+    background:#1f2937;
+    border-color:#374151;
+    color:white;
+}
 
-    .modulo input{
-        width:100%;
-    }
+body.dark-mode .resultado-area{
+    background:#1f2937;
+    color:#93c5fd;
+}
 
-    .total-final{
-        font-size:16px;
-    }
-
-    .total-final span{
-        font-size:20px;
-    }
+body.dark-mode .total-final{
+    background:linear-gradient(135deg,#0f172a,#1e3a8a);
 }
 
 </style>
@@ -191,16 +166,18 @@ header{
 <div id="contenedor"></div>
 
 <div class="area">
-    <h2>RESULTADO GENERAL</h2>
-
-    <div class="resultado-area" style="font-size:16px;">
-        Total: <span id="totalGeneral">0</span> / 600<br><br>
-        Nota Final Sobre 10: <span id="notaFinal">0</span>
-    </div>
+<h2>RESULTADO GENERAL</h2>
+<div class="resultado-area">
+Total: <span id="totalGeneral">0</span> / 600<br><br>
+Nota Final Sobre 10: <span id="notaFinal">0</span>
 </div>
+</div>
+
 <script>
 
-// CONFIGURACIÓN
+/* ========================= */
+/* CONFIGURACIÓN             */
+/* ========================= */
 const areas = [
 {
     nombre:"ÁREA TÉCNICO PROFESIONAL",
@@ -247,89 +224,112 @@ const areas = [
 
 const contenedor = document.getElementById("contenedor");
 
-// Crear UI
+/* ========================= */
+/* CREAR INTERFAZ            */
+/* ========================= */
+
 areas.forEach((area,aIndex)=>{
 
-    const areaDiv = document.createElement("div");
-    areaDiv.className="area";
-    areaDiv.innerHTML=`<h2>${area.nombre}</h2>`;
+const areaDiv = document.createElement("div");
+areaDiv.className="area";
+areaDiv.innerHTML=`<h2>${area.nombre}</h2>`;
 
-    area.modulos.forEach((mod,mIndex)=>{
+area.modulos.forEach((mod,mIndex)=>{
 
-        const moduloDiv=document.createElement("div");
-        moduloDiv.className="modulo";
+const moduloDiv=document.createElement("div");
+moduloDiv.className="modulo";
 
-        moduloDiv.innerHTML=`
-            <span>${mod.nombre}</span>
-            <input type="number" step="0.001" min="0" max="10" id="nota-${aIndex}-${mIndex}">
-            <span>Ptos: <strong id="ptos-${aIndex}-${mIndex}">0</strong></span>
-        `;
+moduloDiv.innerHTML=`
+<span>${mod.nombre}</span>
+<input type="number" step="0.001" min="0" max="10" id="nota-${aIndex}-${mIndex}">
+<span>Ptos: <strong id="ptos-${aIndex}-${mIndex}">0</strong></span>
+`;
 
-        areaDiv.appendChild(moduloDiv);
-    });
-
-    areaDiv.innerHTML+=`
-        <div class="resultado-area">
-            Total Área: <span id="total-area-${aIndex}">0</span> / ${area.max}<br>
-            Media Área: <span id="media-area-${aIndex}">0</span>
-        </div>
-    `;
-
-    contenedor.appendChild(areaDiv);
+areaDiv.appendChild(moduloDiv);
 });
 
-window.onload=function(){
-    areas.forEach((area,aIndex)=>{
-        area.modulos.forEach((mod,mIndex)=>{
-            const key=`nota-${aIndex}-${mIndex}`;
-            const guardado=localStorage.getItem(key);
-            if(guardado){
-                document.getElementById(key).value=guardado;
-            }
-        });
-    });
-    calcular();
-};
+areaDiv.innerHTML+=`
+<div class="resultado-area">
+Total Área: <span id="total-area-${aIndex}">0</span> / ${area.max}<br>
+Media Área: <span id="media-area-${aIndex}">0</span>
+</div>
+`;
+
+contenedor.appendChild(areaDiv);
+});
+
+/* ========================= */
+/* CALCULO                   */
+/* ========================= */
 
 document.addEventListener("input",calcular);
 
 function calcular(){
 
-    let totalGeneral=0;
+let totalGeneral=0;
 
-    areas.forEach((area,aIndex)=>{
+areas.forEach((area,aIndex)=>{
 
-        let totalArea=0;
+let totalArea=0;
 
-        area.modulos.forEach((mod,mIndex)=>{
+area.modulos.forEach((mod,mIndex)=>{
 
-            const key=`nota-${aIndex}-${mIndex}`;
-            let nota=parseFloat(document.getElementById(key).value)||0;
+const key=`nota-${aIndex}-${mIndex}`;
+let nota=parseFloat(document.getElementById(key).value)||0;
 
-            localStorage.setItem(key,nota);
+localStorage.setItem(key,nota);
 
-            let puntos=(nota/10)*mod.peso;
+let puntos=(nota/10)*mod.peso;
 
-            document.getElementById(`ptos-${aIndex}-${mIndex}`).innerText=puntos.toFixed(3);
+document.getElementById(`ptos-${aIndex}-${mIndex}`).innerText=puntos.toFixed(3);
 
-            totalArea+=puntos;
-        });
+totalArea+=puntos;
+});
 
-        document.getElementById(`total-area-${aIndex}`).innerText=totalArea.toFixed(3);
+document.getElementById(`total-area-${aIndex}`).innerText=totalArea.toFixed(3);
 
-        let mediaArea=(totalArea/area.max)*10;
+let mediaArea=(totalArea/area.max)*10;
+document.getElementById(`media-area-${aIndex}`).innerText=mediaArea.toFixed(3);
 
-        document.getElementById(`media-area-${aIndex}`).innerText=mediaArea.toFixed(3);
+totalGeneral+=totalArea;
+});
 
-        totalGeneral+=totalArea;
-    });
-
-    document.getElementById("totalGeneral").innerText=totalGeneral.toFixed(3);
-
-    let notaFinal=(totalGeneral/600)*10;
-
-    document.getElementById("notaFinal").innerText=notaFinal.toFixed(3);
+document.getElementById("totalGeneral").innerText=totalGeneral.toFixed(3);
+document.getElementById("notaFinal").innerText=((totalGeneral/600)*10).toFixed(3);
 }
+
+/* ========================= */
+/* MODO OSCURO SINCRONIZADO  */
+/* ========================= */
+
+// Cargar al iniciar
+window.addEventListener("load",()=>{
+
+if(localStorage.getItem("darkModeGlobal")==="true"){
+document.body.classList.add("dark-mode");
+}
+
+areas.forEach((area,aIndex)=>{
+area.modulos.forEach((mod,mIndex)=>{
+const key=`nota-${aIndex}-${mIndex}`;
+const saved=localStorage.getItem(key);
+if(saved) document.getElementById(key).value=saved;
+});
+});
+
+calcular();
+});
+
+// Escuchar cambios desde otras páginas
+window.addEventListener("storage",(e)=>{
+if(e.key==="darkModeGlobal"){
+if(e.newValue==="true"){
+document.body.classList.add("dark-mode");
+}else{
+document.body.classList.remove("dark-mode");
+}
+}
+});
 
 </script>
 
