@@ -299,45 +299,68 @@ document.getElementById("notaFinal").innerText=((totalGeneral/600)*10).toFixed(3
 }
 
 /* ================================================= */
-/*            SINCRONIZAR MODO OSCURO GLOBAL         */
+/*          MODO OSCURO BASADO EN TU MODELO          */
 /* ================================================= */
 
-// Aplicar modo según localStorage
-function aplicarModoOscuro(){
-    const estado = localStorage.getItem("darkModeGlobal");
+const darkModeToggle = document.getElementById("darkModeToggle");
+const darkModeLabel = document.getElementById("darkModeLabel");
 
-    if(estado === "true"){
-        document.body.classList.add("dark-mode");
+/* Activar */
+function enableDarkMode(){
+    document.body.classList.add("dark-mode");
+    if(darkModeToggle){
+        darkModeToggle.className = "theme-toggle dark-mode";
+    }
+    if(darkModeLabel){
+        darkModeLabel.textContent = "Modo Oscuro";
+    }
+    localStorage.setItem("darkMode","true");
+}
+
+/* Desactivar */
+function disableDarkMode(){
+    document.body.classList.remove("dark-mode");
+    if(darkModeToggle){
+        darkModeToggle.className = "theme-toggle light-mode";
+    }
+    if(darkModeLabel){
+        darkModeLabel.textContent = "Modo Claro";
+    }
+    localStorage.setItem("darkMode","false");
+}
+
+/* Alternar */
+function toggleDarkMode(){
+    if(document.body.classList.contains("dark-mode")){
+        disableDarkMode();
     }else{
-        document.body.classList.remove("dark-mode");
+        enableDarkMode();
     }
 }
 
-// Cuando carga la página
+/* Cargar preferencia al iniciar */
+function loadDarkMode(){
+    const saved = localStorage.getItem("darkMode") === "true";
+
+    if(saved){
+        enableDarkMode();
+    }else{
+        disableDarkMode();
+    }
+}
+
+/* ================================================= */
+/*                 INICIALIZACIÓN                    */
+/* ================================================= */
+
 window.addEventListener("load",()=>{
-    aplicarModoOscuro();
-
-    // Cargar valores guardados
-    areas.forEach((area,aIndex)=>{
-        area.modulos.forEach((mod,mIndex)=>{
-            const key=`nota-${aIndex}-${mIndex}`;
-            const saved = localStorage.getItem(key);
-            if(saved){
-                const input=document.getElementById(key);
-                if(input) input.value=saved;
-            }
-        });
-    });
-
+    loadDarkMode();
     calcular();
 });
 
-// Escuchar cambios desde otras pestañas / páginas
-window.addEventListener("storage",(e)=>{
-    if(e.key === "darkModeGlobal"){
-        aplicarModoOscuro();
-    }
-});
+if(darkModeToggle){
+    darkModeToggle.addEventListener("click",toggleDarkMode);
+}
 </script>
 
 </body>
