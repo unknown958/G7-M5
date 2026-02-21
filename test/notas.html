@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Notas</title>
+
+<style>
+
+:root{
+    --azul:#1e3a8a;
+    --azul-claro:#3b82f6;
+    --rojo:#dc2626;
+    --gris:#6b7280;
+    --fondo:#f4f6fb;
+    --card:#ffffff;
+    --borde:#e5e7eb;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--fondo);
+    min-height:100vh;
+    padding-bottom:40px;
+    color:#111827;
+}
+
+/* HEADER PROFESIONAL */
+header{
+    background: linear-gradient(90deg,var(--azul),var(--azul-claro));
+    color:white;
+    text-align:center;
+    padding:22px;
+    font-size:20px;
+    font-weight:700;
+    letter-spacing:0.5px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.15);
+}
+
+/* TARJETAS DE ÁREA */
+.area{
+    background: var(--card);
+    margin:22px auto;
+    padding:20px;
+    width:95%;
+    max-width:900px;
+    border-radius:16px;
+    border:1px solid var(--borde);
+    box-shadow:0 10px 25px rgba(0,0,0,0.06);
+    transition:0.3s ease;
+}
+
+.area:hover{
+    box-shadow:0 12px 30px rgba(0,0,0,0.1);
+}
+
+.area h2{
+    margin-bottom:16px;
+    color:var(--azul);
+    font-size:16px;
+    font-weight:700;
+    border-left:4px solid var(--rojo);
+    padding-left:10px;
+}
+
+/* MÓDULOS */
+.modulo{
+    display:grid;
+    grid-template-columns: 1fr 85px 110px;
+    align-items:center;
+    gap:15px;
+    padding:12px 14px;
+    margin-bottom:10px;
+    border-radius:10px;
+    background:#f9fafc;
+    border:1px solid #eef1f6;
+    transition:0.2s ease;
+}
+
+.modulo:hover{
+    background:#f1f5ff;
+}
+
+.modulo span:first-child{
+    font-weight:600;
+    font-size:14px;
+    color:#374151;
+}
+
+/* INPUTS MODERNOS */
+.modulo input{
+    width:100%;
+    padding:8px;
+    border-radius:8px;
+    border:1px solid #d1d5db;
+    text-align:center;
+    font-weight:600;
+    font-size:14px;
+    background:white;
+    transition:0.2s ease;
+}
+
+.modulo input:focus{
+    border-color:var(--azul-claro);
+    box-shadow:0 0 0 3px rgba(59,130,246,0.2);
+    outline:none;
+}
+
+.modulo span:last-child{
+    text-align:right;
+    font-weight:700;
+    color:var(--azul);
+    font-size:13px;
+}
+
+/* RESULTADO ÁREA */
+.resultado-area{
+    margin-top:14px;
+    padding:12px;
+    background:#eef2ff;
+    border-radius:10px;
+    font-weight:600;
+    color:var(--azul);
+    font-size:14px;
+}
+
+/* TOTAL FINAL */
+.total-final{
+    margin:30px auto;
+    width:95%;
+    max-width:900px;
+    padding:25px;
+    border-radius:18px;
+    text-align:center;
+    background: linear-gradient(135deg,var(--azul),var(--azul-claro));
+    color:white;
+    font-size:18px;
+    font-weight:700;
+    box-shadow:0 12px 35px rgba(0,0,0,0.15);
+}
+
+.total-final span{
+    font-size:22px;
+    color:#ffdddd;
+}
+
+/* RESPONSIVE PERFECTO */
+@media(max-width:600px){
+
+    header{
+        font-size:17px;
+        padding:18px;
+    }
+
+    .area{
+        padding:16px;
+    }
+
+    .modulo{
+        grid-template-columns: 1fr;
+        gap:6px;
+    }
+
+    .modulo span:last-child{
+        text-align:left;
+    }
+
+    .modulo input{
+        width:100%;
+    }
+
+    .total-final{
+        font-size:16px;
+    }
+
+    .total-final span{
+        font-size:20px;
+    }
+}
+
+</style>
+</head>
+<body>
+
+<div id="contenedor"></div>
+
+<div class="area">
+    <h2>RESULTADO GENERAL</h2>
+
+    <div class="resultado-area" style="font-size:16px;">
+        Total: <span id="totalGeneral">0</span> / 600<br><br>
+        Nota Final Sobre 10: <span id="notaFinal">0</span>
+    </div>
+</div>
+<script>
+
+// CONFIGURACIÓN
+const areas = [
+{
+    nombre:"ÁREA TÉCNICO PROFESIONAL",
+    max:320,
+    modulos:[
+        {nombre:"M1", peso:20},
+        {nombre:"M2", peso:35},
+        {nombre:"M3", peso:40},
+        {nombre:"M4", peso:20},
+        {nombre:"M5", peso:40},
+        {nombre:"M6", peso:45},
+        {nombre:"M7", peso:40},
+        {nombre:"M8", peso:40},
+        {nombre:"M9", peso:20}
+    ]
+},
+{
+    nombre:"ÁREA DE LENGUAJE",
+    max:30,
+    modulos:[
+        {nombre:"M10", peso:30}
+    ]
+},
+{
+    nombre:"ÁREA INTERVENCIÓN POLICIAL",
+    max:135,
+    modulos:[
+        {nombre:"M11", peso:45},
+        {nombre:"M12", peso:50},
+        {nombre:"M13", peso:40},
+        {nombre:"M14", peso:0}
+    ]
+},
+{
+    nombre:"ÁREA DESTREZAS POLICIALES",
+    max:105,
+    modulos:[
+        {nombre:"M15", peso:35},
+        {nombre:"M16", peso:35},
+        {nombre:"M17", peso:35}
+    ]
+}
+];
+
+const contenedor = document.getElementById("contenedor");
+
+// Crear UI
+areas.forEach((area,aIndex)=>{
+
+    const areaDiv = document.createElement("div");
+    areaDiv.className="area";
+    areaDiv.innerHTML=`<h2>${area.nombre}</h2>`;
+
+    area.modulos.forEach((mod,mIndex)=>{
+
+        const moduloDiv=document.createElement("div");
+        moduloDiv.className="modulo";
+
+        moduloDiv.innerHTML=`
+            <span>${mod.nombre}</span>
+            <input type="number" step="0.001" min="0" max="10" id="nota-${aIndex}-${mIndex}">
+            <span>Ptos: <strong id="ptos-${aIndex}-${mIndex}">0</strong></span>
+        `;
+
+        areaDiv.appendChild(moduloDiv);
+    });
+
+    areaDiv.innerHTML+=`
+        <div class="resultado-area">
+            Total Área: <span id="total-area-${aIndex}">0</span> / ${area.max}<br>
+            Media Área: <span id="media-area-${aIndex}">0</span>
+        </div>
+    `;
+
+    contenedor.appendChild(areaDiv);
+});
+
+window.onload=function(){
+    areas.forEach((area,aIndex)=>{
+        area.modulos.forEach((mod,mIndex)=>{
+            const key=`nota-${aIndex}-${mIndex}`;
+            const guardado=localStorage.getItem(key);
+            if(guardado){
+                document.getElementById(key).value=guardado;
+            }
+        });
+    });
+    calcular();
+};
+
+document.addEventListener("input",calcular);
+
+function calcular(){
+
+    let totalGeneral=0;
+
+    areas.forEach((area,aIndex)=>{
+
+        let totalArea=0;
+
+        area.modulos.forEach((mod,mIndex)=>{
+
+            const key=`nota-${aIndex}-${mIndex}`;
+            let nota=parseFloat(document.getElementById(key).value)||0;
+
+            localStorage.setItem(key,nota);
+
+            let puntos=(nota/10)*mod.peso;
+
+            document.getElementById(`ptos-${aIndex}-${mIndex}`).innerText=puntos.toFixed(3);
+
+            totalArea+=puntos;
+        });
+
+        document.getElementById(`total-area-${aIndex}`).innerText=totalArea.toFixed(3);
+
+        let mediaArea=(totalArea/area.max)*10;
+
+        document.getElementById(`media-area-${aIndex}`).innerText=mediaArea.toFixed(3);
+
+        totalGeneral+=totalArea;
+    });
+
+    document.getElementById("totalGeneral").innerText=totalGeneral.toFixed(3);
+
+    let notaFinal=(totalGeneral/600)*10;
+
+    document.getElementById("notaFinal").innerText=notaFinal.toFixed(3);
+}
+
+</script>
+
+</body>
+</html>
