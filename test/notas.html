@@ -357,6 +357,31 @@ window.addEventListener("load",()=>{
     loadDarkMode();
     calcular();
 });
+/* ========================= */
+/* CARGAR NOTAS GUARDADAS */
+/* ========================= */
+
+function cargarNotasGuardadas(){
+
+areas.forEach((area,aIndex)=>{
+
+area.modulos.forEach((mod,mIndex)=>{
+
+let key=`nota-${aIndex}-${mIndex}`;
+let valor=localStorage.getItem(key);
+
+if(valor){
+let input=document.getElementById(key);
+if(input){
+input.value=valor;
+}
+}
+
+});
+
+});
+
+}
 
 if(darkModeToggle){
     darkModeToggle.addEventListener("click",toggleDarkMode);
