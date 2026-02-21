@@ -299,29 +299,29 @@ document.getElementById("notaFinal").innerText=((totalGeneral/600)*10).toFixed(3
 }
 
 /* ================================================= */
-/*                MODO OSCURO GLOBAL                 */
+/*            SINCRONIZAR MODO OSCURO GLOBAL         */
 /* ================================================= */
 
-// Aplicar modo cuando carga la página
+// Aplicar modo según localStorage
 function aplicarModoOscuro(){
-    const darkMode = localStorage.getItem("darkModeGlobal");
+    const estado = localStorage.getItem("darkModeGlobal");
 
-    if(darkMode === "true"){
+    if(estado === "true"){
         document.body.classList.add("dark-mode");
     }else{
         document.body.classList.remove("dark-mode");
     }
 }
 
-// Ejecutar al cargar
+// Cuando carga la página
 window.addEventListener("load",()=>{
     aplicarModoOscuro();
 
-    // Cargar valores guardados de notas
+    // Cargar valores guardados
     areas.forEach((area,aIndex)=>{
         area.modulos.forEach((mod,mIndex)=>{
             const key=`nota-${aIndex}-${mIndex}`;
-            const saved=localStorage.getItem(key);
+            const saved = localStorage.getItem(key);
             if(saved){
                 const input=document.getElementById(key);
                 if(input) input.value=saved;
@@ -332,13 +332,12 @@ window.addEventListener("load",()=>{
     calcular();
 });
 
-// Escuchar cambios desde otras páginas
+// Escuchar cambios desde otras pestañas / páginas
 window.addEventListener("storage",(e)=>{
     if(e.key === "darkModeGlobal"){
         aplicarModoOscuro();
     }
 });
-
 </script>
 
 </body>
