@@ -355,6 +355,13 @@ function loadDarkMode(){
 
 window.addEventListener("load",()=>{
     loadDarkMode();
+areas.forEach((area,aIndex)=>{
+area.modulos.forEach((mod,mIndex)=>{
+const key=`nota-${aIndex}-${mIndex}`;
+const saved=localStorage.getItem(key);
+if(saved) document.getElementById(key).value=saved;
+});
+});
     calcular();
 });
 /* ========================= */
