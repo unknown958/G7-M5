@@ -298,37 +298,45 @@ document.getElementById("totalGeneral").innerText=totalGeneral.toFixed(3);
 document.getElementById("notaFinal").innerText=((totalGeneral/600)*10).toFixed(3);
 }
 
-/* ========================= */
-/* MODO OSCURO SINCRONIZADO  */
-/* ========================= */
+/* ================================================= */
+/*                MODO OSCURO GLOBAL                 */
+/* ================================================= */
 
-// Cargar al iniciar
-window.addEventListener("load",()=>{
+// Aplicar modo cuando carga la página
+function aplicarModoOscuro(){
+    const darkMode = localStorage.getItem("darkModeGlobal");
 
-if(localStorage.getItem("darkModeGlobal")==="true"){
-document.body.classList.add("dark-mode");
+    if(darkMode === "true"){
+        document.body.classList.add("dark-mode");
+    }else{
+        document.body.classList.remove("dark-mode");
+    }
 }
 
-areas.forEach((area,aIndex)=>{
-area.modulos.forEach((mod,mIndex)=>{
-const key=`nota-${aIndex}-${mIndex}`;
-const saved=localStorage.getItem(key);
-if(saved) document.getElementById(key).value=saved;
-});
-});
+// Ejecutar al cargar
+window.addEventListener("load",()=>{
+    aplicarModoOscuro();
 
-calcular();
+    // Cargar valores guardados de notas
+    areas.forEach((area,aIndex)=>{
+        area.modulos.forEach((mod,mIndex)=>{
+            const key=`nota-${aIndex}-${mIndex}`;
+            const saved=localStorage.getItem(key);
+            if(saved){
+                const input=document.getElementById(key);
+                if(input) input.value=saved;
+            }
+        });
+    });
+
+    calcular();
 });
 
 // Escuchar cambios desde otras páginas
 window.addEventListener("storage",(e)=>{
-if(e.key==="darkModeGlobal"){
-if(e.newValue==="true"){
-document.body.classList.add("dark-mode");
-}else{
-document.body.classList.remove("dark-mode");
-}
-}
+    if(e.key === "darkModeGlobal"){
+        aplicarModoOscuro();
+    }
 });
 
 </script>
